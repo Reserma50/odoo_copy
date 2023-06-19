@@ -1,45 +1,53 @@
 <odoo>
-  <data>
-    <form string="Estate Property Test">
-        <sheet>
-            <group>
-                <group>
-                    <field name="name"/>
-                </group>
-                <group>
-                    <field name="description"/>
-                </group>
-                <notebook>
-                    <page string="Description">
-                        <field name="description"/>
-                    </page>
-                </notebook>
-            </group>
-        </sheet>
+    <data>
+        <record id="view_estate_property_form" model="ir.ui.view">
+            <field name="name">estate.property.form</field>
+            <field name="model">estate.property</field>
+            <field name="arch" type="xml">
+                <form string="Estate Property Form Test">
+                    <header>
+                        <field name="name" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                            <group>
+                                <field name="property_type_id" string="Property Type" related="property_type_id.name"/>
+                                <field name="postcode"/>
+                                <field name="date_availability"/>
+                            </group>
+                            <group>
+                                <field name="expected_price"/>
+                                <field name="selling_price"/>
+                            </group>
+                            <notebook>
+                                <page string="Description">
+                                    <group>
+                                        <field name="description" string="Description"/>
+                                        <field name="bedrooms" string="Bedrooms"/>
+                                        <field name="living_area" string="Living Area (sqm)"/>
+                                        <field name="facades" string="Facades"/>
+                                        <field name="garage" string="Garage" />
+                                        <field name="garden" string="Garden"/>
+                                        <field name="garden_area" string=" Garden Area (sqm)"/>
+                                        <field name="garden_orientation" string="Garden Orientation"/>
+                                    </group>
+                                </page>
+                               <page string="Offers">
+                                    
+                               </page>
 
-        <!-- or -->
-
-        <sheet>
-            <div class="oe_button_box" name="button_box">
-                <button name="action_lost_leads" type="object"
-                    class="oe_stat_button" icon="fa-star">
-                    <div class="o_stat_info">
-                        <field name="leads_count" class="o_stat_value"/>
-                        <span class="o_stat_text"> Leads</span>
-                    </div>
-                </button>
-            </div>
-            <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
-            <div class="oe_title">
-                <div class="oe_edit_only">
-                    <label for="name"/>
-                </div>
-                <h1 class="mb32">
-                    <field name="name" class="mb16"/>
-                </h1>
-                <field name="active" invisible="1"/>
-            </div>
-        </sheet>
-    </form>
-  </data>
+                                <page string="Other info">
+                                    <group>
+                                        <field name="seller_id" string="Salesman" related="seller_id.name"/>
+                                        <field name="buyer_id" string="Buyer" related="buyer_id.name"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>  
+            </field>
+        </record>
+    </data>
 </odoo>

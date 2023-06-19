@@ -1,9 +1,24 @@
 <odoo>
   <data>
-    <menuitem id="estate_menu_root" name="Estate">
-        <menuitem id="estate_first_level_menu" name="First Level">
-            <menuitem id="estate_property_menu_action" action="estate_property_action"/>
-        </menuitem>
+    <!-- Top-level menu item "Estate" -->
+    <menuitem id="estate_menu_root" name="Real Estate">
+
+      <!-- Submenu item "First Level" -->
+      <menuitem id="estate_first_level_menu" name="Advertisements">
+        <menuitem id="estate_property_menu_action" action="estate_property_action"/>
+      </menuitem>
+
+      <!-- Second menu item -->
+      <menuitem id="estate_second_level_menu" name="Settings">
+         <!-- New action under the second menu -->
+        <menuitem id="estate_property_type_menu_action" action="estate_property_type_action"/>
+        <menuitem id="estate_property_tag_menu_action" action="estate_property_tag_action"/>
+
+      </menuitem>
+
+
+
+
     </menuitem>
   </data>
 </odoo>
