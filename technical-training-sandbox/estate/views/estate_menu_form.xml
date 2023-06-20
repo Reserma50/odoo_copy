@@ -35,6 +35,8 @@
                                 </page>
                                <page string="Offers">
                                     
+                                        <field name="offer_ids" />
+                                    
                                </page>
 
                                 <page string="Other info">

@@ -65,4 +65,4 @@ class EstatePropertyOffer(models.Model):
         copy = False,
     )
     partner_id = fields.Many2one("res.partner", required=True)
-    property_id = fields.Many2one("estate.property", required=True)
+    property_id = fields.Many2one("estate.property", required=True, default=lambda self: self.env[EstateProperty])

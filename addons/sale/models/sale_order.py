@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 from itertools import groupby
 from markupsafe import Markup
 
@@ -64,13 +64,44 @@ class SaleOrder(models.Model):
         comodel_name='res.company',
         required=True, index=True,
         default=lambda self: self.env.company)
+    #CLIENTE
     partner_id = fields.Many2one(
         comodel_name='res.partner',
-        string="Customer",
+        string="Customer", 
         required=True, readonly=False, change_default=True, index=True,
         tracking=1,
         states=READONLY_FIELD_STATES,
         domain="[('type', '!=', 'private'), ('company_id', 'in', (False, company_id))]")
+    #my fields
+    atention = fields.Char(
+        string = "Atención",
+        copy=False
+    )
+    email = fields.Char(
+        string="Correo electrónico",
+        copy=False
+    )
+    phone = fields.Char(
+        string="Telefono",
+        copy=False
+    )
+    # payment_type_id = fields.One2many(
+    #     "account.payment.method", 
+    #     string="Paymenth method", 
+    #     inverse_name='sale_order_id',)
+    # payment_type_id = fields.Char(string="Forma de Pago", copy=False)
+    payment_type_id = fields.Many2one(
+        "account.payment.method", 
+        string="Paymenth method", 
+        )
+    
+    #warranty_duration = fields.Integer(string='Warranty') #this can be a module!! #string='Warranty (in months)'
+    warranty_duration = fields.Char(string='Warranty')
+    shipping_term = fields.Char(string="Shipping term")
+    # warranty_start_date = fields.Date(string='Warranty Start Date')
+    # warranty_end_date = fields.Date(string='Warranty End Date', compute='_compute_warranty_end_date', store=True)
+
+
     state = fields.Selection(
         selection=[
             ('draft', "Quotation"),
@@ -129,6 +160,7 @@ class SaleOrder(models.Model):
 
     validity_date = fields.Date(
         string="Expiration",
+        # string="Vigencia",
         compute='_compute_validity_date',
         store=True, readonly=False, copy=False, precompute=True,
         states=READONLY_FIELD_STATES)
@@ -170,7 +202,8 @@ class SaleOrder(models.Model):
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     pricelist_id = fields.Many2one(
         comodel_name='product.pricelist',
-        string="Pricelist",
+        # string="Pricelist",
+        string="Tarifas",
         compute='_compute_pricelist_id',
         store=True, readonly=False, precompute=True, check_company=True, required=True,  # Unrequired company
         states=READONLY_FIELD_STATES,
@@ -1486,3 +1519,16 @@ class SaleOrder(models.Model):
         # Override for correct taxcloud computation
         # when using coupon and delivery
         return True
+    
+    # warranty_duration para almacenar la duración de la garantía en meses, warranty_start_date para almacenar la 
+    # fecha de inicio de la garantía y warranty_end_date para almacenar la fecha de finalización de la garantía. 
+    # El campo warranty_end_date se calcula automáticamente mediante la función _compute_warranty_end_date.
+
+    # @api.depends('warranty_start_date', 'warranty_duration')
+    # def _compute_warranty_end_date(self):
+    #     for record in self:
+    #         if record.warranty_start_date and record.warranty_duration:
+    #             start_date = datetime.strptime(record.warranty_start_date, '%Y-%m-%d')
+    #             record.warranty_end_date = start_date + timedelta(months=record.warranty_duration)
+    #         else:
+    #             record.warranty_end_date = False

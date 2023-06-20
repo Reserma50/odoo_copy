@@ -22,7 +22,7 @@
         'views/estate_menu_tree_tag.xml',
         'views/estate_menu_tree_offer.xml',
 
-        'views/estate_menu_form.xml', #uncomment this line!!
+        # 'views/estate_menu_form.xml', #uncomment this line!!
         'views/estate_menu_view_tree_search.xml',
 
         

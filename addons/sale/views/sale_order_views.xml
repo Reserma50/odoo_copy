@@ -250,21 +250,26 @@
                 <group name="sale_header">
                     <group name="partner_details">
                         <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}" options='{"always_reload": True}'/>
-                        <field name="partner_invoice_id" groups="account.group_delivery_invoice_address" context="{'default_type':'invoice'}" options='{"always_reload": True}'/>
-                        <field name="partner_shipping_id" groups="account.group_delivery_invoice_address" context="{'default_type':'delivery'}" options='{"always_reload": True}'/>
+                        <field name="atention" />
+                        <field name="email" /> 
+                        <field name="phone" /> 
+                        <!-- I'M ADD THE invisible="1" SO Remove then if you want-->
+                        <field name="partner_invoice_id" groups="account.group_delivery_invoice_address" context="{'default_type':'invoice'}" options='{"always_reload": True}' invisible="1"/> 
+                        <!-- I'M ADD THE invisible="1" SO Remove then if you want-->
+                        <field name="partner_shipping_id" groups="account.group_delivery_invoice_address" context="{'default_type':'delivery'}" options='{"always_reload": True}' invisible="1"/>
+                        
+                        <!-- my field  -->
+<!-- 
+                        <field name="partner_id" related="partner_id.name" string="Nombre de socio de negocio"/>
+                        <field name="partner_id" related="partner_id.phone" string="Número de teléfono"/> 
+                        <field name="partner_id" related="partner_id.name" string="Persona de contacto"/>  -->
+
+
+                    
                     </group>
                     <group name="order_details">
-                        <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
-                        <div class="o_td_label" groups="base.group_no_one" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
-                            <label for="date_order" string="Quotation Date"/>
-                        </div>
-                        <field name="date_order" nolabel="1" groups="base.group_no_one" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
-                        <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['draft', 'sent'])]}">
-                            <label for="date_order" string="Order Date"/>
-                        </div>
-                        <field name="date_order" attrs="{'invisible': [('state', 'in', ['draft', 'sent'])]}" nolabel="1"/>
                         <field name="show_update_pricelist" invisible="1"/>
-                        <label for="pricelist_id" groups="product.group_product_pricelist"/>
+                        <label for="pricelist_id" string="Tarifa" groups="product.group_product_pricelist"/>
                         <div groups="product.group_product_pricelist" class="o_row">
                             <field name="pricelist_id" options="{'no_open':True,'no_create': True}"/>
                             <button name="action_update_prices" type="object"
@@ -274,11 +279,38 @@
                                 confirm="This will update all unit prices based on the currently set pricelist."
                                 attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done', 'cancel'])]}"/>
                         </div>
+
+                        <field name="validity_date" string="Vigencia" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
+                        <!-- <div class="o_td_label" groups="base.group_no_one" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
+                            <label for="date_order" string="Quotation Date"/>
+                        </div> -->
+  
+                        <!-- <field name="date_order" nolabel="1" groups="base.group_no_one" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                        <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['draft', 'sent'])]}">
+                            <label for="date_order" string="Order Date"/>
+                        </div> -->
+                        <field name="payment_type_id" string="Forma de pago" related="payment_type_id.name" options="{'no_open':True,'no_create': True}"/>  
+                        <!-- <field name="date_order" attrs="{'invisible': [('state', 'in', ['draft', 'sent'])]}" nolabel="1"/> -->
+                        <!-- <field name="show_update_pricelist" invisible="1"/>
+                        <label for="pricelist_id" groups="product.group_product_pricelist"/>
+                        <div groups="product.group_product_pricelist" class="o_row">
+                            <field name="pricelist_id" options="{'no_open':True,'no_create': True}"/>
+                            <button name="action_update_prices" type="object"
+                                string=" Update Prices"
+                                help="Recompute all prices based on this pricelist"
+                                class="btn-link mb-1 px-0" icon="fa-refresh"
+                                confirm="This will update all unit prices based on the currently set pricelist."
+                                attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                        </div> -->
                         <field name="company_id" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
+                        <!-- this field change, is read_only_ is spanish=modena -->
                         <field name="pricelist_id" invisible="1" groups="!product.group_product_pricelist"/>
                         <field name="tax_country_id" invisible="1"/>
                         <field name="payment_term_id" options="{'no_open':True,'no_create': True}"/>
+                        <field name="shipping_term" string="Terminos de entrega" options="{'no_open':True,'no_create': True}"/>
+                        <field name="warranty_duration" string="Garantia" options="{'no_open':True,'no_create': True}"/>
+                        
                     </group>
                 </group>
                 <notebook>
@@ -644,13 +676,20 @@
                             </group>
                         </group>
                     </page>
-                    <page groups="base.group_no_one" string="Customer Signature" name="customer_signature" attrs="{'invisible': [('require_signature', '=', False), ('signed_by', '=', False), ('signature', '=', False), ('signed_on', '=', False)]}">
+                    <!-- <page groups="base.group_no_one" string="Customer Signature" name="customer_signature" attrs="{'invisible': [('require_signature', '=', False), ('signed_by', '=', False), ('signature', '=', False), ('signed_on', '=', False)]}">
                         <group>
                             <field name="signed_by"/>
                             <field name="signed_on"/>
                             <field name="signature" widget="image"/>
                         </group>
+                    </page> -->
+                    <page string="Notes" name="mynotes">
+
                     </page>
+                    <page string="Anexo" name="myannex">
+
+                    </page>
+                    
                 </notebook>
             </sheet>
             <div class="oe_chatter">

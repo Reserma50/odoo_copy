@@ -12,7 +12,7 @@ from odoo.addons.sale.models.sale_order import READONLY_FIELD_STATES
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-
+#IN THIS MODEL WE FOUND QUOTATION TEMPLATE ID
     sale_order_template_id = fields.Many2one(
         comodel_name='sale.order.template',
         string="Quotation Template",
