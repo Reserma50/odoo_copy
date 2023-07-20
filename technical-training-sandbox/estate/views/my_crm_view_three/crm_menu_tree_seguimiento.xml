@@ -1,0 +1,20 @@
+<odoo>
+    <data>    
+    <record id="crm_lead_seguimiento_view_tree" model="ir.ui.view">
+        <field name="name">crm.lead.seguimiento.tree</field>
+        <field name="model">crm.lead.seguimiento</field>
+        <field name="arch" type="xml">
+            <tree string="Seguimiento">
+                    <!-- <field name="field_pub_seguimiento"/> -->
+                    <field name="field_pub_fecha"/>
+                    <field name="field_pub_detalles" string="Descripción"/>
+                    <field name="field_pub_estado"/>
+                    <field name="field_pub_numero_licitacion"/>
+                    <field name="field_pub_precio_ref"/>
+                    <field name="field_pub_precio_oferta" />
+            </tree>
+
+        </field>
+    </record>
+    </data>
+</odoo>

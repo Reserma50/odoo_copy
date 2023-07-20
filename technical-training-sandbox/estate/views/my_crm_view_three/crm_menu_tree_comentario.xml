@@ -1,0 +1,21 @@
+<odoo>
+    <data>    
+    <record id="crm_lead_comentario_view_tree" model="ir.ui.view">
+        <field name="name">crm.lead.comentario.tree</field>
+        <field name="model">crm.lead.comentario</field>
+        <field name="arch" type="xml">
+            <tree string="Comentarios">
+                <field name="fecha"/>
+                <field name="responsable_id"/>
+                <field name="descripcion"/>
+                <!-- <field name="date_deadline"/>
+                <button name="action_set_accept" type="object" string="Accept" icon="fa-check"/>
+                <button name="action_set_refuse" type="object" string="Refuse" icon="fa-close"/>
+                <field name="status"/> -->
+                <!-- <field name="property_id"/> -->
+            </tree>
+
+        </field>
+    </record>
+    </data>
+</odoo>

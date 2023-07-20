@@ -1,0 +1,24 @@
+<odoo>
+    <data>
+        <record id="view_custom_external_layout" model="ir.ui.view">
+            <field name="name">custom.external.layout</field>
+            <field name="model">ir.ui.view</field>
+            <field name="inherit_id" ref="web.external_layout"/>
+            <field name="arch" type="xml">
+            <!-- Aquí van tus modificaciones -->
+            <template id="custom_external_layout" inherit_id="web.external_layout">
+                <xpath expr="//div[@class='page']" position="inside">
+                    <!-- Realiza aquí tus modificaciones en el encabezado -->
+                    <!-- Puedes agregar o modificar elementos HTML según tus necesidades -->
+                </xpath>
+
+                <xpath expr="//div[@class='page']/div[last()]" position="inside">
+                    <!-- Realiza aquí tus modificaciones en el pie de página -->
+                    <!-- Puedes agregar o modificar elementos HTML según tus necesidades -->
+                </xpath>
+            </template>
+
+            </field>
+        </record>
+    </data>
+</odoo>

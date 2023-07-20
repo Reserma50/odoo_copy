@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <record id="view_lead_comentario_form" model="ir.ui.view">
+            <field name="name">crm.lead.comentario.form</field>
+            <field name="model">crm.lead.comentario</field>
+            <field name="arch" type="xml">
+                <form string="Añadir Comentario">
+                    <sheet>
+                        <group>
+                            <field name="descripcion"/>
+                        </group>
+                    </sheet>
+                </form>  
+            </field>
+        </record>
+    </data>
+</odoo>

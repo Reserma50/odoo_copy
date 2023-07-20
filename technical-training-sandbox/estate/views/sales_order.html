@@ -28,7 +28,7 @@
 
             <h2 class="mt-4">
                 <span t-if="env.context.get('proforma', False) or is_pro_forma">Pro-Forma Invoice # </span>
-                <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                <span t-elif="doc.state in ['draft','sent']">Cotización # </span>
                 <span t-else="">Order # </span>
                 <span t-field="doc.name"/>
             </h2>
@@ -63,16 +63,16 @@
                 <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                 <thead style="display: table-row-group">
                     <tr>
-                        <th name="th_description" class="text-start">Description</th>
-                        <th name="th_quantity" class="text-end">Quantity</th>
-                        <th name="th_priceunit" class="text-end">Unit Price</th>
+                        <th name="th_description" class="text-start">Descripción</th>
+                        <th name="th_quantity" class="text-end">Cantidad</th>
+                        <th name="th_priceunit" class="text-end">Precio unitario</th>
                         <th name="th_discount" t-if="display_discount" class="text-end" groups="product.group_discount_per_so_line">
                             <span>Disc.%</span>
                         </th>
-                        <th name="th_taxes" class="text-end">Taxes</th>
+                        <th name="th_taxes" class="text-end">Descuento</th>
                         <th name="th_subtotal" class="text-end">
-                            <span groups="account.group_show_line_subtotals_tax_excluded">Amount</span>
-                            <span groups="account.group_show_line_subtotals_tax_included">Total Price</span>
+                            <span groups="account.group_show_line_subtotals_tax_excluded">Monto</span>
+                            <span groups="account.group_show_line_subtotals_tax_included">Precio Total</span>
                         </th>
                     </tr>
                 </thead>
@@ -137,6 +137,7 @@
                     <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
                         <table class="table table-sm table-borderless">
                             <!-- Tax totals -->
+                            <!-- Untaxed Amount = Monto libre de impuestos -->
                             <t t-set="tax_totals" t-value="doc.tax_totals"/>
                             <t t-call="account.document_tax_totals"/>
                         </table>
@@ -161,7 +162,7 @@
                 <p t-if="not is_html_empty(doc.payment_term_id.note)">
                     <strong>Forma de pago:</strong>
                     <span t-field="doc.payment_type_id.name"/><br/>
-                    <strong>Termino de entrega: </strong>
+                    <strong>Termino de pago: </strong>
                     <span t-field="doc.payment_term_id.name"/><br/>
                     <strong>Tiempo de entrega: </strong><br/>
                     <!-- <span /> -->

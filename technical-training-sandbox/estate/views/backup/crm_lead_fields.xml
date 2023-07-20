@@ -1,0 +1,164 @@
+<odoo>
+    <data>
+        <record id="crm_lead_availability_form" model="ir.ui.view">
+            <field name="name">crm.lead.fields.availability.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
+
+                    <div style="width: 97%; margin-left:12px; margin-bottom:42px;margin-top:42px; font-weight: bold; text-trasnform: uppercase" class="row alert bg-info">
+                        <div class="o_group row align-items-start proyecto">
+                            <div class="o_inner_group col-lg-4">
+                                Informe de Primera Visita
+                            </div>
+                            <div class="o_inner_group col-lg-4">
+                                
+                            </div>
+                            <group class="o_inner_group col-lg-4">
+                                <field name="field_publico_fecha"/>
+                            </group>
+                        
+                        </div>
+                    </div>
+                    <div class="o_group row align-items-start">
+                        <group >
+                            <field name="field_publico_motivo"/>
+                            <field name="field_publico_interesado_ids" widget="many2many_tags"/>
+                            <field name="field_publico_presupuesto" placeholder="B/."/>
+                        </group>
+                    </div>
+                    <group class="o_group row align-items-start proyecto">
+                        <group class="o_inner_group col-lg-6">
+                            <field name="field_publico_marca"/>
+                            <field name="field_publico_afirmacion" widget="radio" />
+                            <field name="field_publico_infraestructura_ids" widget="many2many_tags"/>
+                            <!-- options="{'color_field': 'color', 'no_create_edit': True} -->
+                            <field name="field_publico_pendiente_ids" widget="many2many_tags"/>
+                            <field name= "field_publico_proxima_visita"/>
+                        </group>
+                        <group class="o_inner_group col-lg-6">
+    
+                            <!-- <field name="field_publico_interesado_ids"/> -->
+                            <field name="field_publico_modelo"/>
+                            <field name="field_publico_respuesta"/>
+                            
+                        </group>
+                    </group>
+                    
+                    </xpath>
+                    <!-- <xpath expr="//div[hasclass('oe_title')]" position="after">
+                        <group>
+                            <field name="field_publico_motivo"/>
+                            <field name="field_publico_interesado_ids"/>
+                            <field name="field_publico_presupuesto" placeholder="B/."/>
+                        </group>
+                        
+                    </xpath> -->
+                  
+    
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <!-- Realiza aquí tus modificaciones en el encabezado y el pie de página -->
+                
+                <div class="o_group row align-items-start proyecto">
+                    
+                        
+                        <group class="o_inner_group grid col-lg-6">
+                            <field name="partner_id" widget="res_partner_many2one" />
+                            
+                            <!-- <field name="phone"/> -->
+                            <field name="field_publico_contacto"/>
+                            <field name="email_from"/>
+                            <field name="field_publico_departamento"/>
+                            <field name="field_publico_decition"/>
+                            <field name="field_publico_planificada"/>
+                            
+                            
+                        </group>
+
+                        <group class="o_inner_group grid col-lg-6">
+                            <field string="Comercial" name="user_id"/>
+                            
+                            <field name="field_publico_origen"/>
+                            <field name="field_publico_tel_contacto"/>
+                            <field name="date_deadline"/>
+                            <field name="field_publico_jefe_departamento"/>
+                            
+                        </group>
+
+                </div>
+                </xpath>
+                <!-- <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="field_publico_institucion"/>
+                </xpath> -->
+                <!-- <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath> -->
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
+                    <group>
+                        <field name="field_publico_institucion"/>
+                    </group>
+                    
+                </xpath>
+                <!-- <xpath expr="//field[@name='phone']" position="before">
+                    <field name="partner_id"/>
+                </xpath> -->
+                <!-- <xpath expr="//field[@name='partner_id_1']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath> -->
+                
+                <xpath expr="//page[@name='internal_notes']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <!-- <xpath expr="//page[@name='lead']" position="replace">
+                    <page name="Test"></page>
+                </xpath> -->
+
+                <xpath expr="//page[@name='lead']" position="replace">
+                    <page name="Comentarios">
+                        <field name="comentarios_ids" />
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='Comentarios']" position="after">
+                    <page name="Seguimientos">
+                        <field name="seguimientos_ids" />
+                    </page>
+                </xpath>
+
+                <xpath expr="//field[@name='website']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lang_active_count']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lang_code']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lang_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='country_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='zip']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <!-- <xpath expr="//group[@name='lead_partner']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath> -->
+                <!-- <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath> -->
+                <!-- buscar campo contacto, colocar antes el numero de telefono de cliente
+                numero de telefono de cliente, colocar antes al cliente -->
+                <xpath expr="//field[@name='field_publico_contacto']" position="before">
+                    
+                    <field name="phone"/>
+                    
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

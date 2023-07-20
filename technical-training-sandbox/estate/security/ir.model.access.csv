@@ -3,3 +3,9 @@ access_estate_property,access_estate_property,model_estate_property,base.group_u
 access_estate_property_type,access_estate_property_type,model_estate_property_type,base.group_user,1,1,1,1
 access_estate_property_tag,access_estate_property_tag,model_estate_property_tag,base.group_user,1,1,1,1
 access_estate_property_offer,access_estate_property_offer,model_estate_property_offer,base.group_user,1,1,1,1
+access_crm_lead_interesado,access_crm_lead_interesado,model_crm_lead_interesado,base.group_user,1,0,0,0
+access_crm_lead_infraestructura,access_crm_lead_infraestructura,model_crm_lead_infraestructura,base.group_user,1,0,0,0
+access_crm_lead_pendiente,access_crm_lead_pendiente,model_crm_lead_pendiente,base.group_user,1,1,1,1
+access_crm_lead_comentario,access_crm_lead_comentario,model_crm_lead_comentario,base.group_user,1,1,1,1
+access_crm_lead_seguimiento,access_crm_lead_seguimiento,model_crm_lead_seguimiento,base.group_user,1,1,1,1
+access_crm_lead_competidor,access_crm_lead_competidor,model_crm_lead_competidor,base.group_user,1,1,1,1

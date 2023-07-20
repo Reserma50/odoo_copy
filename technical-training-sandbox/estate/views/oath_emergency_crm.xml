@@ -1,0 +1,44 @@
+                <!-- <xpath expr="//field[@name='tag_ids']" position="after"> -->
+                    <xpath expr="//div[@class='oe_title']" position="after">
+                        <!-- Realiza aquí tus modificaciones en el encabezado y el pie de página -->
+                        
+                        <field name="field_publico_institucion"/>
+                        <group >
+                            <field name="partner_id"/>
+                            
+                            <field name="phone"/>
+                            <field name="field_publico_contacto"/>
+                            <field name="email_from"/>
+                            <field name="field_publico_departamento"/>
+                            <field name="field_publico_decition"/>
+                            <field name="field_publico_planificada"/>
+                            
+                            
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            
+                            <field name="field_publico_origen"/>
+                            <field name="field_publico_tel_contacto"/>
+                            <field name="date_deadline"/>
+                            <field name="field_publico_jefe_departamento"/>
+                            
+                        </group>
+                        <div style="width: 97%; margin-left:12px; margin-bottom:42px; font-weight: bold; text-trasnform: uppercase" class="row alert alert-primary">
+                          Informe de Primera Visita
+                        </div>
+                            <group name="container_public">
+                                <group >
+                      
+                                    <field name="field_publico_departamento"/>
+                                    
+                                    
+                                </group>
+                                <group>
+        
+                                    <field name="field_publico_jefe_departamento"/>
+                                    
+                                </group>
+                            </group>
+                        
+                        </xpath>

@@ -91,7 +91,7 @@
                                 </div>
                             </h2>
                         </div>
-                        <group>
+                        <group name="lead_is_here_inside">
                             <group name="lead_partner" attrs="{'invisible': [('type', '=', 'opportunity')]}">
                                 <!-- Preload all the partner's information -->
                                 <field name="is_partner_visible" invisible='1'/>

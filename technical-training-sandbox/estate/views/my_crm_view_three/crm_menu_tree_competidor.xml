@@ -1,0 +1,17 @@
+<odoo>
+    <data>    
+    <record id="crm_lead_competidor_view_tree" model="ir.ui.view">
+        <field name="name">crm.lead.competidor.tree</field>
+        <field name="model">crm.lead.competidor</field>
+        <field name="arch" type="xml">
+            <tree string="Competidor">
+                    <field name="field_pub_empresa"/>
+                    <field name="field_pub_precio"/>
+                    <field name="field_pub_equipo"/>
+                    <field name="seguimiento_id"/>
+            </tree>
+
+        </field>
+    </record>
+    </data>
+</odoo>

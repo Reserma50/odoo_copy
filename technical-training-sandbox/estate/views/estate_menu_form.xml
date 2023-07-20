@@ -6,19 +6,29 @@
             <field name="arch" type="xml">
                 <form string="Estate Property Form Test">
                     <header>
-                        <field name="name" widget="statusbar"/>
+                        
+                        <button name="action_set_sold" type="object" string="SOLD"/>
+                        <button name="action_set_cancel" type="object" string="CANCEL"/>
+                        <!-- VALIDAR ACCIONES AL FINAL DEL TUT10 -->
                     </header>
                     <sheet>
+
                         <group>
+                            <field name="name" string="Title" />
                             <field name="tag_ids" widget="many2many_tags"/>
+                            
                             <group>
+                                <field name="state" />
                                 <field name="property_type_id" string="Property Type" related="property_type_id.name"/>
                                 <field name="postcode"/>
                                 <field name="date_availability"/>
                             </group>
                             <group>
                                 <field name="expected_price"/>
+                                <field name="best_price"/>
                                 <field name="selling_price"/>
+                                
+
                             </group>
                             <notebook>
                                 <page string="Description">
@@ -31,11 +41,22 @@
                                         <field name="garden" string="Garden"/>
                                         <field name="garden_area" string=" Garden Area (sqm)"/>
                                         <field name="garden_orientation" string="Garden Orientation"/>
+                                        <field name="total_area" string="Area total"/>
+                                        <field name="active" />
+
                                     </group>
                                 </page>
                                <page string="Offers">
                                     
-                                        <field name="offer_ids" />
+                                        
+                                        <field name="offer_ids">
+                                            <tree> 
+                                                <!-- https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/12_sprinkles.html -->
+                                                <field name="property_id.name"/>
+                                                <field name="field_2"/>
+                                            </tree>
+                                        </field>
+
                                     
                                </page>
 

@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <record id="view_lead_seguimiento_form" model="ir.ui.view">
+            <field name="name">crm.lead.seguimiento.form</field>
+            <field name="model">crm.lead.seguimiento</field>
+            <field name="arch" type="xml">
+                <form string="Añadir Seguimiento">
+                    <group class="o_group row align-items-start">
+                        <group class="o_inner_group col-lg-6">
+                            <field name="field_pub_fecha"/>
+                            <field name="field_pub_numero_licitacion"/>
+                            <field name="field_pub_precio_ref"/>
+
+                        </group>
+                        <group class="o_inner_group col-lg-6">
+                            <field name="field_pub_estado"/>
+                            <field name="field_pub_motivo_de_estado"/>
+                            <field name="field_pub_precio_oferta"/>
+                            
+                        </group>
+                    </group>
+                    <group>
+                        <field name="competidores_ids" nolabel="1" colspan="2"/>
+                    </group>
+                    <group>
+                        <field name="field_pub_detalles"/>
+                    </group>
+
+                    
+                </form>  
+            </field>
+        </record>
+    </data>
+</odoo>
