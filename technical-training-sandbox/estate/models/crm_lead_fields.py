@@ -19,7 +19,7 @@ class CrmLeadCompetidores(models.Model):
     field_pub_empresa = fields.Char(string="Empresa")
     field_pub_precio = fields.Float(string="Precio")
     field_pub_equipo = fields.Char(string="Equipo")
-    seguimiento_id = fields.Many2one("crm.lead.seguimiento", required=True)
+    seguimiento_id = fields.Many2one("crm.lead.seguimiento", required=True) #dar seguimiento suando env
 
 class CrmLeadSeguimientos(models.Model):
     _name = "crm.lead.seguimiento"
@@ -43,6 +43,23 @@ class CrmLeadSeguimientos(models.Model):
     competidores_ids = fields.One2many("crm.lead.competidor", "seguimiento_id", string="Competidores")
     lead_id = fields.Many2one("crm.lead", required=True)
 
+    # @api.onchange("field_pub_estado")
+    # def _onchange_field_pub_estado(self):
+    #     if (self.field_pub_estado == "Ganada" or self.field_pub_estado == "Perdida"):
+    #         self.field_pub_motivo_de_estado.required = True
+    #     else:
+    #         self.field_pub_motivo_de_estado.required = False
+
+    # @api.model
+    # def _get_context_field_publico_origen_from_context(self):
+    #     return self._context.get('default_field_publico_origen', 'False')
+    #     #
+    # context_field_publico_origen = fields.Char(string='Primer Select', compute='_compute_context_primer_select', default=_get_context_field_publico_origen_from_context)
+
+    # @api.depends('context_field_publico_origen')
+    # def _compute_context_primer_select(self):
+    #     pass
+
 class crm_lead_fields(models.Model):
     _inherit = 'crm.lead'
     #campos form sector publico
@@ -52,12 +69,14 @@ class crm_lead_fields(models.Model):
         ('Llamada', 'Llamada'),
         ('Referido', 'Referido'),
         ('Cotizacion en linea', 'Cotización en línea'),
+        ('Compra Menor', 'Compra Menor'),
         ('Licitacion Publica', 'Licitación Pública'),
         ('Licitacion por Mejor Valor', 'Licitación por Mejor Valor'),
         ('Otro', 'Otro')
     ] 
     # Las opciones DEBEN SER VALORES CON TILDES O SIMBOLOS RAROS?
     field_publico_origen = fields.Selection(opciones_origen, string='Origen')
+    origen = fields.Char(string='MyOrigen', compute='_compute_origen')
     opciones_institucion = [
         ('CSS', 'CSS'),
         ('MINSA', 'MINSA'),
@@ -104,12 +123,12 @@ class crm_lead_fields(models.Model):
     field_publico_respuesta = fields.Char(string="Motivo")
     field_publico_infraestructura_ids = fields.Many2many('crm.lead.infraestructura', string="Infraestrutura:")
     field_publico_pendiente_ids = fields.Many2many('crm.lead.pendiente', string="Pendiente:")
-    #PROXIMA VISITA
+    # PROXIMA VISITA
     field_publico_proxima_visita = fields.Date(string="Próxima Visita")
-    #COMENTARIOS
-    comentarios_ids = fields.One2many("crm.lead.comentario","lead_id", string="Comentarios")
-    #SEGUIMIENTOS
-    seguimientos_ids = fields.One2many("crm.lead.seguimiento", "lead_id", string="Seguimientos")
+    # COMENTARIOS
+    comentarios_ids = fields.One2many("crm.lead.comentario","lead_id", string="Comentarios") #Hermec use Many2One
+    # SEGUIMIENTOS
+    seguimientos_ids = fields.One2many("crm.lead.seguimiento", "lead_id", string="Seguimientos") #Hermec use Many2One #Luego ManyToMany
 
 class CrmLeadInteresado(models.Model):
     _name = "crm.lead.interesado"

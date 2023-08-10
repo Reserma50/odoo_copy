@@ -52,6 +52,8 @@
                 <xpath expr="//field[@name='user_id']" position="after">
                     
                     <field name="field_publico_origen"/>
+                    <!-- Porq aqui he quedado -->
+                    <!-- <field name="context">{'default_field_publico_origen': field_publico_origen}</field> -->
                     
                 </xpath>
                 <xpath expr="//field[@name='priority']" position="attributes">

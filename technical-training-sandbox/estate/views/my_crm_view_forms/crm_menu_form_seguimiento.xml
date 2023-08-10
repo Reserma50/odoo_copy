@@ -8,15 +8,15 @@
                     <group class="o_group row align-items-start">
                         <group class="o_inner_group col-lg-6">
                             <field name="field_pub_fecha"/>
-                            <field name="field_pub_numero_licitacion"/>
+                            <field name="field_pub_numero_licitacion" />
                             <field name="field_pub_precio_ref"/>
-
                         </group>
                         <group class="o_inner_group col-lg-6">
                             <field name="field_pub_estado"/>
-                            <field name="field_pub_motivo_de_estado"/>
+                            <field name="field_pub_motivo_de_estado" attrs="{'required': ['|',('field_pub_estado', '=', 'Perdida'), ('field_pub_estado', '=', 'Ganada')]}"/>
                             <field name="field_pub_precio_oferta"/>
-                            
+                            <!-- Cambiando -->
+                            <!-- <field name="context_field_publico_origen"/> -->
                         </group>
                     </group>
                     <group>

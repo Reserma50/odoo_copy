@@ -52,12 +52,10 @@
                                         <field name="offer_ids">
                                             <tree> 
                                                 <!-- https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/12_sprinkles.html -->
-                                                <field name="property_id.name"/>
-                                                <field name="field_2"/>
+                                                <field name="property_id" related="property_id.name"/>
+                                                <!-- <field name="field_2"/> -->
                                             </tree>
                                         </field>
-
-                                    
                                </page>
 
                                 <page string="Other info">
