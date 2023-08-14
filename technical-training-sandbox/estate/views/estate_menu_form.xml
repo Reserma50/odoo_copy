@@ -54,8 +54,7 @@
                                <page string="Offers">
                                     
                                         
-                                        <field name="offer_ids" attrs="{'readonly': ['|', ('state', '=', 'sold'), ('state', '=', 'offer_accepted'), ('state', '=', 'canceled')]}"
-                                        />
+                                        <field name="offer_ids" attrs="{'readonly': ['|', ('state', '=', 'sold'), ('state', '=', 'offer_accepted'), ('state', '=', 'canceled')]}"/>
                                             <!-- <tree>  -->
                                                 <!-- https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/12_sprinkles.html -->
                                                 <!-- <field name="property_id" related="property_id.name"/> -->

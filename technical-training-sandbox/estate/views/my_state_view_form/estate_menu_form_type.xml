@@ -5,16 +5,18 @@
             <field name="model">estate.property.type</field>
             <field name="arch" type="xml">
                 <form string="Añadir Tipo de Propiedad">
-                    <sheet>
-                        <field name="name"/>
-                    </sheet>
-                    <fiel name="property_ids">
-                        <tree>
-                            <field name="name"/>
-                            <field name="expected_price"/>
-                            <field name="state"/>
-                        </tree>
-                    </fiel>
+                    <field name="name"/>
+                    <notebook>
+                        <page string="Properties">
+                            <field name="property_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="expected_price"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </form>  
             </field>
         </record>

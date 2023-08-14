@@ -148,7 +148,7 @@ class EstatePropertyType(models.Model):
 
     name = fields.Char('Title',required=True)
     sequence = fields.Integer('Sequencia', default=1, help="Used to order types. Lower is better.")
-    property_ids = fields.One2many("estate.property",'estate_property_type_id', string='Modelo Secundario')
+    property_ids = fields.One2many("estate.property",'property_type_id', string='Modelo Secundario')
 
     _sql_constraints = [
         ('state_property_type_unique_name', 'UNIQUE(name)','The name of porperty type must be unique.'),

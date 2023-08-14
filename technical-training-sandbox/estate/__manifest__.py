@@ -23,7 +23,7 @@
         'views/estate_menu_tree_tag.xml',
         'views/estate_menu_tree_offer.xml',
 
-        # 'views/estate_menu_form.xml', #uncomment this line!!
+        'views/estate_menu_form.xml', #uncomment this line!!
         #no comment link
         # http://localhost:8069/web#id=19&cids=1&menu_id=70&action=85&model=estate.property&view_type=form
         #comment link
