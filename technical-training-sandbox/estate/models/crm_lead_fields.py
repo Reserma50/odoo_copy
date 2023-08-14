@@ -16,7 +16,7 @@ class CrmLeadCompetidores(models.Model):
     _name = "crm.lead.competidor"
     _description = "Competidores de Seguimientos"
 
-    field_pub_empresa = fields.Char(string="Empresa")
+    field_pub_empresa = fields.Char(string="Empresa", required=True)
     field_pub_precio = fields.Float(string="Precio")
     field_pub_equipo = fields.Char(string="Equipo")
     seguimiento_id = fields.Many2one("crm.lead.seguimiento", required=True) #dar seguimiento suando env
@@ -42,6 +42,23 @@ class CrmLeadSeguimientos(models.Model):
     field_pub_precio_oferta = fields.Float(string = "Precio Ofertado")
     competidores_ids = fields.One2many("crm.lead.competidor", "seguimiento_id", string="Competidores")
     lead_id = fields.Many2one("crm.lead", required=True)
+
+    # @api.constrains('competidores_ids')
+    # def _check_competidores_records(self):
+    #     for record in self:
+    #         if not record.competidores_ids:
+    #             raise exceptions.ValidationError('Debe haber al menos un registro en la Tabla de Competidores!')
+
+    # @api.model
+    # def create(self, vals):
+    #     self.env['ir.logging'].create({'name': 'Mensaje de prueba'})
+    #     if 'competidores_ids' in vals:
+    #         competidor_id = vals.get('competidores_ids', False)
+    #         print("QUIERO IMPRIMIR ESTO", competidor_id)
+    #         if not competidor_id:
+    #             raise exceptions.ValidationError("Debes seleccionar un usuario.")
+        
+    #     return super(CrmLeadSeguimientos, self).create(vals)
 
     # @api.onchange("field_pub_estado")
     # def _onchange_field_pub_estado(self):

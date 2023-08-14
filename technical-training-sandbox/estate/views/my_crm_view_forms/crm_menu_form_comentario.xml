@@ -1,15 +1,13 @@
 <odoo>
     <data>
-        <record id="view_lead_competidor_form" model="ir.ui.view">
-            <field name="name">crm.lead.competidor.form</field>
-            <field name="model">crm.lead.competidor</field>
+        <record id="view_lead_comentario_form" model="ir.ui.view">
+            <field name="name">crm.lead.comentario.form</field>
+            <field name="model">crm.lead.comentario</field>
             <field name="arch" type="xml">
-                <form string="Añadir Competidor">
+                <form string="Añadir Comentario">
                     <sheet>
                         <group>
-                            <field name="field_pub_empresa"/>
-                            <field name="field_pub_precio"/>
-                            <field name="field_pub_equipo"/>
+                            <field name="descripcion"/>
                         </group>
                     </sheet>
                 </form>  

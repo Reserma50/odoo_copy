@@ -7,19 +7,24 @@
                 <form string="Estate Property Form Test">
                     <header>
                         
-                        <button name="action_set_sold" type="object" string="SOLD"/>
-                        <button name="action_set_cancel" type="object" string="CANCEL"/>
+                        <button name="action_set_sold" type="object" string="SOLD" attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}"/>
+                        <button name="action_set_cancel" type="object" string="CANCEL" attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}"/>
                         <!-- VALIDAR ACCIONES AL FINAL DEL TUT10 -->
+                        <field name="state" widget="statusbar" statusbar_visible="new, offer_received, offer_accepted, sold"/>
+
                     </header>
                     <sheet>
 
                         <group>
                             <field name="name" string="Title" />
-                            <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             
                             <group>
                                 <field name="state" />
-                                <field name="property_type_id" string="Property Type" related="property_type_id.name"/>
+
+                                <field name="property_type_id" string="Property Type" related="property_type_id.name" options="{'no_create_edit': True, 'no_create':True}"/>
+                                <!-- <field name="property_type_id" string="Property Type Sequence" related="property_type_id.sequence" widget="handle"/> -->
+
                                 <field name="postcode"/>
                                 <field name="date_availability"/>
                             </group>
@@ -39,8 +44,8 @@
                                         <field name="facades" string="Facades"/>
                                         <field name="garage" string="Garage" />
                                         <field name="garden" string="Garden"/>
-                                        <field name="garden_area" string=" Garden Area (sqm)"/>
-                                        <field name="garden_orientation" string="Garden Orientation"/>
+                                        <field name="garden_area" string=" Garden Area (sqm)" attrs="{'invisible': [('garden', '=', False)]}"/>
+                                        <field name="garden_orientation" string="Garden Orientation" attrs="{'invisible': [('garden', '=', False)]}"/>
                                         <field name="total_area" string="Area total"/>
                                         <field name="active" />
 
@@ -49,13 +54,14 @@
                                <page string="Offers">
                                     
                                         
-                                        <field name="offer_ids">
-                                            <tree> 
+                                        <field name="offer_ids" attrs="{'readonly': ['|', ('state', '=', 'sold'), ('state', '=', 'offer_accepted'), ('state', '=', 'canceled')]}"
+                                        />
+                                            <!-- <tree>  -->
                                                 <!-- https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/12_sprinkles.html -->
-                                                <field name="property_id" related="property_id.name"/>
+                                                <!-- <field name="property_id" related="property_id.name"/> -->
                                                 <!-- <field name="field_2"/> -->
-                                            </tree>
-                                        </field>
+                                            <!-- </tree> -->
+                                        <!-- </field> -->
                                </page>
 
                                 <page string="Other info">

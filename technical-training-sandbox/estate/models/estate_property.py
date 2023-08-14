@@ -2,11 +2,14 @@ from odoo import models, fields, api, exceptions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from odoo.exceptions import ValidationError
+from odoo.tools.float_utils import float_compare, float_is_zero
 
 
+selection_state=[('new', 'New'), ('offer_received', 'Offer Received'), ('offer_accepted', 'Offer Accepted'), ('sold', 'Sold'), ('canceled', 'Canceled')]
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Estate Property"
+    _order = "id desc"
 
     name = fields.Char('Title',required=True, copy=False)
     description = fields.Text()
@@ -14,7 +17,7 @@ class EstateProperty(models.Model):
     # date_availability = fields.Date(copy=False, default=lambda self: fields.Datetime.today()) #the default availability date is in 3 months
     date_availability = fields.Date('Available From',copy=False, default=lambda self:fields.Datetime.today() + relativedelta(months=3))
     expected_price = fields.Float('Expected Price', required=True)
-    selling_price = fields.Float('Selling Price',readonly=True, copy=False)
+    selling_price = fields.Float('Selling Price', readonly=True, copy=False,) #by default is 0.00
     bedrooms = fields.Integer(default = 2)
     living_area = fields.Integer('Living Area (sqm)')
     facades = fields.Integer()
@@ -27,12 +30,13 @@ class EstateProperty(models.Model):
     )    
     active = fields.Boolean('Active', default=False)
     state = fields.Selection(
+        selection_state,
         default='new',
         required=True,
-        selection=[('new', 'New'), ('offer received', 'Offer Received'), ('offer accepted', 'Offer Accepted'), ('sold', 'Sold'), ('canceled', 'Canceled')],
+        
     )   
     # buller_id = fields.Many2one("res.Buller", string="Buller")
-    property_type_id = fields.Many2one("estate.property.type", string="Property Type")
+    property_type_id = fields.Many2one("estate.property.type", string='Modelo Principal')
 
     buyer_id = fields.Many2one("res.partner", string="Buyer", copy=False)
     seller_id = fields.Many2one("res.users", string="Salesman", default=lambda self: self.env.user)
@@ -60,10 +64,10 @@ class EstateProperty(models.Model):
     def _check_selling_price(self):
         ''' it will not be possible to accept an offer lower than 90% of the expected price.'''
         for record in self:
+            print(record.selling_price)
             if record.selling_price < (record.expected_price * 0.90):
-
                 raise ValidationError("It is not  possible to accept an offer lower than 90% of the expected price.")
-    # all records passed the test, don't return anything
+    #all records passed the test, don't return anything
 
     # it might be useful to still be able to set a value directly. In our real estate example, we can define a validity 
     # duration for an offer and set a validity date. We would like to be able to set either the duration or the date with 
@@ -140,8 +144,11 @@ class EstateProperty(models.Model):
 class EstatePropertyType(models.Model):
     _name = "estate.property.type"
     _description = "Estate Property Type"
+    _order = "sequence, name"
 
     name = fields.Char('Title',required=True)
+    sequence = fields.Integer('Sequencia', default=1, help="Used to order types. Lower is better.")
+    property_ids = fields.One2many("estate.property",'estate_property_type_id', string='Modelo Secundario')
 
     _sql_constraints = [
         ('state_property_type_unique_name', 'UNIQUE(name)','The name of porperty type must be unique.'),
@@ -151,8 +158,10 @@ class EstatePropertyType(models.Model):
 class EstatePropertyTag(models.Model):
     _name = "estate.property.tag"
     _description = "Estate Property Tag"
+    _order = "name"
 
     name = fields.Char('Title',required=True)
+    color = fields.Integer('Color')
 
     _sql_constraints = [
         ('state_property_tag_unique_name', 'UNIQUE(name)','The name of porperty tag must be unique.'),
@@ -161,6 +170,7 @@ class EstatePropertyTag(models.Model):
 class EstatePropertyOffer(models.Model):
     _name = "estate.property.offer"
     _description = "Estate Property Offer"
+    _order = "price desc"
 
     price = fields.Float()
     status = fields.Selection(
@@ -190,10 +200,12 @@ class EstatePropertyOffer(models.Model):
         # deberás extraer la parte de la fecha utilizando el método date().
 
         for record in self:  #revisar que durante la creación el sistema no reviente
-            # if self.create_date: 
-            dead_line = record.create_date + relativedelta(days=record.validity)
+            # print(f"SHOW THE {record.create_date}")
+            # exceptions.ValidationError(f"SHOW THE RESULT!  {self.create_date}")
+            if record.create_date: 
+                dead_line = record.create_date + relativedelta(days=record.validity)
             # De esta manera, el campo date_deadline se establecerá con la fecha correspondiente, sin incluir la información de tiempo.
-            record.date_deadline = dead_line.date()
+            # record.date_deadline = dead_line.date()
             # else:
             #     dead_line = relativedelta(days=record.validity)
             #     # De esta manera, el campo date_deadline se establecerá con la fecha correspondiente, sin incluir la información de tiempo.
@@ -214,13 +226,14 @@ class EstatePropertyOffer(models.Model):
         # values = super(EstateProperty, self).alias_get_creation_values()
         # values['selling_price'] = self.env['ir.model']._get('estate_property_offer').id
         for record in self:
-            if record.property_id.selling_price == 0:
+            if float_is_zero(record.property_id.selling_price, 2):
                 record.status = 'accepted'
+                print(f'actual selling price {record.property_id.selling_price} , to change {record.price}')
                 record.property_id.selling_price = record.price
                 record.property_id.buyer_id = record.partner_id
             else:
-                record.property_id.selling_price = 0
                 raise exceptions.UserError('Pay attention: in real life only one offer can be accepted for a given property!.')
+
         # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
         return True
     
@@ -229,7 +242,7 @@ class EstatePropertyOffer(models.Model):
         for record in self:
             record.status = 'refused'
             if record.property_id.buyer_id == record.partner_id:
-                record.property_id.selling_price = 0
+                record.property_id.buyer_id = None
         # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
         return True
     

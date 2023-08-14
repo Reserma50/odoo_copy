@@ -17,12 +17,13 @@
 
         'views/estate_menus.xml',
 
-        # 'views/estate_menu_tree.xml',
+        'views/estate_menu_tree.xml',
+
         'views/estate_menu_tree_type.xml',
         'views/estate_menu_tree_tag.xml',
         'views/estate_menu_tree_offer.xml',
 
-        'views/estate_menu_form.xml', #uncomment this line!!
+        # 'views/estate_menu_form.xml', #uncomment this line!!
         #no comment link
         # http://localhost:8069/web#id=19&cids=1&menu_id=70&action=85&model=estate.property&view_type=form
         #comment link
@@ -45,6 +46,9 @@
         'views/my_crm_view_forms/crm_menu_form_comentario.xml',
         'views/my_crm_view_forms/crm_menu_form_seguimiento.xml',
         'views/my_crm_view_forms/crm_menu_form_competidor.xml',
+        
+        #tutorial 12
+        'views/my_state_view_form/estate_menu_form_type.xml'
         
     ],
     # data files containing optionally loaded demonstration data

@@ -11,8 +11,9 @@
                 <xpath expr="//field[@name='tag_ids']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-
-                <xpath expr="//group[@name='lead_is_here_inside']" position="after">
+                
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <!-- <xpath expr="//group[@name='lead_is_here_inside']" position="after"> -->
                     <!-- Realiza aquí tus modificaciones en el encabezado y el pie de página -->
                     
                     <div class="o_group row align-items-start proyecto">

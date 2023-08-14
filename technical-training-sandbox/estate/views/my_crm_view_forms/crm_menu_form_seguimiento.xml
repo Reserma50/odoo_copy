@@ -20,13 +20,11 @@
                         </group>
                     </group>
                     <group>
-                        <field name="competidores_ids" nolabel="1" colspan="2"/>
+                        <field name="competidores_ids" nolabel="1" colspan="2" required="1"/>
                     </group>
                     <group>
                         <field name="field_pub_detalles"/>
                     </group>
-
-                    
                 </form>  
             </field>
         </record>

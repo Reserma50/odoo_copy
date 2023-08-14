@@ -1,1 +1,1 @@
-from . import estate_property, crm_lead_fields
+from . import estate_property, crm_lead_fields, flota_odometro_fields
