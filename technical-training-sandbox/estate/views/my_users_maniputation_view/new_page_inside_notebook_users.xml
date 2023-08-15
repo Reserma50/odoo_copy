@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <record id="res_users_inherited_module_name" model="ir.ui.view">
+            <field name="name">res.users.view.inherit.tree</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- find field description and add the field new_field after it -->
+                 <xpath expr="//field[@name='pricelist_id']" position="after">
+                  <!-- <field name="property_ids"/>  -->
+                  <div class="o_group row align-items-start">
+                    <group>
+                        Add on the TOP!!
+                      </group>
+                      <field name="test"/>
+                      <field name="property_ids"/>
+                  </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+    

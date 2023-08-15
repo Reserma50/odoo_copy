@@ -11,7 +11,7 @@
                 <field name="date_deadline"/>
                 <button name="action_set_accept" type="object" string="Yes" icon="fa-check" attrs="{'invisible': ['|',('status', '=', 'refused'),('status', '=', 'accepted')]}"/>
                 <button name="action_set_refuse" type="object" string="No" icon="fa-close" attrs="{'invisible': ['|',('status', '=', 'refused'),('status', '=', 'accepted')]}"/>
-                <field name="status"/>
+                <field name="status" invisible='1'/>
                 <!-- <field name="property_id"/> -->
             </tree>
 

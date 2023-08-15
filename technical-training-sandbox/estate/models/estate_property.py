@@ -120,7 +120,7 @@ class EstateProperty(models.Model):
             else:
                 raise exceptions.UserError('Sold properties cannot be canceled.')
         # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
-        return 
+        return True
     
     # @api.model
     # def get_estate_property_by_id(self, estate_property_id):
@@ -140,6 +140,11 @@ class EstateProperty(models.Model):
     #     print("TEST DE BUTTON LINKED TO FUNCTION")
     #     return True
 
+    @api.ondelete(at_uninstall=False)
+    def _unlink_if_property_new(self):
+        mylist = ["offer_received","offer_accepted", "sold"]
+        if any(property.state in mylist for property in self):
+            raise ValidationError("Can't delete an active Property!")
 
 class EstatePropertyType(models.Model):
     _name = "estate.property.type"
@@ -245,4 +250,18 @@ class EstatePropertyOffer(models.Model):
                 record.property_id.buyer_id = None
         # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
         return True
+    
+    @api.model
+    def create(self, vals):
+        '''At offer creation, set the property state to Offer Received'''
+        my_property_id = self.env['estate.property'].browse(vals['property_id'])
+        offers = self.search([('property_id', "=", my_property_id.id)])
+        if len(offers) == 0:
+            my_property_id.sudo().write({'state': 'offer_received'})
+        for n in offers:
+            if vals['price'] < n.price:
+                raise ValidationError("user tries to create an offer with a lower amount than an existing offer")
+        return super(EstatePropertyOffer, self).create(vals)
+
+
     

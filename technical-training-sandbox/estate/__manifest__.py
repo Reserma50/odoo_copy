@@ -1,7 +1,7 @@
 {
     'name': "Real State",
     'version': '1.0',
-    'depends': ['base','crm'],
+    'depends': ['base','crm', 'sale'],
     'author': "Joseph González",
     'category': 'App',
     'description': """
@@ -48,13 +48,17 @@
         'views/my_crm_view_forms/crm_menu_form_competidor.xml',
         
         #tutorial 12
-        'views/my_state_view_form/estate_menu_form_type.xml'
+        'views/my_state_view_form/estate_menu_form_type.xml',
+
+        #inherit res_users
+        # 'views/my_users_maniputation_view/new_page_inside_notebook_users.xml',
+        # 'views/my_users_maniputation_view/users_order.xml',
         
     ],
     # data files containing optionally loaded demonstration data
     'demo': [
         #'demo/demo_data.xml',
     ],
-    'application': True,
+    'application': False,
 
 }
