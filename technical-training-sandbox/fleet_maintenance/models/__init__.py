@@ -1,0 +1,1 @@
+from . import inherited_fleet_service_type
