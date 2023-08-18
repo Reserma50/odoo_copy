@@ -1,0 +1,190 @@
+generate new ssh 
+add in github
+cline using ssh
+
+Link Git with your fork(s)
+Link Git with odoo-dev
+In the command below, replace <your_github_account> with the name of the GitHub account on which you created the fork(s).
+
+ cd /odoo_copy
+ git remote add dev git@github.com:Reserma50/odoo_copy.git
+
+ ./odoo-bin --addons-path="addons/,../enterprise/,../technical-training-sandbox" -d rd-demo
+
+ ./odoo-bin --addons-path="addons/,../estate/" -d rd-demo
+ ./odoo-bin --addons-path="addons/,../odoo_copy/" -d rd-demo
+
+ #DB CHANGES
+ Any modification of the Python files requires a restart of the Odoo server. When we restart the server, we will add the parameters -d and -u:
+    cd odoo_copy
+  ./odoo-bin --addons-path="addons/,../odoo_copy/technical-training-sandbox" -d rd-demo -u estate
+  #sentence
+  ./odoo-bin --addons-path="addons/,technical-training-sandbox/" -d rd-demo -u estate
+
+  #sentence two
+   ./odoo-bin --addons-path="addons/,technical-training-sandbox/" -d rd-demo -u estate --dev xml
+
+ #another way to deploy en our local server
+ python3 odoo-bin --addons-path=addons -d mydb
+
+
+ POSTGRESQL
+
+ Success. You can now start the database server using:
+
+cd odoo_copy
+source env_odoo/bin/activate
+
+sudo pg_ctlcluster 12 main start
+
+Ver Cluster Port Status Owner    Data directory              Log file
+12  main    5432 down   postgres /var/lib/postgresql/12/main /var/log/postgresql/postgresql-12-main.log
+update-alternatives: using /usr/share/postgresql/12/man/man1/postmaster.1.gz to provide /usr/share/man/man1/postmaster.1.gz (postmaster.1.gz) in auto mode
+invoke-rc.d: could not determine current runlevel
+Setting up sysstat (12.2.0-2ubuntu0.2) ...
+
+
+Check Postgres Version from SQL Shell
+The version number can also be retrieved directly from the PostgreSQL prompt. Access the PostgreSQL shell prompt by typing the following command:
+
+sudo -u postgres psql
+
+###############################3
+$ git push -u origin developer  
+fatal: 'origin' does not appear to be a git repository
+fatal: The remote end hung up unexpectedly
+
+$ git remote -v   
+origin /Volumes/500GB/git-repository/myproject.git (fetch)     
+origin /Volumes/500GB/git-repository/myproject.git (push)
+
+#####to execute our ORM, 
+to execute our ORM, we need to install the module using odoo interface (app list (activate)) Then pOOr table is succesfully created. 
+
+
+$ psql -d rd-demo
+
+rd-demo=# \d estate_property;
+
+
+
+###Write a file directly using CAT
+
+cat > ir.model.access.csv << "EOF"
+
+
+
+data permissions inside security
+2023-06-01 15:04:43,037 23254 WARNING rd-demo odoo.modules.loading: The models ['estate.property'] have no access rules in module estate, consider adding some, like: 
+
+"WAS GONE!!!!"
+
+data files!!!!
+The XML files must be added to the same folders as the CSV files and defined similarly in the __manifest__.py.
+
+
+####################if the system shows and error about POSTGRESQL
+
+(env_odoo) l4n@PC-LuisDominguez:~/code_odoo_test/odoo_copy$ sudo service postgresql status
+12/main (port 5432): down
+(env_odoo) l4n@PC-LuisDominguez:~/code_odoo_test/odoo_copy$ sudo service postgresql start
+
+#if the system says
+
+OSError: [Errno 98] Address already in use
+TYPE
+
+sudo lsof -i :8069
+output:
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+python3 12622  l4n    3u  IPv4 148197      0t0  TCP *:8069 (LISTEN)
+
+sudo kill -9 <PID> 
+sudo kill -9 12622
+
+#if you cannot see the data. 
+You can check the active field !!
+
+in order
+
+add model 
+bind foreign key
+give acces using csv file
+create property action  (new for )
+add new menu in state_menus.xml
+
+
+##### sql backup DUMP
+
+pg_dump dbname > dumpfile
+
+example:
+
+pg_dump rd-demo > mydb.sql
+
+mail_message table 
+
+COPY public.mail_message (id, parent_id, res_id, subtype_id, mail_activity_type_id, author_id, author_guest_id, mail_server_id, create_uid, write_uid, subject, model, record_name, message_type, email_from, message_id, reply_to, email_layout_xmlid, body, is_internal, reply_to_force_new, email_add_signature, date, pinned_at, create_date, write_date) FROM stdin;
+
+
+Notas sobre el capítulo 9 
+
+Additional Information
+Computed fields are not stored in the database by default. Therefore it is not possible to search on a 
+computed field unless a search method is defined. This topic is beyond the scope of this training, so 
+we won’t cover it. An example can be found here.
+https://github.com/odoo/odoo/blob/f011c9aacf3a3010c436d4e4f408cd9ae265de1b/addons/event/models/event_event.py#L188
+
+Chapter 12: Add The Sprinkles (who knows?)
+
+                                   
+             Column              
+---------------------------------+-----------------------------+-----------+----------+------------------------------------------
+ id                              
+ sequence_number                  
+ message_main_attachment_id      
+ journal_id                      
+ company_id                      
+ payment_id                      
+ statement_line_id               
+ tax_cash_basis_rec_id           
+ tax_cash_basis_origin_move_id   
+ auto_post_origin_id             
+ secure_sequence_number          
+ invoice_payment_term_id         
+ partner_id                      
+ commercial_partner_id           
+ partner_shipping_id              
+ partner_bank_id                 
+ fiscal_position_id               
+ currency_id                     
+ reversed_entry_id               
+ invoice_user_id                 
+ invoice_incoterm_id              
+ invoice_cash_rounding_id        
+ create_uid                      | integer                     |           |          | 
+ write_uid                       | integer                     |           |          | 
+ sequence_prefix                 | character varying           |           |          | 
+ access_token                    | character varying           |           |          | 
+ name                            | character varying           |           |          | 
+ ref                             | character varying           |           |          | 
+ state                           | character varying           |           | not null | 
+ move_type                       | character varying           |           | not null | 
+ auto_post                       | character varying           |           | not null | 
+ inalterable_hash                | character varying           |           |          | 
+ payment_reference               | character varying           |           |          | 
+ qr_code_method                  | character varying           |           |          | 
+ payment_state                   | character varying           |           |          | 
+ invoice_source_email            | character varying           |           |          | 
+ invoice_partner_display_name    | c
+
+
+ #new One
+ # actualizar la base de datos de referencia
+ View inheritance may not use attribute 'string' as a selector.
+
+ netstat -lnp
+ sudo kill -9 14730
+
+ ##ERROR 
+ ValueError: Expected singleton: fleet.vehicle.log.services(3, 7)
