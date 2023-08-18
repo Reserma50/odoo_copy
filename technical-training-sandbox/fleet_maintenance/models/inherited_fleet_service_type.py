@@ -112,7 +112,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                             print(f"Campo: {field_name}, Valor: {self[field_name]}")
                     
                     print("LAST MAINTENANCE ", last_maintenance)
-                    last_km=last_maintenance.kms_recorridos
+                    last_maintenance_to_update=last_maintenance
                     print("ULTIMO MANTENIMIENTO CONTIENE (Servicios):", last_maintenance.services_ids)
                     # last_maintenance.services_ids.search(order=order, limit=1) #No valid
                     last_maintenance = last_maintenance.services_ids.sorted(key=lambda r: r.create_date, reverse=True)[0]
@@ -127,20 +127,24 @@ class InheritedFleetVehicleOdometer(models.Model):
                         print(f"({self.value} - {last_maintenance.odometer}) >= {my_type.reference}")
                         if ((self.value - last_maintenance.odometer) >= my_type.reference):
                             print("NO SE CREA MANTENIMIENTO PERO SE ACTUALIZA EL VALOR DEL KILOMETRAJE Y SE ENVIA NOTIFICACIÓN O MENSAJE!")
+                            last_maintenance_to_update.write({'kms_recorridos':((self.value - last_maintenance.odometer)-my_type.reference)*-1})
                             break #se ejecutara el bucle y no queremos eso
                         else:
-                            print("FALTAN KILOMETROS.")
+                            last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
+                            print("FALTAN KILOMETROS.",(my_type.reference - (self.value - last_maintenance.odometer)))
                         # print(service)
                     elif last_maintenance.state == "done" and last_maintenance.vehicle_id.id == self.vehicle_id.id:
                         print(f"({self.value} - {last_maintenance.odometer}) >= {my_type.reference}")
                         if ((self.value - last_maintenance.odometer) >= my_type.reference):
-                            print("creando mantenimiento a los ", last_maintenance.odometer)
+                            print("Creando mantenimiento a los ", last_maintenance.odometer)
                             #service not create #no se ha hecho
-                            maintenance = self.crear_servicios_manteniento(my_type=my_type)
+                            print(self.vehicle_id)
+                            #maintenance = self.crear_servicios_manteniento(my_type=my_type)
                             # print(maintenance)
                             break #se ejecutara el bucle y no queremos eso
                         else:
-                            print("FALTAN KILOMETROS.")
+                            last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
+                            print("FALTAN KILOMETROS.",(my_type.reference - (self.value - last_maintenance.odometer)))
                     elif last_maintenance.state == "done" and last_maintenance.vehicle != self.vehicle_id:
                         print("CAMBIO EN LOS DATOS, NO ES EL MISMO AUTO DE ")
                     else:
