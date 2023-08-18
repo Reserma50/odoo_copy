@@ -51,7 +51,7 @@
         'views/my_state_view_form/estate_menu_form_type.xml',
 
         #inherit res_users
-        # 'views/my_users_maniputation_view/new_page_inside_notebook_users.xml',
+        'views/my_users_maniputation_view/new_page_inside_notebook_users.xml',
         # 'views/my_users_maniputation_view/users_order.xml',
         
     ],

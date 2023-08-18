@@ -12,6 +12,7 @@
         'security/ir.model.access.csv',
         #tree views
         'views/views_tree/inherited_fleet_service_type.xml',
+        # 'views/views_tree/inherited_fleet_vehicle_maintenance.xml',
         
     ],
     # data files containing optionally loaded demonstration data
