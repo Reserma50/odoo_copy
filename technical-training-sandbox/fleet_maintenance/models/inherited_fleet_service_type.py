@@ -1,4 +1,4 @@
-from odoo import fields, models, api, Command
+from odoo import fields, models, api, Command, _
 
 class InheritedFleetServiceType(models.Model):
     _inherit = 'fleet.service.type'
@@ -149,6 +149,11 @@ class InheritedFleetVehicleOdometer(models.Model):
                         print("CAMBIO EN LOS DATOS, NO ES EL MISMO AUTO DE ")
                     else:
                         print("NO SE GENERO PORQUE AÚN NO SE HA EFECTUADO EL MANTENIMIENTO.")
+                        # my_vehicle=self.env["fleet.vehicle"].search([('vehicle_id.id', '=', self.vehicle_id.id)],order=order)
+                        # my_vehicle.activity_schedule(
+                        # 'mail.mail_activity_data_todo',
+                        # user_id=vehicle.manager_id.id or self.env.user.id,
+                        # note=_('Specify the End date of %s') % vehicle.driver_id.name)
 
                     #if no exist then -->    
                     #create service obtaint id
