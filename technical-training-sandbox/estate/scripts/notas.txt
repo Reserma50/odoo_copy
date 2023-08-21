@@ -188,3 +188,9 @@ Chapter 12: Add The Sprinkles (who knows?)
 
  ##ERROR 
  ValueError: Expected singleton: fleet.vehicle.log.services(3, 7)
+
+ ### DROP DATABASE "rd-demo-first"";
+
+ #chang
+ postgres=# \c rd-demo-fleet;
+You are now connected to database "rd-demo-fleet" as user "l4n".
