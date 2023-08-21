@@ -209,6 +209,14 @@ class InheritedFleetVehicleOdometer(models.Model):
         mail.send()
         
         return True
+    
+    def enviar_mi_nueva_notificacion_chatter(self):
+        subject = _("Nueva lectura de %s" % self.vehicle.name)
+        body = _("Una nueva lectura de %s fue registrada para el vechiculo %s" % (self.vehicle_value, self.vehicle.name))
+        self.message_post(subject=subject, body=body)
+        
+        return True
+    
         
         
     
@@ -232,6 +240,8 @@ class FleetVehicleMaintenance(models.Model):
     kms_recorridos = fields.Char(string="KM", 
                                  help="Verde, indica los Kilometros que faltan para un futuro mantenimiento. Rojo, indica los Kilometros recorridos sin haber realizado el mantenimiento.")
 
+    #ejemplo de capo de adjunto
+    # odometer_image = fields.Binary(string='Odometer Image', attachment=True)
     # @api.depends("services_ids.odometer")
     # def _compute_km_maintenance(self):
 
