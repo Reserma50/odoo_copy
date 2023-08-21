@@ -68,6 +68,31 @@ class InheritedFleetVehicleOdometer(models.Model):
                 "kms_recorridos" : self.value,
             }
         )
+        
+    def actualizar_servicios_manteniento(self, my_type):
+        
+
+        for field_name, field in self.fields_get().items():
+            print("CAMPOS COMO LOS DE SELF")
+            if field_name in self:
+                print(f"Campo: {field_name}, Valor: {self[field_name]}")
+        
+        print("My Self", self.vehicle_id.id)
+
+        return self.env['fleet.vehicle.maintenance'].write(
+            {
+                'services_ids':[
+                    Command.create({
+                        "vehicle_id": self.vehicle_id.id,
+                        "description":f" Mantenimiento de {my_type.name} requerido; Vehiculo alcanzó la referencia de {my_type.reference} ",
+                        "odometer" : self.value,
+                        "purchaser_id": self.driver_id.id,  # 
+                        "service_type_id":my_type.id,   
+                    })
+                ],
+                "kms_recorridos" : self.value,
+            }
+        )
 
 
     def _compute_vehicle_log_name(self):
@@ -82,10 +107,20 @@ class InheritedFleetVehicleOdometer(models.Model):
 
         
         res = super(InheritedFleetVehicleOdometer, self)._compute_vehicle_log_name()
+        return res
+    
+    @api.model
+    def create(self, vals):
+        record = super(InheritedFleetVehicleOdometer, self).create(vals)
+        record.odometer_service_procedure()
+        
+        
+    
+    def odometer_service_procedure(self):
         #self.odometer
-        print(res)
-        print(type(res))
-                    
+        # print(res)
+        # print(type(res))
+        print("Ejecutando después de la creación")            
         #traer los tipos de servicios
         all_types = self.env['fleet.service.type'].search([('category', '=', 'service')])
         print(all_types)
@@ -122,7 +157,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                     if (my_type.id == last_maintenance.service_type_id.id and last_maintenance.state != "done" and my_type.reference > 0):
                         #crear mantenimiento
                         if last_maintenance.odometer == 0:
-                            print("Si odometro esta en 0 _ ODOMETRO DE LOS ULTIMO",last_maintenance.odometer)
+                            print("Es 0? Si odometro esta ODOMETRO DE LOS ULTIMO",last_maintenance.odometer)
                             break
                         print(f"({self.value} - {last_maintenance.odometer}) >= {my_type.reference}")
                         if ((self.value - last_maintenance.odometer) >= my_type.reference):
@@ -139,7 +174,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                             print("Creando mantenimiento a los ", last_maintenance.odometer)
                             #service not create #no se ha hecho
                             print(self.vehicle_id)
-                            #maintenance = self.crear_servicios_manteniento(my_type=my_type)
+                            maintenance = self.actualizar_servicios_manteniento(my_type=my_type)
                             # print(maintenance)
                             break #se ejecutara el bucle y no queremos eso
                         else:
@@ -159,9 +194,23 @@ class InheritedFleetVehicleOdometer(models.Model):
                     #create service obtaint id
                     #create manintenance obtaint id
 
-        return res
-
-
+    def send_service_notificaction(self):
+        vehicle_name = self.vehicle_id.name
+        odometer_value = self.odometer_value
+        subject = (f"A service for new odometer reading of {vehicle_name}")
+        body = (f"A new odometer reading of {odometer_value} was recorded for the vehicle {vehicle_name}")
+        mail_values = {
+            'subject': subject,
+            'body_html': body,
+            'email_to': 'ejemplo@ejemplo.com' #replace with the actual mail
+            
+        }
+        mail = self.env['mail.mail'].create(mail_values)
+        mail.send()
+        
+        return True
+        
+        
     
 class FleetVehicleMaintenance(models.Model):
     _name = "fleet.vehicle.maintenance"
