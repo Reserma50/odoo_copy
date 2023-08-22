@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='model_id']" position="after">
                     <div class="o_group row align-items-start">
-                        <field name="services_ids" />
+                        <field name="log_maintenance" />
                     </div>
                 </xpath>
             </field>
