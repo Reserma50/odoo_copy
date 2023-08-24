@@ -21,5 +21,6 @@
         #'demo/demo_data.xml',
     ],
     'application': False,
+    'license': 'LGPL-3',
 
 }

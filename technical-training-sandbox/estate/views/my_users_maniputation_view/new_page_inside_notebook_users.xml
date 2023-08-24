@@ -10,7 +10,7 @@
                     <div class="o_group row align-items-start">
                         <field name="test"/>
                         <field name="property_ids"/>
-                      </div>
+                    </div>
                   </page>
                 </xpath>
             </field>

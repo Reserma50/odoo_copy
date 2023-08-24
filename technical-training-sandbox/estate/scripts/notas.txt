@@ -194,3 +194,17 @@ Chapter 12: Add The Sprinkles (who knows?)
  #chang
  postgres=# \c rd-demo-fleet;
 You are now connected to database "rd-demo-fleet" as user "l4n".
+
+
+ EL RECORD FALLO POR ODOMETER_ID 
+  Wrong value for fleet.vehicle.log.maintenance.odometer_id: fleet.vehicle.odometer(31,)
+
+ EL RECORD FALLO POR SERVICE_TYPE_ID 
+  Wrong value for fleet.vehicle.log.maintenance.service_type_id: fleet.service.type(47,)
+
+revisando la base de datos no es posible acceder a traves de estos datos....
+id | message_main_attachment_id | vehicle_id | user_id | service_id | create_uid | write_uid | description  | create_date  | write_date 
+
+INSTEAD:
+print("\n EL RECORD ES: ", record.service_id.odometer_id.value)
+print("\n EL RECORD ES: ", record.service_id.service_type_id.name)

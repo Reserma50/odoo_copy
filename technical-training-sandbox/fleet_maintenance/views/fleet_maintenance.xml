@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id='fleet_vehicle_log_maintenance_view_form' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.log_maintenance.form</field>
+        <field name="model">fleet.vehicle.log.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance logs">
+                <field name="vehicle_id" invisible="1"/>
+                <header>
+                    <!-- <button name="action_open" states="futur" type="object" string="Start Contract" class="oe_highlight" groups="fleet.fleet_group_manager"/>
+                    <button name="action_close" states="futur" type="object" string="Cancel" groups="fleet.fleet_group_manager"/>
+                    <button name="action_close" states="open,expired,futur" type="object" string="Close Contract" groups="fleet.fleet_group_manager"/>
+                    <button name="action_draft" states="closed" type="object" string="Reset To Draft" groups="fleet.fleet_group_manager"/> -->
+                    <field name="service_state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <!-- <field name="active" invisible="1"/> -->
+                    <!-- <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/> -->
+                    <!-- <field name="currency_id" invisible="1"/> -->
+                    <div class="oe_title">
+                        <!-- <h1><field name="service_type_id" related="service_type_id.name" /></h1> -->
+                    </div>
+                    <group string="Information" col="2">
+                        <group>
+                            <field name="description"/>
+                            <field name="service_id" related="service_id.stage"/>
+                            <field name="odometer_id" related="odometer_id.value"/>
+                        </group>
+                        <group>
+                            <field name="service_id" label="Fecha de creación:" related="service_id.create_date" />
+                            <field name="kms_next_estimate" label="Próximo mantenimiento:"  />
+                            <field name="kms_left" />
+                            <field name="do_today"/>
+                            <field name="odometer"/>
+                        </group>
+                    </group>
+                    <separator string="Vehicle"/>
+                    <group col="2">
+                        <group col="1">
+                            <field name="vehicle_id" related="vehicle_id.name"/>
+                        </group>
+                        <group col="2">
+                            <field name="driver_id" related="driver_id.name"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <!-- <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/> -->
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id='fleet_vehicle_log_maintenance_view_tree' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.log.maintenance.tree</field>
+        <field name="model">fleet.vehicle.log.maintenance</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state_maintenance == 'open'" decoration-danger="state_maintenance == 'expired'" string="Maintenance logs">
+                <!-- <field name="active" invisible="1"/> -->
+                <field name="do_today" invisible="1"/>
+                <!-- <field name="name" class="fw-bold" /> -->
+                <!-- <field name="start_date" /> -->
+                <field name="kms_next_estimate" string="Próximo Mantenimiento" />
+                <field name="kms_left" />
+                <field name="vehicle_id"/>
+                <!-- <field name="insurer_id" /> -->
+                <!-- <field name="vehicle_id.odometer" string="Kilometraje actual"/> -->
+                <field name="service_id" />
+                <field name="driver_id" widget="many2one_avatar"/>
+                <!-- <field name="cost_generated" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="cost_frequency"/> -->
+                <field name="state_maintenance" widget="badge" decoration-info="state_maintenance == 'open'" decoration-danger="state_maintenance == 'expired'" />
+                <!-- <field name="activity_exception_decoration" widget="activity_exception"/> -->
+            </tree>
+        </field>
+    </record>
+<!-- 
+    <record id='fleet_vehicle_log_contract_view_kanban' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.log.contract.kanban</field>
+        <field name="model">fleet.vehicle.log.contract</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" sample="1">
+                <field name="activity_state"/>
+                <progressbar field="activity_state" colors='{"planned": "success", "today": "warning", "overdue": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div>
+                                <strong>
+                                    <field name="vehicle_id" widget="res_partner_many2one"/>
+                                    <span class="float-end badge text-bg-secondary">
+                                        <field name="state"/>
+                                    </span>
+                                </strong>
+                            </div>
+                            <div>
+                                <t t-if="luxon.DateTime.fromISO(record.expiration_date.raw_value) &lt; luxon.DateTime.local()" t-set="expiration_class" t-value="'oe_kanban_text_red'"/>
+                                <span t-att-class="expiration_class"><field name="start_date"/> - <field name="expiration_date"/></span>
+                            </div>
+                            <div>
+                                <field name="insurer_id" widget="res_partner_many2one"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record> -->
+<!-- 
+    <record id="fleet_vehicle_log_contract_view_graph" model="ir.ui.view">
+       <field name="name">fleet.vehicle.log.contract.graph</field>
+       <field name="model">fleet.vehicle.log.contract</field>
+       <field name="arch" type="xml">
+            <graph string="Contract Costs Per Month" sample="1">
+                <field name="date"/>
+                <field name="vehicle_id"/>
+                <field name="amount" type="measure"/>
+            </graph>
+        </field>
+    </record> -->
+
+    <!-- <record id="fleet_vehicle_log_contract_view_search" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.contract.search</field>
+        <field name="model">fleet.vehicle.log.contract</field>
+        <field name="arch" type="xml">
+            <search string="Vehicles Contracts">
+                <field name="vehicle_id" string="Vehicle" filter_domain="[('vehicle_id.name','ilike', self)]"/>
+                <field name="purchaser_id" string="Driver" filter_domain="[('purchaser_id','child_of', self)]"/>
+                <field name="insurer_id" string="Vendor" filter_domain="[('insurer_id','child_of', self)]"/>
+                <filter string="In Progress" name="open" domain="[('state', '=', 'open')]"/>
+                <filter string="Expired" name="expired" domain="[('state', '=', 'expired')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter invisible="1" string="Late Activities" name="activities_overdue"
+                    domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                    help="Show all records which has next action date is before today"/>
+                <filter invisible="1" string="Today Activities" name="activities_today"
+                    domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter invisible="1" string="Future Activities" name="activities_upcoming_all"
+                    domain="[('my_activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Vehicle" name="vehicle" context="{'group_by': 'vehicle_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record> -->
+
+    <record id="fleet_vehicle_log_maintenance_view_activity" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.maintenance.activity</field>
+        <field name="model">fleet.vehicle.log.maintenance</field>
+        <field name="arch" type="xml">
+            <activity string="Vehicles Maintenances">
+                <field name="driver_id"/>
+                <templates>
+                    <div t-name="activity-box">
+                        <img t-att-src="activity_image('res.partner', 'avatar_128', record.driver_id.raw_value)" t-att-title="record.driver_id.value" t-att-alt="record.driver_id.value"/>
+                        <div>
+                            <field name="vehicle_id" display="full"/>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id='fleet_vehicle_log_maintenance_action' model='ir.actions.act_window'>
+        <field name="name">Maintenances</field>
+        <field name="res_model">fleet.vehicle.log.maintenance</field>
+        <field name="view_mode">tree,form,activity</field>
+        <!-- <field name="context">{'search_default_groupby_service_type_id': 1}</field> -->
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new maintenance entry
+          </p><p>
+            Track all the maintenance done on your vehicle.
+            Maintenances can be of many types: occasional repair, fixed maintenance, etc.
+          </p>
+        </field>
+    </record>
+
+    <menuitem name="Maintenances" action="fleet_vehicle_log_maintenance_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_maintenance_menu" sequence="5"/>
+
+</odoo>

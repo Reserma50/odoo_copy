@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="fleet_vehicle_maintenance_form" model="ir.ui.view">
+            <field name="name">fleet.vehicle.view.inherit.tree</field>
+            <field name="model">fleet.vehicle.maintenance</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_id']" position="after">
+                    <div class="o_group row align-items-start">
+                        <!-- <menuitem name="Configuration" parent="menu_root" id="fleet_configuration" sequence="100" groups="fleet_group_manager"/> -->
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

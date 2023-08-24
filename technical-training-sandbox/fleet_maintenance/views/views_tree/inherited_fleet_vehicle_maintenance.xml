@@ -2,15 +2,15 @@
 <odoo>
     <data>
 
-        <record id="fleet_vehicle_maintenance_form" model="ir.ui.view">
+        <record id="fleet_vehicle_maintenance_tree" model="ir.ui.view">
             <field name="name">fleet.vehicle.view.inherit.tree</field>
-            <field name="model">fleet.vehicle.maintenance</field>
+            <field name="model">fleet.vehicle</field>
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='model_id']" position="after">
-                    <div class="o_group row align-items-start">
+                <xpath expr="//field[@name='description']" position="replace">
                         <field name="log_maintenance" />
-                    </div>
+                        <button name="action_set_maintenance" type="object" string="Calcular desde 0"/>
+                        <!-- attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}" -->
                 </xpath>
             </field>
         </record>

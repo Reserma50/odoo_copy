@@ -6,7 +6,6 @@
             <field name="arch" type="xml">
                 <form string="Estate Property Form Test">
                     <header>
-                        
                         <button name="action_set_sold" type="object" string="SOLD" attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}"/>
                         <button name="action_set_cancel" type="object" string="CANCEL" attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}"/>
                         <!-- VALIDAR ACCIONES AL FINAL DEL TUT10 -->
