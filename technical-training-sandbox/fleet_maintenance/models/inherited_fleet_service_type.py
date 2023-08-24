@@ -115,7 +115,7 @@ class InheritedFleetVehicleOdometer(models.Model):
             }
         )
     
-    def update_service_maintenance(self, my_type, last_maintenance, record):
+    def update_service_maintenance(self, my_type, last_maintenance, record, state='new'):
         
         print("CAMPOS COMO LOS DE SELF! En la función actualizar antes de Crear Servicio!")
         for field_name, field in self.fields_get().items():
@@ -130,6 +130,7 @@ class InheritedFleetVehicleOdometer(models.Model):
             "odometer_id" : record.id,
             "purchaser_id": record.driver_id.id,  # 
             "service_type_id":my_type.id,
+            "state":state,
             }
         )
         #create service
@@ -186,7 +187,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                             print("ULTIMO MANTENIMIENTO CONTIENE (Servicios):", last_maintenance.service_id)
                             last_maintenance = last_maintenance.service_id.sorted(key=lambda r: r.create_date, reverse=True)[0]
                             print(last_maintenance) #Servicio
-                            result = record.value - last_maintenance.odometer_id.value
+                            result = (record.value - last_maintenance.odometer_id.value)
                             if last_maintenance.state in ['running', 'cancelled']:# Service
                                 if (result >= my_type.reference):
                                     print("NO SE CREA MANTENIMIENTO PERO SE ACTUALIZA (solo) EL VALOR DEL KILOMETRAJE Y SE ENVIA NOTIFICACIÓN O MENSAJE!")
@@ -194,7 +195,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     # Chatter
                                     self.message_post_after_service_maintenance(record=last_maintenance_to_update, new_message="Warning. Runnig Without Execute Maintenance !", message_values=last_maintenance)
                                 else:
-                                    last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
+                                    # last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
                                     print('FALTAN KILOMETROS:',(my_type.reference - (self.value - last_maintenance.odometer)))
                             elif last_maintenance.state == 'done' and (result >= my_type.reference):
 
@@ -205,14 +206,22 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
                                     self.create_activity_notification(created=True, updated=False, service_name=my_type.name) #activity
                             else:# Stage  = "New"  
-                                if (result >= my_type.reference): 
+                                if result >= my_type.reference: 
                                     print("NO SE CREA MANTENIMIENTO PERO SE ACTUALIZA EL VALOR DEL KILOMETRAJE Y SE ENVIA NOTIFICACIÓN O MENSAJE!")
                                     last_maintenance.write({'state':'cancelled'})
                                     self.send_service_mail_notification(created=False, updated=True, service_type = my_type) #message
                                     #chatter
                                     self.message_post_after_service_maintenance(record=last_maintenance_to_update, new_message="Warning. Runnig Without Execute Maintenance !", message_values=last_maintenance)
                                 else:
-                                    print("No se actualiza la información de Mantenimiento")
+                                    print("result")
+                                    print( "record.value - last_maintenance.odometer_id.value ", record.value - last_maintenance.odometer_id.value)
+                                    print("last_maintenance.state", last_maintenance.state)
+                                    print("No se actualiza la información de Mantenimiento, menor o igual a la referencia ")
+                                    maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="cancelled")
+                                    self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
+                                    self.create_activity_notification(created=True, updated=False, service_name=my_type.name) #activity
+
+
         return True
 
     
@@ -277,7 +286,7 @@ class InheritedFleetVehicleOdometer(models.Model):
 
                             break #se ejecutara el bucle y no queremos eso
                         else:
-                            last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
+                            # last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
                             print("FALTAN KILOMETROS.",(my_type.reference - (self.value - last_maintenance.odometer)))
                         # print(service)
                     elif last_maintenance.state == "done" and last_maintenance.vehicle_id.id == self.vehicle_id.id:
@@ -535,7 +544,7 @@ class FleetVehicleLogMaintenance(models.Model):
     odometer_id = fields.Many2one('fleet.vehicle.log.services', related='service_id.odometer_id',
                                  help="Verde, indica los Kilometros que faltan para un futuro mantenimiento. Rojo, indica los Kilometros recorridos sin haber realizado el mantenimiento.")
     kms_next_estimate = fields.Float(
-        'Maintenance Expiration KMS', compute ='_compute_next_maintenance',
+        'Próximo Mantenimiento', compute ='_compute_next_maintenance',
         help='kms when the coverage of the maintenance expirates (por defecto debe ser type.reference + service_id.odometer_id.value)')
     kms_left = fields.Integer(compute='_compute_kms_left', string='KMS')
     do_today = fields.Boolean(compute='_compute_kms_left')

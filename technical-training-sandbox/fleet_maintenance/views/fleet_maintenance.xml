@@ -11,7 +11,7 @@
                     <button name="action_close" states="futur" type="object" string="Cancel" groups="fleet.fleet_group_manager"/>
                     <button name="action_close" states="open,expired,futur" type="object" string="Close Contract" groups="fleet.fleet_group_manager"/>
                     <button name="action_draft" states="closed" type="object" string="Reset To Draft" groups="fleet.fleet_group_manager"/> -->
-                    <field name="service_state" widget="statusbar" />
+                    <field name="state_maintenance" widget="statusbar" />
                 </header>
                 <sheet>
                     <!-- <field name="active" invisible="1"/> -->
@@ -24,10 +24,10 @@
                         <group>
                             <field name="description"/>
                             <field name="service_id" related="service_id.stage"/>
-                            <field name="odometer_id" related="odometer_id.value"/>
+                            <!-- <field name="odometer_id" related="odometer_id.value"/> -->
                         </group>
                         <group>
-                            <field name="service_id" label="Fecha de creación:" related="service_id.create_date" />
+                            <!-- <field name="service_id" label="Fecha de creación:" related="service_id.create_date" /> -->
                             <field name="kms_next_estimate" label="Próximo mantenimiento:"  />
                             <field name="kms_left" />
                             <field name="do_today"/>
