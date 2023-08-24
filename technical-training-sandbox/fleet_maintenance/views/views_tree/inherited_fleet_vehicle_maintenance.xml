@@ -8,9 +8,9 @@
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='description']" position="replace">
-                        <field name="log_maintenance" />
-                        <button name="action_set_maintenance" type="object" string="Calcular desde 0"/>
-                        <!-- attrs="{'invisible': ['|', ('state', '=', 'sold'), ('state', '=', 'canceled')]}" -->
+                        <field name="log_maintenance" options="{'no_create': True}"/>
+                        <field name="maintenance_count" invisible="1"/>
+                        <button name="action_set_maintenance" type="object" string="Calcular Próximos mantenimientos" attrs="{'invisible': [('maintenance_count', '!=', 0)]}"/>
                 </xpath>
             </field>
         </record>

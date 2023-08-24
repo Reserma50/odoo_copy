@@ -118,6 +118,8 @@ class FleetVehicle(models.Model):
         ('today', 'Today'),
     ], compute='_compute_service_activity')
 
+    
+
     @api.depends('log_services')
     def _compute_service_activity(self):
         for vehicle in self:
