@@ -221,7 +221,6 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
                                     self.create_activity_notification(created=True, updated=False, service_name=my_type.name) #activity
 
-
         return True
 
     
@@ -489,7 +488,6 @@ class InheritedFleetVehicle(models.Model):
                     })
                 else:
                     raise exceptions.UserError("Níngun servicio tiene referencia de Kilometrajes añadida!")
-
         return True
 
     
