@@ -81,12 +81,12 @@
     <!-- </template> -->
         <!-- test from cibrosys -->
 
-        <template id="external_layout_boxed_custom"
-            inherit_id="web.external_layout_boxed">
+        <!-- <template id="external_layout_boxed_custom"
+            inherit_id="web.external_layout_standard">
 
             <xpath expr="//div[1]" position="replace">
-                <!-- <t t-if="not o" t-set="o" t-value="docs" />
-                <t t-set="company" t-value="company_id" /> -->
+                <t t-if="not o" t-set="o" t-value="docs" />
+                <t t-set="company" t-value="company_id" />
                 <div t-attf-class="header o_company_#{company.id}_layout"
                     t-att-style="report_header_style">
 
@@ -170,11 +170,11 @@
 
                 </div>
 
-            </xpath>
+            </xpath> -->
 
-            <xpath expr="//div[2]" position="replace">
-                <!-- <t t-if="not o" t-set="o" t-value="docs" />
-                <t t-set="company" t-value="company_id" /> -->
+            <!-- <xpath expr="//div[2]" position="replace">
+                <t t-if="not o" t-set="o" t-value="docs" />
+                <t t-set="company" t-value="company_id" />
                 <center>
                     <h5 style="color:black;">
                         <b>
@@ -186,9 +186,9 @@
                         class="topage" />
                 </center>
 
-            </xpath>
+            </xpath> -->
 
-        </template>
+        <!-- </template> -->
 
 
 </odoo>

@@ -36,7 +36,94 @@
                                 </div>
                             </div>
                         </div>
-                        <p style="page-break-before:always; "> </p>
+                        <!-- <p style="page-break-before:always; "> </p>
+                        <div class="page">
+                            <h5 class="text-start">
+                                <span>1. Detalles Generales:</span>
+                            </h5>
+                            <div class="row mt-2">
+                                <strong>1.1 Introducción: </strong><br></br>
+                                <strong>1.2 Alcance del proyecto: </strong><br></br>
+                                <strong>1.3 Solución de la propuesta (Si aplica): </strong><br></br>
+                                <strong>1.4 Entregables: </strong><br></br>
+                                <strong>1.5 Requerimientos: </strong><br></br>
+                                <strong>1.6 Entrenamientos y soporte: </strong><br></br>
+                                <strong>1.7 Garantía: </strong><br></br>
+                            </div>
+        
+                            <h5 class="text-start mt-5">
+                                <span>2. Tiempo de entrega de Proyecto:</span>
+                            </h5> -->
+                            <!-- <div class="row mt-2"> -->
+                                <!-- <strong>1.1 Introducción: </strong><br></br> -->
+                               <!--  <strong>1.2 Alcance del proyecto: </strong><br></br>
+                                <strong>1.3 Solución de la propuesta (Si aplica): </strong><br></br> -->
+                                <!-- <strong>1.4 Entregables: </strong><br></br>
+                                <strong>1.5 Requerimientos: </strong><br></br> -->
+                                <!-- <strong>1.6 Entrenamientos y soporte: </strong><br></br>
+                                <strong>1.7 Garantía: </strong><br></br> -->
+                            <!-- </div> -->
+                            <!-- <h5 class="text-start mt-5">
+                                <span>3. Acerca de RESERMA:</span>
+                            </h5>
+                            <div class="row mt-2">
+                                <p>I have found several samples and information about which tags to use and how to use "if statements"
+                                    for adding the page break, but unfortunately any of this samples help me because I do not know where
+                                    to add the page-break tag.</p>
+                            </div>
+                            <h5 class="text-start mt-5">
+                                <span>4. Propuesta Económica:</span>
+                            </h5>
+                            <div class="row mt-2">
+                                <p>I have found several samples and information about which tags to use and how to use "if statements"
+                                    for adding the page break, but unfortunately any of this samples help me because I do not know where
+                                    to add the page-break tag.</p>
+                            </div>
+                            <p>Muy atentamente,</p>
+                            <div class="row mt-5">
+                                <strong>Firma: </strong><br></br>
+                                <strong>Nombre con cargo: </strong><br></br>
+                                <strong>Correo: </strong><br></br>
+                                <strong>Teléfono: </strong><br></br>
+                            </div>
+                        </div> -->
+                </t>
+                <!-- separate DIV-->
+                <p style="page-break-before:always; "> </p>
+                <t t-call="web.external_layout">
+                    <!-- <t t-call="sale_fields.external_layout_boxed_custom"> -->
+                    <!-- <t t-call="sale_fields.external_layout_proposal"> -->
+                        <!-- <div class="page">
+                            <h2 class="text-center" >
+                                <span t-field="sale.propuesta_ejecutiva"/>
+                            </h2>
+                            <div class="row mt-5">
+                                <div class="col-4">
+                                </div>
+                                <div class="col-4">
+                                </div>
+                                <div class="col-4">
+                                    <strong>Preparado para: </strong><br></br>
+                                    <span t-field="sale.partner_id"/>
+                                    <br></br>
+                                    <br></br>
+                                    <strong >Atención: </strong><br></br>
+                                    <span t-field="sale.atention"/>
+                                    <br></br>
+
+                                    <br></br>
+                                    <strong>Cargo: </strong><br></br>
+                                    <br></br>
+                                    <strong>Fecha: </strong>
+                                    <span t-field="sale.write_date"/>
+                                    <br></br>
+                                    <strong>Número de Propuesta: </strong>
+                                    <span t-if="sale.consecutivo" t-field="sale.consecutivo"/>
+
+                                </div>
+                            </div>
+                        </div>
+                        <p style="page-break-before:always; "> </p> -->
                         <div class="page">
                             <h5 class="text-start">
                                 <span>1. Detalles Generales:</span>

@@ -126,13 +126,13 @@ class crm_lead_fields(models.Model):
     field_publico_jefe_departamento = fields.Char(string="Jefe de Departamento")
     field_publico_contacto = fields.Char(string="Contacto")
     field_publico_tel_contacto = fields.Char(string="Teléfono de contacto")
-    field_publico_decition = fields.Char(string="Toma la desición")
+    field_publico_decition = fields.Char(string="Toma la desición", help="Nombre? Cargo?")
     field_publico_planificada = fields.Selection(opciones_planificada,string="¿Para cuándo tiene planifcada la compra?")
     #CAMPOS INFORME DE LA PRIMERA VISITA
     field_publico_fecha = fields.Date(string="Fecha",default=lambda self:fields.Datetime.today())
     field_publico_motivo = fields.Selection(opciones_motivo, string="Principal motivo de Elección")
     field_publico_interesado_ids = fields.Many2many('crm.lead.interesado', string="Interesado en")
-    field_publico_presupuesto = fields.Float(string="Presupuesto de la compra")
+    field_publico_presupuesto = fields.Float(string="Presupuesto de la compra", help="B/.")
     #CAMPOS DE EQUIPO
     field_publico_marca = fields.Char(string="Marca")
     field_publico_modelo = fields.Char(string="Modelo")
