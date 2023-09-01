@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_proposal_executive">
+        <t t-call="web.html_container" t-lang="es_MX">
+            <t t-if="not o" t-set="o" t-value="docs" />
+            <t t-set="company" t-value="company_id" />
+            <!-- EDIT -->
+            <!-- <div class="header">
+              <div style="border-top: 1px solid black;">
+                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" alt="Company Logo" class="float-left" />
+                <div style="font-size:14px;text-align:right;" class="float-right">
+                  <div>
+                    <strong t-field="o.company_id.partner_id.name" />
+                    <span t-field="o.company_id.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;], &quot;no_marker&quot;: true}" />
+                    <span t-field="o.company_id.partner_id.website" />
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <!-- MAIN BOXED LAYOUT -->
+            <div t-attf-class="header o_company_#{o.company_id.id}_layout" t-att-style="report_header_style">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-6">
+                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" alt="Company Logo" class="float-left" />
+                        </div>
+
+                        <div class="col-6 text-end mb4">
+                            <div class="mt0 mt3 h6" t-field="o.company_id.report_header" />
+                            <div name="company_data" class="float-end mb4" style="color:grey; font-size:9px; margin-top: 35px;">
+                                <span >Teléfono: </span><span t-if="o.company_id.phone" t-field="o.company_id.phone" style="color:grey"/><br></br>
+
+                                <span>Fax: (507) 263-7172</span> <br></br>
+                                <span>E-mail: </span><span t-if="o.company_id.email" t-field="o.company_id.email" style="color:grey"/> <br></br>
+                                <span>Apartado: 0831-00645</span> <br></br>
+                                <span>Panamá, República de Panamá</span> <br></br>
+                                <!--   <span t-if="o.company_id.street" t-field="o.company_id.street" style="color:grey"/> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div name="company_address" class="row mb4">
+                        <span t-if="o.company_id.company_details" t-field="o.company_id.company_details" /> <br></br>
+                        <span t-if="o.company_id.vat" t-field="o.company_id.vat" style="color:grey; font-size:9px;"/>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <t t-set="company" t-value="company_id" /> -->
+            <!-- <div class="page mt-5">
+                <h2 class="text-center">
+                    <span t-field="o.propuesta_ejecutiva"/>
+                </h2>
+                <div class="row mt-5">
+                    <div class="col-4">
+                            A
+                    </div>
+                    <div class="col-4">
+                            B
+                    </div>
+                    <div class="col-4">
+                        <strong>Preparado para: </strong>
+                        <span t-field="o.partner_id"/>
+                        <br></br>
+                        <br></br>
+                        <strong>Atención: </strong>
+                        <span t-field="o.atention"/>
+                        <br></br>
+                        <br></br>
+                        <strong>Cargo: </strong>
+                         <span t-field="proposal.atention"/>
+                    </div>
+                </div>
+            </div> -->
+
+
+            <div t-attf-class="article o_report_layout_standard">
+                <div class="page" style="margin-top: 30%; ">
+                    <h2 class="text-center" >
+                        <span t-field="o.propuesta_ejecutiva"/>
+                    </h2>
+                    <div class="row mt-5">
+                        <div class="col-4">
+                        </div>
+                        <div class="col-4">
+                        </div>
+                        <div class="col-4">
+                            <strong>Preparado para: </strong><br></br>
+                            <span t-field="o.partner_id"/>
+                            <br></br>
+                            <br></br>
+                            <strong >Atención: </strong><br></br>
+                            <span t-field="o.atention"/>
+                            <br></br>
+
+                            <br></br>
+                            <strong>Cargo: </strong><br></br>
+                            <!-- <span t-field="proposal.atention"/> -->
+                            <br></br>
+                            <strong>Fecha: </strong>
+                            <span t-field="o.write_date"/>
+                            <br></br>
+                            <strong>Número de Propuesta: </strong>
+                            <span t-if="o.consecutivo" t-field="o.consecutivo"/>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="footer o_standard_footer" >
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <ul class="list-inline">
+                            <li t-if="o.company_id.street"><span t-field="o.company_id.street" /></li>
+                            <!-- <span>Avenida Belisario Porras, San Francisco, Entre calle 72 y 73</span><br></br> -->
+                            <a t-if="o.company_id.website" href="www.reserma.com" t-field="o.company_id.website">www.reserma.com</a>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p style="page-break-before:always; "> </p>
+
+                <div class="page mt-2">
+                    <h5 class="text-start">
+                        <span>1. Detalles Generales:</span>
+                    </h5>
+                    <div class="row mt-2">
+                        <strong>1.1 Introducción: </strong><br></br>
+                        <strong>1.2 Alcance del proyecto: </strong><br></br>
+                        <strong>1.3 Solución de la propuesta (Si aplica): </strong><br></br>
+                        <strong>1.4 Entregables: </strong><br></br>
+                        <strong>1.5 Requerimientos: </strong><br></br>
+                        <strong>1.6 Entrenamientos y soporte: </strong><br></br>
+                        <strong>1.7 Garantía: </strong><br></br>
+                    </div>
+
+                    <h5 class="text-start mt-5">
+                        <span>2. Tiempo de entrega de Proyecto:</span>
+                    </h5>
+                    <!-- <div class="row mt-2"> -->
+                        <!-- <strong>1.1 Introducción: </strong><br></br> -->
+                       <!--  <strong>1.2 Alcance del proyecto: </strong><br></br>
+                        <strong>1.3 Solución de la propuesta (Si aplica): </strong><br></br> -->
+                        <!-- <strong>1.4 Entregables: </strong><br></br>
+                        <strong>1.5 Requerimientos: </strong><br></br> -->
+                        <!-- <strong>1.6 Entrenamientos y soporte: </strong><br></br>
+                        <strong>1.7 Garantía: </strong><br></br> -->
+                    <!-- </div> -->
+                    <h5 class="text-start mt-5">
+                        <span>3. Acerca de RESERMA:</span>
+                    </h5>
+                    <div class="row mt-2">
+                        <p>I have found several samples and information about which tags to use and how to use "if statements"
+                            for adding the page break, but unfortunately any of this samples help me because I do not know where
+                            to add the page-break tag.</p>
+                    </div>
+                    <h5 class="text-start mt-5">
+                        <span>4. Propuesta Económica:</span>
+                    </h5>
+                    <div class="row mt-2">
+                        <p>I have found several samples and information about which tags to use and how to use "if statements"
+                            for adding the page break, but unfortunately any of this samples help me because I do not know where
+                            to add the page-break tag.</p>
+                    </div>
+                    <p>Muy atentamente,</p>
+                    <div class="row mt-5">
+                        <strong>Firma: </strong><br></br>
+                        <strong>Nombre con cargo: </strong><br></br>
+                        <strong>Correo: </strong><br></br>
+                        <strong>Teléfono: </strong><br></br>
+                    </div>
+                </div>
+            </div>
+
+
+        <!-- <t t-set="company" t-value="company_id" /> -->
+        <div class="footer o_standard_footer" >
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline">
+                    <li t-if="o.company_id.street" class="list-inline-item"><span t-field="o.company_id.street" /></li>
+                    <!-- <span>Avenida Belisario Porras, San Francisco, Entre calle 72 y 73</span><br></br> -->
+                    <li t-if="o.company_id.website" class="list-inline-item"><a href="www.reserma.com" t-field="o.company_id.website">www.reserma.com</a></li>
+                </ul>
+            </div>
+        </div>
+        </t>
+        <!-- <link type="text/css" rel="stylesheet" href="/sale_fields/static/css/bootstrap.min.css"/> -->
+
+    </template>
+</odoo>

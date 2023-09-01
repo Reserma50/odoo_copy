@@ -1,0 +1,94 @@
+<template id="custom_report_external_layout">
+    <t t-call="web.html_container">
+      <t t-if="not o" t-set="o" t-value="docs" />
+      <t t-set="company" t-value="company_id" />
+      <div class="header">
+        <div style="border-top: 1px solid black;">
+          <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" alt="Company Logo" class="float-left" />
+          <div style="font-size:14px;text-align:right;" class="float-right">
+            <div>
+              <strong t-field="o.company_id.partner_id.name" />
+              <span t-field="o.company_id.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;], &quot;no_marker&quot;: true}" />
+              <span t-field="o.company_id.partner_id.website" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page mt-5">
+
+        <h2>
+            <span class="text-center" t-field="proposal.propuesta_ejecutiva"/>
+        </h2>
+        <div class="row mt-5">
+            <div class="col-4">
+
+            </div>
+            <div class="col-4">
+
+            </div>
+            <div class="col-4">
+                <strong>Preparado para: </strong>
+                <span t-field="proposal.partner_id"/>
+                <br></br>
+                <br></br>
+                <strong>Atención: </strong>
+                <span t-field="proposal.atention"/>
+                <br></br>
+                <br></br>
+                <strong>Cargo: </strong>
+                <!-- <span t-field="proposal.atention"/> -->
+            </div>
+            
+        </div>
+        <!-- <table class="table">
+            <thead>
+                <tr>
+                    <th>Price</th>
+                    <th>Partner</th>
+                    <th>Validy (days)</th>
+                    <th>Deadline</th>
+                    <th>State</th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-set="offers" t-value="proposal.mapped('offer_ids')"/>
+                <tr t-foreach="offers" t-as="offer">
+                    <td>
+                        <span t-field="offer.price"/>
+                        
+                    </td>
+                    <td>
+                        
+                        <span t-field="offer.partner_id"/>
+                        
+                    </td>
+                    <td>
+                        
+                        <span t-field="offer.validity"/>
+                        
+                    </td>
+                    <td>
+
+                        <span t-field="offer.date_deadline"/>
+                    </td>
+                    <td>
+
+                        <span t-field="offer.status"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table> -->
+    </div>
+    <div class="second-page">
+      <!-- Company address etc - visible only on the first page -->
+    </div>
+      <div class="footer">
+        <div class="text-center" style="border-top: 1px solid black;">
+          <ul class="list-inline">
+            <li t-if="o.company_id.phone">E-mail: <span t-field="o.company_id.email" />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </t>
+   </template>

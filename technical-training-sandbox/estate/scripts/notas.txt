@@ -208,3 +208,43 @@ id | message_main_attachment_id | vehicle_id | user_id | service_id | create_uid
 INSTEAD:
 print("\n EL RECORD ES: ", record.service_id.odometer_id.value)
 print("\n EL RECORD ES: ", record.service_id.service_type_id.name)
+
+##using scafold 
+./odoo-bin scaffold sale_fields technical-training-sandbox/
+
+field does nos appear beacuse these two fields!!
+        <record id="sale_order_propuesta_tree" model="ir.ui.view">
+            <field name="name">sale.order.view.inherit.form</field>
+
+          #tree and form (make the differences)
+
+
+https://wkhtmltopdf.org/downloads.html#stable
+sudo apt install -f ./wkhtmltox_0.12.6-1.focal_amd64.deb 
+
+
+EL sistema toma la plantilla por defecto.
+
+Y dentro del template simplemente se llama al web.external_layout
+
+Siempre debe ser external_layout. 
+
+https://www.odoo.com/es_ES/forum/ayuda-1/external-layout-header-and-external-layout-footer-in-odoo-13-171366
+
+"web.external_layout calls one of web.external_layout_standard or web.external_layout_clean or web.external_layout_boxed 
+depending on the layout that has been selected for the document."
+
+
+#change the vaue to get the info from html
+http://localhost:8069/es_MX/report/html/sale_fields.report_proposal_executive/4
+
+
+#new page add proposal 
+
+drop dbname
+
+run again
+
+add languaje es_MX
+
+add sale_fields

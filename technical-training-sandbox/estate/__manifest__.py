@@ -54,6 +54,11 @@
         'views/my_users_maniputation_view/new_page_inside_notebook_users.xml',
         # 'views/my_users_maniputation_view/users_order.xml',
         
+
+        #reports and templates
+        'report/estate_property_reports.xml',
+        'report/estate_porperty_templates.xml',
+
     ],
     # data files containing optionally loaded demonstration data
     'demo': [

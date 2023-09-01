@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <template id="custom_sale_report" inherit_id="web.external_layout_boxed">
+            <xpath expr="//div[@class='page']" position="replace">
+                <!-- Realiza aquí tus modificaciones en el encabezado y el pie de página -->
+                <!-- Puedes modificar la estructura HTML según tus necesidades -->
+                <div class="page">
+                    <!-- Nuevo encabezado -->
+                    <div class="header">
+                        <!-- Contenido del encabezado -->
+                        HELLO
+                    </div>
+
+                    <!-- Contenido de la cotización -->
+                    <div class="oe_structure">
+                        <!-- Contenido de la cotización existente -->
+                    </div>
+
+                    <!-- Nuevo pie de página -->
+                    <div class="footer">
+                        FOOTER
+                        <!-- Contenido del pie de página -->
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

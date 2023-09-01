@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- <template id="external_layout_boxed_custom" inherit_id="web.external_layout_boxed"> -->
+        <!-- support for custom header -->
+
+        <!-- <xpath expr="//div[1]" position="replace">
+            <t t-if="not o" t-set="o" t-value="docs" />
+            <t t-set="company" t-value="company_id" />
+            <div t-attf-class="header o_company_#{o.company_id.id}_layout" t-att-style="report_header_style">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-6">
+                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" alt="Company Logo"
+        class="float-left" />
+                        </div>
+
+                        <div class="col-6 text-end mb4">
+                            <div class="mt0 mt3 h6" t-field="o.company_id.report_header" />
+                            <div name="company_data" class="float-end mb4" style="color:grey; font-size:9px; margin-top:
+        35px;">
+                                <span >Teléfono: </span><span t-if="o.company_id.phone" t-field="o.company_id.phone"
+        style="color:grey"/><br></br>
+
+                                <span>Fax: (507) 263-7172</span> <br></br>
+                                <span>E-mail: </span><span t-if="o.company_id.email" t-field="o.company_id.email"
+        style="color:grey"/> <br></br>
+                                <span>Apartado: 0831-00645</span> <br></br>
+                                <span>Panamá, República de Panamá</span> <br></br>
+                                <span t-if="o.company_id.street" t-field="o.company_id.street" style="color:grey"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div name="company_address" class="row mb4">
+                        <span t-if="o.company_id.company_details" t-field="o.company_id.company_details" /> <br></br>
+                        <span t-if="o.company_id.vat" t-field="o.company_id.vat" style="color:grey; font-size:9px;"/>
+                    </div>
+                </div>
+
+            </div>
+        
+        
+        </xpath> -->
+        <!-- <xpath expr="//div[2]" position="replace">
+            <t t-if="not o" t-set="o" t-value="docs" />
+            <t t-set="company" t-value="company_id" />
+            <div class="footer o_standard_footer" >
+                <div class="text-center" style="border-top: 1px solid black;">
+                    <ul class="list-inline">
+                        <li t-if="o.company_id.street" class="list-inline-item"><span t-field="o.company_id.street" /></li>
+                        <span>Avenida Belisario Porras, San Francisco, Entre calle 72 y 73</span><br></br>
+                        <li t-if="o.company_id.website" class="list-inline-item"><a href="www.reserma.com"
+        t-field="o.company_id.website">www.reserma.com</a></li>
+                    </ul>
+                </div>
+            </div>
+        </xpath> -->
+
+
+        <!-- <div t-attf-class="header o_company_#{company.id}_layout" position="attributes">
+            <attribute name="t-if">not custom_header</attribute>
+        </div>
+        <div t-attf-class="header o_company_#{company.id}_layout" position="after">
+            <div t-attf-class="header o_company_#{company.id}_layout" t-if="custom_header">
+                <div class="o_boxed_header">
+                    <t t-call="#{custom_header}"/>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- support for custom footer -->
+        <!-- <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout"
+        position="attributes">
+            <attribute name="t-if">not custom_footer</attribute>
+        </div>
+        <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout" position="after">
+            <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout" t-if="custom_footer">
+                <t t-out="custom_footer"/>
+            </div>
+        </div> -->
+    <!-- </template> -->
+        <!-- test from cibrosys -->
+
+        <template id="external_layout_boxed_custom"
+            inherit_id="web.external_layout_boxed">
+
+            <xpath expr="//div[1]" position="replace">
+                <!-- <t t-if="not o" t-set="o" t-value="docs" />
+                <t t-set="company" t-value="company_id" /> -->
+                <div t-attf-class="header o_company_#{company.id}_layout"
+                    t-att-style="report_header_style">
+
+                    <div class="row">
+
+                        <div class="col-12">
+
+                            <div class="float-end">
+
+                                <img t-if="company.logo"
+                                    t-att-src="image_data_uri(company.logo)"
+                                    style="max-width:260px;max-height:89px;"
+                                    alt="Logo" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-9 text-end" style="margin-top:22px;"
+                            t-field="company.report_header" name="moto" />
+
+                    </div>
+                    <div t-if="company.logo or company.report_header" class="row zero_min_height">
+
+                        <div class="col-12">
+
+                            <div style="border-bottom: 1px solid black;" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="float-left">
+
+                            <div class="details">
+
+                                <table class="table_partner" style="width:120%;">
+
+                                    <tr>
+
+                                        <td>
+                                            <b style="color:black;">CLIENT Details:</b>
+
+                                        </td>
+
+                                    </tr>
+
+                                    <tr>
+
+                                        <td>
+                                            <b>
+                                                <span style="color:black;"
+                                                    t-if="company" t-esc="o.partner_id.name" />
+                                            </b>
+                                            <br></br>
+
+                                            <t t-if="o.partner_id.street">
+                                                <span t-esc="o.partner_id.street" />
+                                                <br></br>
+
+                                            </t>
+                                            <t t-if="o.partner_id">
+                                                <span t-esc="o.partner_id.city" />
+                                                <br></br>
+
+                                            </t>
+
+                                        </td>
+
+                                    </tr>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </xpath>
+
+            <xpath expr="//div[2]" position="replace">
+                <!-- <t t-if="not o" t-set="o" t-value="docs" />
+                <t t-set="company" t-value="company_id" /> -->
+                <center>
+                    <h5 style="color:black;">
+                        <b>
+                            <t t-esc="o.company_id.name" />
+                        </b>
+                    </h5>
+<h6
+                        style="color:black;">Your company details</h6> Page: <span class="page" />/<span
+                        class="topage" />
+                </center>
+
+            </xpath>
+
+        </template>
+
+
+</odoo>
