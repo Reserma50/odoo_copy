@@ -1,60 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- <template id="external_layout_boxed_custom" inherit_id="web.external_layout_boxed"> -->
+    <template id="external_layout_boxed_custom" inherit_id="web.external_layout_boxed">
         <!-- support for custom header -->
 
-        <!-- <xpath expr="//div[1]" position="replace">
-            <t t-if="not o" t-set="o" t-value="docs" />
-            <t t-set="company" t-value="company_id" />
-            <div t-attf-class="header o_company_#{o.company_id.id}_layout" t-att-style="report_header_style">
-                <div class="o_boxed_header">
-                    <div class="row mb8">
+
+        <xpath expr="//div[1]" position="replace">
+
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+
+            <!-- <t t-if="not o" t-set="o" t-value="docs" /> -->
+            <!-- <t t-set="company" t-value="company_id" /> -->
+            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                <div class="o_clean_header">
+                    <div class="row">
                         <div class="col-6">
-                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" alt="Company Logo"
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Company Logo"
         class="float-left" />
                         </div>
 
-                        <div class="col-6 text-end mb4">
-                            <div class="mt0 mt3 h6" t-field="o.company_id.report_header" />
-                            <div name="company_data" class="float-end mb4" style="color:grey; font-size:9px; margin-top:
-        35px;">
-                                <span >Teléfono: </span><span t-if="o.company_id.phone" t-field="o.company_id.phone"
-        style="color:grey"/><br></br>
-
+                        <div class="col-6 text-end">
+                            <!-- <div class="mt0 mt3 h6" t-field="company.report_header" /> -->
+                            <div name="company_data" class="float-end mb4" style="color:grey; font-size:9px; margin-top:35px;">
+                                <span >Teléfono: </span><span t-if="company.phone" t-field="company.phone" style="color:grey"/><br></br>
                                 <span>Fax: (507) 263-7172</span> <br></br>
-                                <span>E-mail: </span><span t-if="o.company_id.email" t-field="o.company_id.email"
-        style="color:grey"/> <br></br>
+                                <span>E-mail: </span><span t-if="company.email" t-field="company.email" style="color:grey"/> <br></br>
                                 <span>Apartado: 0831-00645</span> <br></br>
                                 <span>Panamá, República de Panamá</span> <br></br>
-                                <span t-if="o.company_id.street" t-field="o.company_id.street" style="color:grey"/>
+                                <span t-if="company.street" t-field="company.street" style="color:grey"/>
                             </div>
                         </div>
                     </div>
 
                     <div name="company_address" class="row mb4">
-                        <span t-if="o.company_id.company_details" t-field="o.company_id.company_details" /> <br></br>
-                        <span t-if="o.company_id.vat" t-field="o.company_id.vat" style="color:grey; font-size:9px;"/>
+                        <span t-if="company.company_details" t-field="company.company_details" /> <br></br>
+                        <span t-if="company.vat" t-field="company.vat" style="color:grey; font-size:9px;"/>
                     </div>
                 </div>
 
             </div>
         
         
-        </xpath> -->
-        <!-- <xpath expr="//div[2]" position="replace">
-            <t t-if="not o" t-set="o" t-value="docs" />
-            <t t-set="company" t-value="company_id" />
-            <div class="footer o_standard_footer" >
+        </xpath>
+        <xpath expr="//div[2]" position="replace">
+
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+            <div class="footer o_clean_footer" >
                 <div class="text-center" style="border-top: 1px solid black;">
                     <ul class="list-inline">
-                        <li t-if="o.company_id.street" class="list-inline-item"><span t-field="o.company_id.street" /></li>
-                        <span>Avenida Belisario Porras, San Francisco, Entre calle 72 y 73</span><br></br>
-                        <li t-if="o.company_id.website" class="list-inline-item"><a href="www.reserma.com"
-        t-field="o.company_id.website">www.reserma.com</a></li>
+                        <!-- <li t-if="company.street" class="list-inline-item"><span t-field="company.street" /></li> -->
+                        <li t-if="company.street" class="list-inline-item"><span>Avenida Belisario Porras, San Francisco, Entre calle 72 y 73</span></li>
+
+                        
+                        <li t-if="company.website" class="list-inline-item"><a href="www.reserma.com"
+        t-field="company.website">www.reserma.com</a></li>
                     </ul>
                 </div>
             </div>
-        </xpath> -->
+        </xpath>
 
 
         <!-- <div t-attf-class="header o_company_#{company.id}_layout" position="attributes">
@@ -178,7 +207,7 @@
                 <center>
                     <h5 style="color:black;">
                         <b>
-                            <t t-esc="o.company_id.name" />
+                            <t t-esc="company.name" />
                         </b>
                     </h5>
 <h6
@@ -188,7 +217,7 @@
 
             </xpath> -->
 
-        <!-- </template> -->
+        </template>
 
 
 </odoo>

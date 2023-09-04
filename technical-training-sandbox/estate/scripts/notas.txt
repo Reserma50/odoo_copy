@@ -248,3 +248,38 @@ run again
 add languaje es_MX
 
 add sale_fields
+
+
+############################################################
+
+https://wkhtmltopdf.org/downloads.html
+
+#verify architecture ubuntu
+The command is uname -m.
+x86-64
+
+x86-64 (también conocido como x64, x86_64, AMD64 e Intel 64) 
+
+sudo dpkg -i wkhtmltox_0.12.6-1.focal_amd64.deb
+
+#ERROR
+Package xfonts-75dpi is not installed
+
+sudo dpkg -a --configure
+
+sudo apt-get install -y xfonts-75dpi
+
+sudo cp /usr/local/bin/wkhtmltopdf /usr/bin
+
+#####ESTO NO FUNCIONA 
+
+    <template id="external_layout_boxed_custom" inherit_id="web.external_layout_boxed">
+        <!-- support for custom header -->
+
+        <xpath expr="//div[1]" position="replace">
+            <t t-if="not o" t-set="o" t-value="docs" />
+            <t t-set="company" t-value="company_id" /> 
+            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+
+
+####  NO funciona1

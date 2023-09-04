@@ -32,7 +32,7 @@
         # 'views/custom/custom_sale_report.xml',
 
         #custom external layout boxed
-        # 'report/inherit_report/external_layout_boxed_heredado.xml',
+        'report/inherit_report/external_layout_boxed_heredado.xml',
 
         #my own external layout
         'report/external_layout_proposal.xml',
