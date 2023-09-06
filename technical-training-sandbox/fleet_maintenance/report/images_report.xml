@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_images" model="ir.actions.report">
+        <field name="name">Reporte con Imágenes </field>
+        <field name="model">fleet.vehicle</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">fleet_maintenance.report_car_images</field>
+        <field name="report_file">fleet_maintenance.report_car_images</field>
+        <field name="print_report_name">'Report_images_faces'</field>
+        <!-- <field name="paperformat_id" ref="event.paperformat_euro_lowmargin"/> -->
+        <field name="binding_model_id" ref="model_fleet_vehicle"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

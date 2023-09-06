@@ -9,8 +9,17 @@
             <field name="arch" type="xml">
                 
                 
-                <xpath expr="//field[@name='driver_id']" position="after">
-                        <field name="car_image_back" />
+                <xpath expr="//group[1]" position="after">
+                    <group col="2" string="Imagenes" >
+                        <group >
+                            <field name="last_image_front"/>
+                            <field name="last_image_back"/>
+                        </group>
+                        <group >
+                            <field name="last_image_right_side"/>
+                            <field name="last_image_lefth_side"/>
+                        </group>
+                    </group>
                 </xpath>
 
 

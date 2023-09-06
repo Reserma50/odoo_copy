@@ -13,9 +13,13 @@
         #tree views
         'views/views_tree/inherited_fleet_service_type.xml',
         'views/views_tree/inherited_fleet_vehicle_maintenance.xml',
-        # 'views/views_tree/inherited_fleet_vehicle_image.xml',
-        'views/fleet_maintenance.xml'
-        
+        'views/views_tree/inherited_fleet_vehicle_image.xml',
+        'views/fleet_maintenance.xml',
+
+        #report
+        'report/images_report.xml',
+        'report/images_template.xml',
+
     ],
     # data files containing optionally loaded demonstration data
     'demo': [

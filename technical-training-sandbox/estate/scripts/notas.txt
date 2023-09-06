@@ -283,3 +283,5 @@ sudo cp /usr/local/bin/wkhtmltopdf /usr/bin
 
 
 ####  NO funciona1
+
+#centrar div contenedor de Imagenes7

@@ -2,4 +2,6 @@ id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_fleet_vehicle_maintenance,access_fleet_vehicle_maintenance,model_fleet_vehicle_maintenance,base.group_user,1,1,1,1
 access_fleet_vehicle_log_maintenance,access_fleet_vehicle_log_maintenance,model_fleet_vehicle_log_maintenance,base.group_user,1,1,1,1
 
+access_fleet_vehicle_log_images,access_fleet_vehicle_log_images,model_fleet_vehicle_log_images,base.group_user,1,1,1,1
+
 
