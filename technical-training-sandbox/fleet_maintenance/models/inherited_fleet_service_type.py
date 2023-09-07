@@ -638,6 +638,7 @@ class FleetVehicleLogMaintenance(models.Model):
         help='kms when the coverage of the maintenance expirates (por defecto debe ser type.reference + service_id.odometer_id.value)')
     set_kms= fields.Float(
         'Próximo Mantenimiento SETEADO')
+    complete = fields.Boolean(default=False, string="Completado")
     kms_left = fields.Integer(compute='_compute_kms_left', string='KMS')
     do_today = fields.Boolean(compute='_compute_kms_left')
     state_maintenance = fields.Selection(
@@ -741,6 +742,7 @@ class FleetVehicleLogMaintenance(models.Model):
                     record.state_maintenance = "open"
                 elif record.service_state == "done":
                     record.state_maintenance = "futur"
+                    # if record.complete 
                     print("\n Here is where the data is chnaged!!")
                 elif record.service_state == "cancelled":
                     record.state_maintenance = "expired"
