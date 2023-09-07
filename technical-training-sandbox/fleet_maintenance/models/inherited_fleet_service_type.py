@@ -61,6 +61,9 @@ class InheritedFleetVehicleOdometer(models.Model):
         
     def create_maintenance(self, my_type, record): #record from fleet.vehicle.odometer
         '''CREATE MAINTENANCE WITH NEW SERVICES '''
+        print("\n *********************************************** \n")
+        print("\n **** def create_maintenance(self, my_type, record):   CLASS [ODOMETER] **** \n")
+        print("\n *********************************************** \n")
         for field_name, field in self.fields_get().items():
             if field_name in self:
                 print(f"Campo: {field_name}, Valor: {self[field_name]}")
@@ -88,6 +91,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                 "odometer_id" : record.id,
                 "service_type_id":my_type.id,   
                 "odometer" : self.value,
+                "set_kms":(self.value+my_type.reference)
             }
         )
     def actualizar_servicios_manteniento(self, my_type, last_maintenance):
@@ -120,6 +124,11 @@ class InheritedFleetVehicleOdometer(models.Model):
     
     def update_service_maintenance(self, my_type, last_maintenance, record, state='done', update=True):
         '''UPDATE MAINTENANCE, NEW SERVICES OR NO NEW SERVICES'''
+
+        print("\n *********************************************** \n")
+        print("\n **** def update_service_maintenance(self, my_type, last_maintenance, record, state='done', update=True): **** \n")
+        print("\n *********************************************** \n")
+
         if not (state == "done" and update == False): #Crear Servicio #Actualizar Mantenimiento
             servicio = self.env["fleet.vehicle.log.services"].create(
                 {
@@ -163,6 +172,11 @@ class InheritedFleetVehicleOdometer(models.Model):
         return record
 
     def maintenance_service_procedure(self, record):
+        print("\n *********************************************** \n")
+        print("\n **** def maintenance_service_procedure(self, record): **** \n")
+        print("\n *********************************************** \n")
+
+        
         order = "create_date DESC"
         aviso_km = 10
         #Extract services types
@@ -193,7 +207,8 @@ class InheritedFleetVehicleOdometer(models.Model):
                             last_maintenance = last_maintenance.service_id.sorted(key=lambda r: r.create_date, reverse=True)[0]
                             print("\n ************************************* \n")
 
-                            next_minus_estimate = last_maintenance_to_update.kms_next_estimate - aviso_km
+                            # next_minus_estimate = last_maintenance_to_update.kms_next_estimate - aviso_km
+                            next_minus_estimate = last_maintenance_to_update.set_kms - aviso_km
 
                             print("Al asignar para ver cual es el record", last_maintenance) #Servicio
                             calculate = next_minus_estimate - record.value 
@@ -210,7 +225,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="done", update=False)
                                     # self.send_service_mail_notification(created=False, updated=True, service_type = my_type)
                                     # self.create_activity_notification(created=False, updated=True, service_name=my_type.name)
-                                elif calculate < 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
+                                elif calculate <= 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="new", update=True)
                                     self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
                                     self.create_activity_notification(created=True, updated=False, service_name=my_type.name) 
@@ -235,14 +250,11 @@ class InheritedFleetVehicleOdometer(models.Model):
                             else:# State  = "New"  
                                 if calculate > 0:  #aviso_km means kilometer before reach the End (10kms).  #solo actualizar mantenimiento, no crear servicio
                                     print("\n NO DEBERÍA suceder este escenario! ")
-                                elif calculate < 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
+                                elif calculate <= 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="new", update=True)
-                                    # self.send_service_mail_notification(created=False, updated=True, service_type = my_type)
-                                    # self.create_activity_notification(created=False, updated=True, service_name=my_type.name) 
                                 else: #sobrepaso el standard y no realizo el mantenieminto #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="cancelled", update=True)
                                     self.send_service_mail_notification(created=False, updated=True, service_type = my_type)
-                                    # self.create_activity_notification(created=False, updated=True, service_name=my_type.name)
 
         return True
 
@@ -473,6 +485,10 @@ class InheritedFleetVehicle(models.Model):
 
     @api.model
     def create(self, vals):
+        print("\n *********************************************** \n")
+        print("\n **** def create(self, vals):     [Class SERVICES ] **** \n")
+        print("\n *********************************************** \n")
+
         record = super(InheritedFleetVehicle, self).create(vals)
         print("ADD CHATTER!!")
         # record.enviar_mi_nueva_notificacion_chatter()
@@ -498,6 +514,10 @@ class InheritedFleetVehicle(models.Model):
         return True
     
     def action_set_maintenance(self):
+        print("\n *********************************************** \n")
+        print("\n **** action_set_maintenance(self):     [Class VEHICLE ] **** \n")
+        print("\n *********************************************** \n")
+
         Odometer = self.env["fleet.vehicle.odometer"]
         ServiceType = self.env["fleet.service.type"]
         for record in self:
@@ -530,17 +550,22 @@ class InheritedFleetVehicle(models.Model):
 
     
     def _compute_count_maintenance(self):
+        print("\n *********************************************** \n")
+        print("\n **** _compute_count_maintenance(self):     [Class VEHICLE ] **** \n")
+        print("\n *********************************************** \n")
+
+
         Maintenance = self.env['fleet.vehicle.log.maintenance']
         maintenance_data = Maintenance.read_group([('vehicle_id', 'in', self.ids)], ['vehicle_id'], ['vehicle_id'])
-        print("MAINTENANCE DATA", maintenance_data)
+        # print("MAINTENANCE DATA", maintenance_data)
         mapped_maintenance_data = defaultdict(lambda: 0)
 
         for maintenance_data in maintenance_data:
             mapped_maintenance_data[maintenance_data['vehicle_id'][0]] = maintenance_data['vehicle_id_count']
-            print("mapped_maintenance_data[maintenance_data['vehicle_id'][0]]", mapped_maintenance_data[maintenance_data['vehicle_id'][0]])
+            # print("mapped_maintenance_data[maintenance_data['vehicle_id'][0]]", mapped_maintenance_data[maintenance_data['vehicle_id'][0]])
         
         for vehicle in self:
-            print("EL ID DEL VEHICULO", vehicle.id, "Vehicle active", vehicle.active)
+            # print("EL ID DEL VEHICULO", vehicle.id, "Vehicle active", vehicle.active)
             if vehicle.active:
                 vehicle.maintenance_count = mapped_maintenance_data[vehicle.id]
             else:
@@ -611,6 +636,8 @@ class FleetVehicleLogMaintenance(models.Model):
     kms_next_estimate = fields.Float(
         'Próximo Mantenimiento', compute ='_compute_next_maintenance',
         help='kms when the coverage of the maintenance expirates (por defecto debe ser type.reference + service_id.odometer_id.value)')
+    set_kms= fields.Float(
+        'Próximo Mantenimiento SETEADO')
     kms_left = fields.Integer(compute='_compute_kms_left', string='KMS')
     do_today = fields.Boolean(compute='_compute_kms_left')
     state_maintenance = fields.Selection(
@@ -628,8 +655,13 @@ class FleetVehicleLogMaintenance(models.Model):
     
 
     def _get_odometer(self):
+        print("\n *********************************************** \n")
+        print("\n **** def _get_odometer(self): Class [maintenance] **** \n")
+        print("\n *********************************************** \n")
+
         FleetVehicalOdometer = self.env['fleet.vehicle.odometer']
         for record in self:
+            print("\n Entra en el for de _get_odometer")
             vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', '=', record.vehicle_id.id)], limit=1, order='value desc')
             if vehicle_odometer:
                 record.odometer = vehicle_odometer.value
@@ -643,13 +675,20 @@ class FleetVehicleLogMaintenance(models.Model):
         if maintenance is in a closed state, return -1
         otherwise return the number of days before the maintenance expires
         """
+        print("\n *********************************************** \n")
+        print("\n **** def _compute_kms_left(self):  Class [maintenance]**** \n")
+        print("\n *********************************************** \n")
+
+
+
         today = fields.Date.from_string(fields.Date.today())
         for record in self:
-            print("\n record.kms_next_estimate", record.kms_next_estimate )
-            print("\n record.state_maintenance", record.state_maintenance )
+            print("\n Entra en el for de _compute_kms_left")
+            # print("\n1. record.kms_next_estimate", record.kms_next_estimate )
+            # print("\n2. record.state_maintenance", record.state_maintenance )
             # if record.kms_next_estimate and record.state_maintenance in ['open', 'closed', 'expired','futur']:
-            renew_kms = record.kms_next_estimate
-            print("\n ")
+            renew_kms = record.set_kms
+            # print("\n3. record.kms_next_estimate", record.kms_next_estimate)
             diff_kms = (renew_kms - record.odometer)
             record.kms_left = diff_kms if diff_kms > 0 else diff_kms
             record.do_today = diff_kms <= 0
@@ -659,22 +698,44 @@ class FleetVehicleLogMaintenance(models.Model):
     
     @api.depends('service_state','odometer_id', 'service_type_id')
     def _compute_next_maintenance(self):
+        print("\n *********************************************** \n")
+        print("\n **** def _compute_next_maintenance(self): Class [maintenance]**** \n")
+        print("\n *********************************************** \n")
+
         FleetVehicleMaintenance = self.env['fleet.vehicle.log.maintenance']
         
         for record in self:
+            print("\n Entra en el for de _compute_next_maintenance")
             last_main = FleetVehicleMaintenance.search([('service_id', '=', record.service_id.id)])
             # self.verify_output_values(last_main)
+            print(record.kms_next_estimate,"vs last estimate", last_main.kms_next_estimate)
 
             if record.service_state == "done":
-                record.kms_next_estimate= (record.service_id.odometer_id.value + record.service_id.service_type_id.reference)
+                record.kms_next_estimate = (record.service_id.odometer_id.value + record.service_id.service_type_id.reference)
+                print(record.kms_next_estimate,"vs last estimate", last_main.kms_next_estimate)
+            elif record.service_state == "new":#sin realizar
+                record.kms_next_estimate = (record.service_id.odometer_id.value - record.service_id.service_type_id.reference)
+                # print(record.kms_next_estimate,"vs last estimate", last_main.kms_next_estimate)
             else:
-                print("LATEST VALUES ", last_main.kms_next_estimate, last_main.service_id)
-                record.kms_next_estimate=last_main.kms_next_estimate
+                record.kms_next_estimate= (record.service_id.odometer_id.value + record.service_id.service_type_id.reference)
+                
+            # else:
+            #     print("LATEST VALUES ", last_main.kms_next_estimate, last_main.service_id)
+            #     if not last_main.kms_next_estimate > 0:
+            #         record.kms_next_estimate=20000
+            #         # raise exceptions.UserError('No se puede asignar el valor de Cero a el proximo mantenimiento!')
+            #     else:
+            #         record.kms_next_estimate=20000
             
 
     @api.depends('service_state')
     def _compute_maintenance_state(self):
+        print("\n *********************************************** \n")
+        print("\n **** def _compute_maintenance_state(self): Class [maintenance]**** \n")
+        print("\n *********************************************** \n")
         for record in self:
+            print("\n Entra en el for de _compute_maintenance_state")
+            print("\n SERVICE DESCRIPTION:", record.description)
             if record.service_state:
                 if record.service_state == "new":
                     record.state_maintenance = "open"

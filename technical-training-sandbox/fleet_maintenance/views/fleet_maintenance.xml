@@ -62,7 +62,8 @@
                 <field name="do_today" invisible="1"/>
                 <!-- <field name="name" class="fw-bold" /> -->
                 <!-- <field name="start_date" /> -->
-                <field name="kms_next_estimate" string="Próximo Mantenimiento" />
+                <field name="set_kms" string="Próximo Mantenimiento" />
+                <!-- <field name="kms_next_estimate"  /> -->
                 <field name="kms_left" />
                 <field name="vehicle_id"/>
                 <!-- <field name="insurer_id" /> -->

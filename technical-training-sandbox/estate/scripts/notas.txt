@@ -285,3 +285,9 @@ sudo cp /usr/local/bin/wkhtmltopdf /usr/bin
 ####  NO funciona1
 
 #centrar div contenedor de Imagenes7
+
+
+cuando el valor alcanza el objetivo queda en progreso
+cuando sobreása el valor queda en estado vencido
+
+Peor el valor de la cantidad de KM permanece intacta!!
