@@ -91,6 +91,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                 "odometer_id" : record.id,
                 "service_type_id":my_type.id,   
                 "odometer" : self.value,
+                "complete": False,
                 "set_kms":(self.value+my_type.reference)
             }
         )
@@ -225,7 +226,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="done", update=False)
                                     # self.send_service_mail_notification(created=False, updated=True, service_type = my_type)
                                     # self.create_activity_notification(created=False, updated=True, service_name=my_type.name)
-                                elif calculate <= 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
+                                elif calculate <= 0 and calculate > -10: #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="new", update=True)
                                     self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
                                     self.create_activity_notification(created=True, updated=False, service_name=my_type.name) 
@@ -234,13 +235,13 @@ class InheritedFleetVehicleOdometer(models.Model):
                                     self.send_service_mail_notification(created=True, updated=False, service_type = my_type)
                                     self.create_activity_notification(created=True, updated=False, service_name=my_type.name)
                             elif last_maintenance.state in ['running']:# Service
-                                if (result >= my_type.reference):
-                                    print("NO SE CREA MANTENIMIENTO PERO SE ACTUALIZA (solo) EL VALOR DEL KILOMETRAJE Y SE ENVIA NOTIFICACIÓN O MENSAJE!")
-                                    self.send_service_mail_notification(created=False, updated=True, service_type = my_type) #message
-                                    # Chatter
-                                    self.message_post_after_service_maintenance(record=last_maintenance_to_update, new_message="Warning. Runnig Without Execute Maintenance !", message_values=last_maintenance)
-                                else:
-                                    # last_maintenance_to_update.write({'kms_recorridos':(my_type.reference - (self.value - last_maintenance.odometer))})
+                                if calculate > 0:  #aviso_km means kilometer before reach the End (10kms).  #solo actualizar mantenimiento, no crear servicio
+                                    print("\n NO DEBERÍA suceder este escenario! ")
+                                elif calculate <= 0 and calculate > -10: #actualizar manteniemiento creando servicios nuevos
+                                    maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="new", update=True)
+                                else: #sobrepaso el standard y no realizo el mantenieminto #actualizar manteniemiento creando servicios nuevos
+                                    maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="cancelled", update=True)
+                                    self.send_service_mail_notification(created=False, updated=True, service_type = my_type)
                                     print('FALTAN KILOMETROS:',(my_type.reference - (self.value - last_maintenance.odometer)))
                             elif last_maintenance.state in ['cancelled']:# Service
                                 maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="cancelled", update=True)
@@ -250,7 +251,7 @@ class InheritedFleetVehicleOdometer(models.Model):
                             else:# State  = "New"  
                                 if calculate > 0:  #aviso_km means kilometer before reach the End (10kms).  #solo actualizar mantenimiento, no crear servicio
                                     print("\n NO DEBERÍA suceder este escenario! ")
-                                elif calculate <= 0 and calculate >= -10: #actualizar manteniemiento creando servicios nuevos
+                                elif calculate <= 0 and calculate > -10: #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="new", update=True)
                                 else: #sobrepaso el standard y no realizo el mantenieminto #actualizar manteniemiento creando servicios nuevos
                                     maintenance = self.update_service_maintenance(my_type=my_type, last_maintenance=last_maintenance_to_update, record=record, state="cancelled", update=True)
@@ -449,13 +450,38 @@ class FleetVehicleMaintenance(models.Model):
 class InheritedFleetVehicleLogServices(models.Model):
     _inherit = "fleet.vehicle.log.services"
 
-    def action_set_done(self):
-        '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
+    # def action_set_done(self):
+    #     '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
+    #     for record in self:
+    #         if not record.amount > 0.0:
+    #             raise exceptions.UserError('Services cannot be done without cost. Set cost and try again!')
+    #     # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
+    #     return True
+    
+    def write(self, vals):
+        print("vals", vals)
+        record = super(InheritedFleetVehicleLogServices, self).write(vals)
         for record in self:
-            if not record.amount > 0.0:
-                raise exceptions.UserError('Services cannot be done without cost. Set cost and try again!')
-        # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
-        return True
+            print("Contiene data el último mantenimiento?")
+            for field_name, field in record.fields_get().items():
+                if field_name in record:
+                    print(f"Campo: {field_name}, Valor: {record[field_name]}")
+
+
+        Odometer = self.env["fleet.vehicle.odometer"]
+        last_maintenance = self.env['fleet.vehicle.log.maintenance'].search([('service_id', '=', self.id)],limit=1,order='create_date desc')                     
+        vehicle_odometer = Odometer.search([('vehicle_id', '=', last_maintenance.vehicle_id.id)], limit=1, order='value desc')
+        if not last_maintenance.complete and record.state == "done":
+            last_maintenance.complete= True
+            last_maintenance.set_kms = vehicle_odometer.value + last_maintenance.service_id.service_type_id.reference
+        else:
+            print("No hacer nada") 
+            #vehicle_odometer.update_service_maintenance(my_type=maintenance.service_type_id, last_maintenance=maintenance, maintenance=vehicle_odometer, state='done', update=True)
+        # record.odometer_service_procedure(record)
+        # record.maintenance_service_procedure(record)
+        # print("Después de impresión!")
+        return record    
+
     
 
 class InheritedFleetVehicle(models.Model):
@@ -734,20 +760,31 @@ class FleetVehicleLogMaintenance(models.Model):
         print("\n *********************************************** \n")
         print("\n **** def _compute_maintenance_state(self): Class [maintenance]**** \n")
         print("\n *********************************************** \n")
-        for record in self:
+
+
+
+        
+        for maintenance in self:
+
+            # print("VALUES")
+
+            # for field_name, field in maintenance.fields_get().items():
+            #     if field_name in maintenance:
+            #         print(f"Campo: {field_name}, Valor: {maintenance[field_name]}")
+
             print("\n Entra en el for de _compute_maintenance_state")
-            print("\n SERVICE DESCRIPTION:", record.description)
-            if record.service_state:
-                if record.service_state == "new":
-                    record.state_maintenance = "open"
-                elif record.service_state == "done":
-                    record.state_maintenance = "futur"
-                    # if record.complete 
+            print("\n SERVICE DESCRIPTION:", maintenance.description)
+            if maintenance.service_state:
+                if maintenance.service_state == "new":
+                    maintenance.state_maintenance = "open"
+                elif maintenance.service_state == "done":
+                    maintenance.state_maintenance = "futur"
+                    # if maintenance.complete 
                     print("\n Here is where the data is chnaged!!")
-                elif record.service_state == "cancelled":
-                    record.state_maintenance = "expired"
+                elif maintenance.service_state == "cancelled":
+                    maintenance.state_maintenance = "expired"
                 else: # cancelled
-                    record.state_maintenance = "expired"
+                    maintenance.state_maintenance = "expired"
 
 
 class InheritedFleetServiceType(models.Model):
