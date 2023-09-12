@@ -9,3 +9,4 @@ access_crm_lead_pendiente,access_crm_lead_pendiente,model_crm_lead_pendiente,bas
 access_crm_lead_comentario,access_crm_lead_comentario,model_crm_lead_comentario,base.group_user,1,1,1,1
 access_crm_lead_seguimiento,access_crm_lead_seguimiento,model_crm_lead_seguimiento,base.group_user,1,1,1,1
 access_crm_lead_competidor,access_crm_lead_competidor,model_crm_lead_competidor,base.group_user,1,1,1,1
+

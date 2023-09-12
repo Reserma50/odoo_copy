@@ -265,3 +265,17 @@ class EstatePropertyOffer(models.Model):
 
 
     
+
+# class EstatePropertyProyect(models.Model): #no puede ser compras
+#     _name = "estate.property.proyect"
+#     _description = "State Proyect"
+#     _order = "name"
+
+#     name = fields.Char('Title',required=True)
+#     description = fields.Html('Description')
+#     color = fields.Integer('Color')
+#     proyectos_ids = fields.One2many('purchase.order', 'project_id', string='Proyecto')
+
+#     _sql_constraints = [
+#         ('state_property_proyect_unique_name', 'UNIQUE(name)','The name of porperty proyect must be unique.'),
+#     ]

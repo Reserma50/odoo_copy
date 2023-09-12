@@ -4,7 +4,7 @@
     <t t-foreach="docs" t-as="vehicle">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
-                <div class="page text-center" style="width:75%; hight:50%">
+                <div class="page text-center" style="width:90%; hight:60%">
                     <h2 class="">
                         <span  t-if="vehicle.name" t-field="vehicle.name"/>
                     </h2>
@@ -15,6 +15,7 @@
                         <div class="col-6 justify-content-center">
                             <img class="mx-auto d-block" t-if="vehicle.last_image_back" t-att-src="image_data_uri(vehicle.last_image_back)" style="width:90%" alt="vehicle back"/>
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -26,8 +27,19 @@
                         </div>
                     </div>
                     
-                    <div class="row justify-content-center">
-                        <img class="mx-auto d-block" t-if="vehicle.last_image_front" t-att-src="image_data_uri(vehicle.last_image_front)" style="width:50%" alt="TANQUE DE COMBUSTIBLE"/>
+                    <div class="row justify-content-end">
+                        <div t-if="vehicle.signature" class="mt32 ml64 mr4" name="signature">
+                            <div class="offset-8">
+                                <strong>Signature</strong>
+                            </div>
+                            <div class="offset-8">
+                                <img t-att-src="image_data_uri(vehicle.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                            </div>
+                            <div class="offset-8 text-center">
+                                <p t-field="vehicle.driver_id.name"/>
+                            </div>
+                        </div>
+                        <!-- <img class="mx-auto d-block" t-if="vehicle.last_image_front" t-att-src="image_data_uri(vehicle.last_image_front)" style="width:50%" alt="TANQUE DE COMBUSTIBLE"/> -->
                     </div>
                 </div>
             </t>

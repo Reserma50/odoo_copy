@@ -11,7 +11,7 @@
                 
                 <xpath expr="//group[1]" position="after">
                     <group col="2" string="Imagenes" >
-                        <group >
+                        <group>
                             <field name="last_image_front"/>
                             <field name="last_image_back"/>
                         </group>
@@ -19,7 +19,15 @@
                             <field name="last_image_right_side"/>
                             <field name="last_image_lefth_side"/>
                         </group>
+                        <!-- <group>
+                            <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
+                            <widget name="signature" string="Firmar" full_name="driver_id"/>
+                        </group> -->
                     </group>
+                </xpath>
+
+                <xpath expr="//button[@name='action_accept_driver_change']" position="after">
+                    <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
                 </xpath>
 
 

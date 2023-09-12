@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_compras_fields_compras_fields,compras_fields.compras_fields,model_compras_fields_compras_fields,base.group_user,1,1,1,1
+access_compras_fields_purchase_shipment,compras_fields.purchase_shipment, model_compras_fields_purchase_shipment, base.group_user,1,1,1,1

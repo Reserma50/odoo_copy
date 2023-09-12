@@ -14,6 +14,8 @@
         'views/estate_property_views.xml',
         'views/estate_property_type_views.xml',
         'views/estate_property_tag_views.xml',
+        #NEW ONE
+        # 'views/estate_property_proyect_views.xml',
 
         'views/estate_menus.xml',
 
@@ -22,6 +24,7 @@
         'views/estate_menu_tree_type.xml',
         'views/estate_menu_tree_tag.xml',
         'views/estate_menu_tree_offer.xml',
+        
 
         'views/estate_menu_form.xml', #uncomment this line!!
         #no comment link

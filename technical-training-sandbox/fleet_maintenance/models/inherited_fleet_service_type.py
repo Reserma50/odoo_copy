@@ -504,10 +504,47 @@ class InheritedFleetVehicle(models.Model):
     last_image_lefth_side = fields.Binary(string='Last lefth_side Image',
         help='lefth_side image of the vehicle at the moment of this log')
     
+    #signature
+    signature = fields.Image('Signature', help='Signature', copy=False, attachment=True)
+    is_signed = fields.Boolean('Is Signed', compute="_compute_is_signed")
+    is_locked = fields.Boolean(default=True, help='When the chages is not done this allows changing the '
+                               'initial fields. When the changes is done this allows '
+                               'changing the done fields.')
+    
     # last_image_back = fields.Binary(compute='_get_last_back_image')
     # last_image_left = fields.Binary(compute='_get_last_left_image')
     # last_image_right = fields.Binary(compute='_get_last_right_image')
 
+
+    @api.depends('signature')
+    def _compute_is_signed(self):
+        for vehicle in self:
+            vehicle.is_signed = vehicle.signature
+
+    def write(self, vals):
+        if vals.get('signature'):
+            for vehicle in self:
+                vehicle._attach_sign()
+
+        res = super(InheritedFleetVehicle, self).write(vals)
+        return res
+
+    def _attach_sign(self):
+        """ Render the changes report in pdf and attach it to the picking in `self`. """
+        self.ensure_one()
+        # report = self.env['ir.actions.report']._render_qweb_pdf("stock.action_report_delivery", self.id) #modificando el reporte
+        report = self.env['ir.actions.report']._render_qweb_pdf("fleet_maintenance.action_report_images", self.id) #modificando el reporte
+        
+        filename = "%s_signed_car_changes" % self.name
+        if self.driver_id:
+            message = _('Vehicle verification signed by %s') % (self.driver_id.name)
+        else:
+            message = _('vehicle verification')
+        self.message_post(
+            attachments=[('%s.pdf' % filename, report[0])],
+            body=message,
+        )
+        return True
 
     @api.model
     def create(self, vals):

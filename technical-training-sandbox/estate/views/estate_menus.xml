@@ -13,6 +13,8 @@
          <!-- New action under the second menu -->
         <menuitem id="estate_property_type_menu_action" action="estate_property_type_action"/>
         <menuitem id="estate_property_tag_menu_action" action="estate_property_tag_action"/>
+        <!-- Proyecto para compras -->
+        <!-- <menuitem id="estate_property_proyect_menu_action" action="estate_property_proyect_action"/> -->
 
       </menuitem>
 

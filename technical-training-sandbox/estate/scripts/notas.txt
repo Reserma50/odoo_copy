@@ -238,6 +238,12 @@ depending on the layout that has been selected for the document."
 #change the vaue to get the info from html
 http://localhost:8069/es_MX/report/html/sale_fields.report_proposal_executive/4
 
+http://localhost:8069/es_MX/report/html/state_maintenance.report_proposal_executive/4
+
+
+http://localhost:8069/es_MX/report/html/fleet_maintenance.report_car_images/4
+
+action_report_images
 
 #new page add proposal 
 
@@ -291,3 +297,33 @@ cuando el valor alcanza el objetivo queda en progreso
 cuando sobreása el valor queda en estado vencido
 
 Peor el valor de la cantidad de KM permanece intacta!!
+
+#COMPRAS|CHNAGES
+
+./odoo-bin scaffold compras_fields technical-training-sandbox/
+add purchase to the list.
+
+Agregar español MX a la lista
+
+#add file inside state
+
+/home/l4n/code_odoo_test/odoo_copy/technical-training-sandbox/estate/views/estate_property_proyect_views.xml
+
+
+access_estate_property_proyect, access_estate_property_proyect, model_estate_property_proyect,base.group_user,1,1,1,1
+
+access_estate_property_proyect,access_estate_property_proyect, model_estate_property_proyect,base.group_user,1,1,1,1
+
+INSERT INTO compras_fields_purchase_shipment(name, description) VALUES('Vía Porras', 'Ave. Belisario Porras No 162, Edificio
+Reserma Entre calle 72 y 73.San Francisco, Frente al Parque Omar
+Panamá') ;
+
+INSERT INTO compras_fields_purchase_shipment(name, description) VALUES('MegaStorage', 'MegaStorage') ;
+INSERT INTO compras_fields_purchase_shipment(name, description) VALUES('Miami', 'Miami') ;
+
+INSERT INTO estate_property_proyect (name, description) VALUES('Proyecto1', 'El proyecto que iniciamos');
+
+
+
+#data 
+<button name="action_generate_serial" type="object" class="btn btn-primary fa fa-plus-square-o" aria-label="Creates a new serial/lot number" title="Creates a new serial/lot number" role="img" attrs="{'invisible': ['|', ('product_tracking', 'in', ('none', False)), ('lot_producing_id', '!=', False)]}"/>
