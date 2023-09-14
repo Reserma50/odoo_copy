@@ -243,6 +243,10 @@ http://localhost:8069/es_MX/report/html/state_maintenance.report_proposal_execut
 
 http://localhost:8069/es_MX/report/html/fleet_maintenance.report_car_images/4
 
+
+#compras #pedido 
+http://localhost:8069/es_MX/report/html/purchase.report_purchaseorder/8
+
 action_report_images
 
 #new page add proposal 
