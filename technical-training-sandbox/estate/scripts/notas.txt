@@ -337,3 +337,11 @@ This branch has the new changes from signature fleet and compras field
 # In order to search data, the last branch is:
 
 new_compras #STABLE VERSION 9/18/2023
+
+
+#un espacio hace la diferencia dentre un error en el archivo de permisos
+, model 
+
+NO ES LO MISMO que
+
+,model

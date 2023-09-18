@@ -34,6 +34,10 @@
                     <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
                 </xpath>
 
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="renovation_date" />
+                </xpath>
+
 
             </field>
         </record>

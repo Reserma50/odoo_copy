@@ -23,7 +23,7 @@
                     <group string="Information" col="2">
                         <group>
                             <field name="description"/>
-                            <field name="service_id" related="service_id.stage"/>
+                            <field name="service_id" related="service_id.stage" readonly="1"/>
                             <!-- <field name="odometer_id" related="odometer_id.value"/> -->
                         </group>
                         <group>
@@ -37,7 +37,7 @@
                     <separator string="Vehicle"/>
                     <group col="2">
                         <group col="1">
-                            <field name="vehicle_id" related="vehicle_id.name"/>
+                            <field name="vehicle_id" related="vehicle_id.name" />
                         </group>
                         <group col="2">
                             <field name="driver_id" related="driver_id.name"/>
@@ -184,5 +184,7 @@
     </record>
 
     <menuitem name="Maintenances" action="fleet_vehicle_log_maintenance_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_maintenance_menu" sequence="5"/>
+
+    
 
 </odoo>

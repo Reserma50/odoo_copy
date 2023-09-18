@@ -1,6 +1,8 @@
 from odoo import fields, models, api, Command, _, exceptions
 from collections import defaultdict
 
+from dateutil.relativedelta import relativedelta
+
 # class InheritedFleetVehicle(models.Model):
 #     _inherit = 'fleet.vehicle'
 
@@ -495,6 +497,9 @@ class InheritedFleetVehicle(models.Model):
     log_maintenance = fields.One2many('fleet.vehicle.log.maintenance', 'vehicle_id', 'Maintenances Logs') 
     maintenance_count = fields.Integer(compute="_compute_count_maintenance", string='Maintenance')     
     log_images = fields.One2many('fleet.vehicle.log.images', 'vehicle_id', 'Images Logs') 
+    #log matriculation
+    log_matriculation = fields.One2many('fleet.vehicle.log.matriculation', 'vehicle_id', 'Matriculas Logs') 
+    matriculation_count = fields.Integer(compute="_compute_count_matriculation", string='Matriculation')
     last_image_front = fields.Binary(compute='_get_last_front_image',inverse='_set_front_image', string='Frontal',
         help='Front side image of the vehicle at the moment of this log')
     last_image_back = fields.Binary(string='Posterior',
@@ -514,6 +519,7 @@ class InheritedFleetVehicle(models.Model):
                                'initial fields. When the changes is done this allows '
                                'changing the done fields.')
     #renovación del registro del vehículo
+    renovation_date = fields.Date('Matriculation Date', required=False, help='Date when the vehicle has been renovated')
 
     
     # last_image_back = fields.Binary(compute='_get_last_back_image')
@@ -639,6 +645,24 @@ class InheritedFleetVehicle(models.Model):
             else:
                 vehicle.maintenance_count = 0
 
+    def _compute_count_matriculation(self):
+        print("\n *********************************************** \n")
+        print("\n **** _compute_count_matriculation(self):     [Class VEHICLE ] **** \n")
+        print("\n *********************************************** \n")
+
+        Matriculation = self.env['fleet.vehicle.log.matriculation']
+        matriculation_data = Matriculation.read_group([('vehicle_id', 'in', self.ids)], ['vehicle_id'], ['vehicle_id'])
+        mapped_matriculation_data = defaultdict(lambda: 0)
+
+        for matriculation_data in matriculation_data:
+            mapped_matriculation_data[matriculation_data['vehicle_id'][0]] = matriculation_data['vehicle_id_count']
+        
+        for vehicle in self:
+            if vehicle.active:
+                vehicle.matriculation_count = mapped_matriculation_data[vehicle.id]
+            else:
+                vehicle.matriculation_count = 0
+
     def _get_last_front_image(self):
         FleetVehicalImage = self.env['fleet.vehicle.log.images']
         for record in self:
@@ -686,6 +710,92 @@ class InheritFleetLogImage(models.Model):
     car_image_der = fields.Binary(string='Imagen Lado Derecho/Copiloto')
     car_image_fuel = fields.Binary(string='Nivel de Combustible')
 
+class InheritedFleetLogMatriculation(models.Model):
+
+    _name = 'fleet.vehicle.log.matriculation'
+    _description = 'Vehicle Matriculation'
+    _order = 'state_matriculation desc'
+
+    def compute_next_year_date(self, vehicle):
+        oneyear = relativedelta(years=1)
+        start_date = fields.Date.from_string(vehicle.renovation_date)
+        return fields.Date.to_string(start_date + oneyear)
+
+
+    vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', required=True)
+    # default=lambda self: self._get_current_vehicle()
+    date = fields.Date(help='Date when the cost has been executed')
+    user_id = fields.Many2one('res.users', 'Responsible', default=lambda self: self.env.user, index=True)
+    expiration_date = fields.Date(
+        'Placa Expiration Date', 
+        # default=lambda self:
+        # self.compute_next_year_date(self.env.vehicle),
+        compute='_compute_next_year_date',
+        help='Date when the coverage of the placa expirates (by default, one year after begin date)')
+    days_left = fields.Integer(compute='_compute_days_left', string='Warning Date')
+    expires_today = fields.Boolean(compute='_compute_days_left')
+    state_matriculation = fields.Selection(
+        [
+         ('open', 'In Progress'),
+         ('expired', 'Expired'),
+         ('closed', 'Closed')
+        ], 'Status', default='open', readonly=True,
+        help='Choose whether the renovation is still valid or not',
+        tracking=True,
+        copy=False)
+    notes = fields.Html('Terms and Conditions', copy=False)
+    # cost_generated = fields.Monetary('Recurring Cost', tracking=True)
+    cost_frequency = fields.Selection([
+        ('no', 'No'),
+        ('daily', 'Daily'),
+        ('weekly', 'Weekly'),
+        ('monthly', 'Monthly'),
+        ('yearly', 'Yearly')
+        ], 'Recurring Cost Frequency', default='yearly', required=True)
+    
+    @api.depends('expiration_date', 'state_matriculation')
+    def _compute_days_left(self):
+        """return a dict with as value for each matriculate an integer
+        if matriculate is in an open state and is overdue, return 0
+        if matriculate is in a closed state, return -1
+        otherwise return the number of days before the matriculate expires
+        """
+        today = fields.Date.from_string(fields.Date.today())
+        for record in self:
+            if record.expiration_date and record.state_matriculation in ['open', 'expired']:
+                renew_date = fields.Date.from_string(record.expiration_date)
+                diff_time = (renew_date - today).days
+                record.days_left = diff_time if diff_time > 0 else 0
+                record.expires_today = diff_time == 0
+            else:
+                record.days_left = -1
+                record.expires_today = False
+
+    @api.depends('vehicle_id')
+    def _compute_next_year_date(self):
+        FleetVehical = self.env['fleet.vehicle']
+        for record in self:
+            if record.vehicle_id:
+                FleetVehical.search([('vehicle_id', '=', record.vehicle_id)], limit=1, order='create_date desc')
+                oneyear = relativedelta(years=1)
+                start_date = fields.Date.from_string(FleetVehical.renovation_date)
+                return fields.Date.to_string(start_date + oneyear)
+            else:
+                return fields.Date.to_string(fields.Date.today())
+    
+    # @api.model
+    # def _get_current_vehicle(self):
+    #     # Retrieve the current user
+    #     user = self.env.user
+
+    #     # Here, you need to implement your logic to determine the current vehicle for the user
+    #     # It could be based on user preferences, assignments, or any other business logic
+    #     # For example, you can get the user's current vehicle from a related model or any other source
+
+    #     # Replace 'your_logic_to_get_current_vehicle' with your actual logic
+    #     current_vehicle = self.env['fleet.vehicle'].search([('your_field', '=', user.your_field)], limit=1)
+
+    #     return current_vehicle.id if current_vehicle else False
 
 class FleetVehicleLogMaintenance(models.Model):
     _name = 'fleet.vehicle.log.maintenance'

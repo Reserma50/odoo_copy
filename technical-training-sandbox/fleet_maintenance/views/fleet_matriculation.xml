@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id='fleet_vehicle_log_matriculation_view_form' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.log_matriculation.form</field>
+        <field name="model">fleet.vehicle.log.matriculation</field>
+        <field name="arch" type="xml">
+            <form string="Matriculation logs">
+                <field name="vehicle_id" invisible="1"/>
+                <header>
+                    <!-- <button name="action_open" states="futur" type="object" string="Start Contract" class="oe_highlight" groups="fleet.fleet_group_manager"/>
+                    <button name="action_close" states="futur" type="object" string="Cancel" groups="fleet.fleet_group_manager"/>
+                    <button name="action_close" states="open,expired,futur" type="object" string="Close Contract" groups="fleet.fleet_group_manager"/>
+                    <button name="action_draft" states="closed" type="object" string="Reset To Draft" groups="fleet.fleet_group_manager"/> -->
+                    <field name="state_matriculation" widget="statusbar" />
+                </header>
+                <sheet>
+                    <!-- <field name="active" invisible="1"/> -->
+                    <!-- <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/> -->
+                    <!-- <field name="currency_id" invisible="1"/> -->
+                    <div class="oe_title">
+                        <!-- <h1><field name="service_type_id" related="service_type_id.name" /></h1> -->
+                    </div>
+                    <group string="Information" col="2">
+                        <group>
+                            <field name="expiration_date" widget="remaining_days"/>
+                            <!-- <field name="description"/> -->
+                            <!-- <field name="service_id" related="service_id.stage" readonly="1"/> -->
+                            <!-- <field name="odometer_id" related="odometer_id.value"/> -->
+                        </group>
+                        <group>
+                            <!-- <field name="service_id" label="Fecha de creación:" related="service_id.create_date" /> -->
+                            <!-- <field name="kms_next_estimate" label="Próximo mantenimiento:"  /> -->
+                            <field name="days_left" />
+                            <!-- <field name="do_today"/> -->
+                            <!-- <field name="odometer"/> -->
+                        </group>
+                    </group>
+                    <separator string="Vehicle"/>
+                    <group col="2">
+                        <group col="1">
+                            <field name="vehicle_id" related="vehicle_id.name" />
+                            <!-- readonly="1" -->
+                        </group>
+                        <group col="2">
+                            <field name="user_id" related="user_id.name" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <!-- <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/> -->
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id='fleet_vehicle_log_matriculation_view_tree' model='ir.ui.view'>
+        <field name="name">fleet.vehicle.log.matriculation.tree</field>
+        <field name="model">fleet.vehicle.log.matriculation</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state_matriculation == 'open'" decoration-danger="state_matriculation == 'expired'" string="matriculation logs">
+                <!-- <field name="active" invisible="1"/> -->
+                <!-- <field name="do_today" /> -->
+                <!-- <field name="start_date" /> -->
+                <!-- <field name="set_kms" string="Próximo Mantenimiento" /> -->
+                <field name="days_left" />
+                <field name="vehicle_id" context="{'default_vehicle_id': vehicle_id}"/>
+                <!-- <field name="driver_id" widget="many2one_avatar"/> -->
+                <!-- <field name="cost_generated" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="cost_frequency"/> -->
+                <field name="state_matriculation" widget="badge" decoration-info="state_matriculation == 'open'" decoration-danger="state_matriculation == 'expired'" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- MATRICULATION -->
+    <record id='fleet_vehicle_log_matriculation_action' model='ir.actions.act_window'>
+        <field name="name">matriculations</field>
+        <field name="res_model">fleet.vehicle.log.matriculation</field>
+        <field name="view_mode">tree,form,activity</field>
+        <!-- <field name="context">{'search_default_groupby_service_type_id': 1}</field> -->
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new matriculation entry
+          </p><p>
+            Track all the matriculation done on your vehicle.
+            matriculations can be of many types: occasional repair, fixed matriculation, etc.
+          </p>
+        </field>
+    </record>
+    <menuitem name="Matriculation" action="fleet_vehicle_log_matriculation_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_matriculation_menu" sequence="6"/>
+
+</odoo>
