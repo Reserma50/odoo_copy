@@ -9,8 +9,16 @@
             <field name="arch" type="xml">
                 
                 
+
+                <xpath expr="//notebook[1]" position="before">
+                    <group col="2" string="Combustible"   name="fuel">
+                        <group>
+                            <field name="last_image_fuel_level"/>
+                        </group>
+                    </group>
+                </xpath>
                 <xpath expr="//group[1]" position="after">
-                    <group col="2" string="Imagenes" >
+                    <group col="2" string="Imagenes"   name="image">
                         <group>
                             <field name="last_image_front"/>
                             <field name="last_image_back"/>
@@ -19,10 +27,6 @@
                             <field name="last_image_right_side"/>
                             <field name="last_image_lefth_side"/>
                         </group>
-                        <!-- <group>
-                            <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
-                            <widget name="signature" string="Firmar" full_name="driver_id"/>
-                        </group> -->
                     </group>
                 </xpath>
 

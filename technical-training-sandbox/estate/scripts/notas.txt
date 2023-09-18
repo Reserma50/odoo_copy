@@ -331,3 +331,9 @@ INSERT INTO estate_property_proyect (name, description) VALUES('Proyecto1', 'El 
 
 #data 
 <button name="action_generate_serial" type="object" class="btn btn-primary fa fa-plus-square-o" aria-label="Creates a new serial/lot number" title="Creates a new serial/lot number" role="img" attrs="{'invisible': ['|', ('product_tracking', 'in', ('none', False)), ('lot_producing_id', '!=', False)]}"/>
+
+# compras_fleet_modified branch
+This branch has the new changes from signature fleet and compras field
+# In order to search data, the last branch is:
+
+new_compras #STABLE VERSION 9/18/2023

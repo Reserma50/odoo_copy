@@ -28,15 +28,20 @@
                     </div>
                     
                     <div class="row justify-content-end">
-                        <div t-if="vehicle.signature" class="mt32 ml64 mr4" name="signature">
-                            <div class="offset-8">
-                                <strong>Signature</strong>
-                            </div>
-                            <div class="offset-8">
-                                <img t-att-src="image_data_uri(vehicle.signature)" style="max-height: 4cm; max-width: 8cm;"/>
-                            </div>
-                            <div class="offset-8 text-center">
-                                <p t-field="vehicle.driver_id.name"/>
+                        <div class="col-6">
+                            <img class="mx-auto d-block" t-if="vehicle.last_image_fuel_level" t-att-src="image_data_uri(vehicle.last_image_fuel_level)" style="width:90%" alt="vehicle fuel"/>
+                        </div>
+                        <div class="col-6">
+                            <div t-if="vehicle.signature" class="mt32 ml64 mr4" name="signature">
+                                <div class="offset-4">
+                                    <strong>Signature</strong>
+                                </div>
+                                <div class="offset-4">
+                                    <img t-att-src="image_data_uri(vehicle.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                                </div>
+                                <div class="offset-4 text-center">
+                                    <p t-field="vehicle.driver_id.name"/>
+                                </div>
                             </div>
                         </div>
                         <!-- <img class="mx-auto d-block" t-if="vehicle.last_image_front" t-att-src="image_data_uri(vehicle.last_image_front)" style="width:50%" alt="TANQUE DE COMBUSTIBLE"/> -->

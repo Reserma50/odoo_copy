@@ -495,14 +495,17 @@ class InheritedFleetVehicle(models.Model):
     log_maintenance = fields.One2many('fleet.vehicle.log.maintenance', 'vehicle_id', 'Maintenances Logs') 
     maintenance_count = fields.Integer(compute="_compute_count_maintenance", string='Maintenance')     
     log_images = fields.One2many('fleet.vehicle.log.images', 'vehicle_id', 'Images Logs') 
-    last_image_front = fields.Binary(compute='_get_last_front_image',inverse='_set_front_image', string='Last Front Image',
-        help='Front image of the vehicle at the moment of this log')
-    last_image_back = fields.Binary(string='Last back Image',
-        help='Back image of the vehicle at the moment of this log')
-    last_image_right_side = fields.Binary(string='Last right_side Image',
-        help='right_side image of the vehicle at the moment of this log')
-    last_image_lefth_side = fields.Binary(string='Last lefth_side Image',
-        help='lefth_side image of the vehicle at the moment of this log')
+    last_image_front = fields.Binary(compute='_get_last_front_image',inverse='_set_front_image', string='Frontal',
+        help='Front side image of the vehicle at the moment of this log')
+    last_image_back = fields.Binary(string='Posterior',
+        help='Back side  image of the vehicle at the moment of this log')
+    last_image_right_side = fields.Binary(string='Lado Derecho',
+        help='right (copilot) side image of the vehicle at the moment of this log')
+    last_image_lefth_side = fields.Binary(string='Lado Izquierdo',
+        help='lefth (pilot) side image of the vehicle at the moment of this log')
+    last_image_fuel_level = fields.Binary(string='Nivel de Combustible',
+        help='Fuel image level of the vehicle at the moment of this log')
+    
     
     #signature
     signature = fields.Image('Signature', help='Signature', copy=False, attachment=True)
@@ -510,6 +513,8 @@ class InheritedFleetVehicle(models.Model):
     is_locked = fields.Boolean(default=True, help='When the chages is not done this allows changing the '
                                'initial fields. When the changes is done this allows '
                                'changing the done fields.')
+    #renovación del registro del vehículo
+
     
     # last_image_back = fields.Binary(compute='_get_last_back_image')
     # last_image_left = fields.Binary(compute='_get_last_left_image')
@@ -522,11 +527,11 @@ class InheritedFleetVehicle(models.Model):
             vehicle.is_signed = vehicle.signature
 
     def write(self, vals):
+
+        res = super(InheritedFleetVehicle, self).write(vals)
         if vals.get('signature'):
             for vehicle in self:
                 vehicle._attach_sign()
-
-        res = super(InheritedFleetVehicle, self).write(vals)
         return res
 
     def _attach_sign(self):
@@ -643,11 +648,13 @@ class InheritedFleetVehicle(models.Model):
                 record.last_image_back =  vehicle_image.car_image_back
                 record.last_image_right_side = vehicle_image.car_image_izq
                 record.last_image_lefth_side = vehicle_image.car_image_der
+                record.last_image_fuel_level = vehicle_image.car_image_fuel
             else:
                 record.last_image_front = None
                 record.last_image_back = None
                 record.last_image_right_side = None
                 record.last_image_lefth_side = None
+                record.last_image_fuel_level = None
 
     def _set_front_image(self):
         for record in self:
@@ -658,6 +665,7 @@ class InheritedFleetVehicle(models.Model):
                     'car_image_back':record.last_image_back,
                     'car_image_izq':record.last_image_right_side,
                     'car_image_der':record.last_image_lefth_side,
+                    'car_image_fuel': record.last_image_fuel_level,
 
                     'date': date,
                     'vehicle_id': record.id}
@@ -676,7 +684,7 @@ class InheritFleetLogImage(models.Model):
     car_image_back = fields.Binary(string='Imagen Posterior/Trasera')
     car_image_izq = fields.Binary(string="Imagen Lado Izquierdo/Conductor")
     car_image_der = fields.Binary(string='Imagen Lado Derecho/Copiloto')
-
+    car_image_fuel = fields.Binary(string='Nivel de Combustible')
 
 
 class FleetVehicleLogMaintenance(models.Model):
