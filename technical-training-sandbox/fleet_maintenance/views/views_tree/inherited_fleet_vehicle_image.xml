@@ -8,8 +8,6 @@
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
                 
-                
-
                 <xpath expr="//notebook[1]" position="before">
                     <group col="2" string="Combustible"   name="fuel">
                         <group>
@@ -36,8 +34,8 @@
 
                 <xpath expr="//field[@name='location']" position="after">
                     <field name="renovation_date" />
+                    <field name="expiration_date" />
                 </xpath>
-
 
             </field>
         </record>

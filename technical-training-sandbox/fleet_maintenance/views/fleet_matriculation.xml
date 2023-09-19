@@ -11,7 +11,7 @@
                     <button name="action_close" states="futur" type="object" string="Cancel" groups="fleet.fleet_group_manager"/>
                     <button name="action_close" states="open,expired,futur" type="object" string="Close Contract" groups="fleet.fleet_group_manager"/>
                     <button name="action_draft" states="closed" type="object" string="Reset To Draft" groups="fleet.fleet_group_manager"/> -->
-                    <field name="state_matriculation" widget="statusbar" />
+                    <field name="state_matriculation" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <!-- <field name="active" invisible="1"/> -->
@@ -22,24 +22,18 @@
                     </div>
                     <group string="Information" col="2">
                         <group>
-                            <field name="expiration_date" widget="remaining_days"/>
-                            <!-- <field name="description"/> -->
-                            <!-- <field name="service_id" related="service_id.stage" readonly="1"/> -->
-                            <!-- <field name="odometer_id" related="odometer_id.value"/> -->
+                            <field name="expiration_date" widget="remaining_days" readonly="1"/>
+                            <field name="amount" widget="monetary"/>
                         </group>
                         <group>
-                            <!-- <field name="service_id" label="Fecha de creación:" related="service_id.create_date" /> -->
-                            <!-- <field name="kms_next_estimate" label="Próximo mantenimiento:"  /> -->
-                            <field name="days_left" />
-                            <!-- <field name="do_today"/> -->
-                            <!-- <field name="odometer"/> -->
+                            <field name="days_left" readonly="1" />
+                            <field name="date" readonly="1"/>
                         </group>
                     </group>
                     <separator string="Vehicle"/>
                     <group col="2">
                         <group col="1">
-                            <field name="vehicle_id" related="vehicle_id.name" />
-                            <!-- readonly="1" -->
+                            <field name="vehicle_id" related="vehicle_id.name" readonly="1" label="Realizado el día" />
                         </group>
                         <group col="2">
                             <field name="user_id" related="user_id.name" readonly="1"/>
@@ -64,6 +58,7 @@
                 <!-- <field name="do_today" /> -->
                 <!-- <field name="start_date" /> -->
                 <!-- <field name="set_kms" string="Próximo Mantenimiento" /> -->
+                <field name="expiration_date" />
                 <field name="days_left" />
                 <field name="vehicle_id" context="{'default_vehicle_id': vehicle_id}"/>
                 <!-- <field name="driver_id" widget="many2one_avatar"/> -->
@@ -80,14 +75,14 @@
         <field name="name">matriculations</field>
         <field name="res_model">fleet.vehicle.log.matriculation</field>
         <field name="view_mode">tree,form,activity</field>
-        <!-- <field name="context">{'search_default_groupby_service_type_id': 1}</field> -->
+        <!-- <field name="context">{'search_default_groupby_service_type_id': 1}</field> NO VA ESTA LINEA-->
         <field name="context">{'search_default_open': 1}</field>
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
             Create a new matriculation entry
           </p><p>
             Track all the matriculation done on your vehicle.
-            matriculations can be of many types: occasional repair, fixed matriculation, etc.
+            <!-- matriculations can be of many types: occasional repair, fixed matriculation, etc. -->
           </p>
         </field>
     </record>

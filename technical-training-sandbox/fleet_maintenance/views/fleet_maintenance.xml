@@ -37,7 +37,7 @@
                     <separator string="Vehicle"/>
                     <group col="2">
                         <group col="1">
-                            <field name="vehicle_id" related="vehicle_id.name" />
+                            <field name="vehicle_id" related="vehicle_id.name" readonly="1"/>
                         </group>
                         <group col="2">
                             <field name="driver_id" related="driver_id.name"/>

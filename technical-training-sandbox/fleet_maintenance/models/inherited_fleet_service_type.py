@@ -1,15 +1,8 @@
 from odoo import fields, models, api, Command, _, exceptions
 from collections import defaultdict
-
+from odoo.tools.float_utils import float_compare, float_is_zero
 from dateutil.relativedelta import relativedelta
 
-# class InheritedFleetVehicle(models.Model):
-#     _inherit = 'fleet.vehicle'
-
-#     def _compute_vehicle_log_name(self):
-#         print("SE AÑADE UN NUEVO ODOMETRO")
-#         return super(InheritedFleetVehicle, self)._compute_vehicle_log_name()
-    
 class InheritedFleetVehicleOdometer(models.Model):
     # _inherit = ['fleet.vehicle.odometer', 'mail.thread','mail.activity.mixin']
     _inherit = ['fleet.vehicle.odometer']
@@ -489,11 +482,11 @@ class InheritedFleetVehicleLogServices(models.Model):
 class InheritedFleetVehicle(models.Model):
     _inherit = "fleet.vehicle"
 
-    # image_ids = fields.One2many(comodel_name='fleet.vehicle.image',
-    #                             inverse_name="",
-    #                             string='Imagenes', 
-    #                             domain=lambda self: [('state', 'in', ['offer_received', 'offer_accepted', 'sold'])]
-    #                             )
+    def compute_next_year_date(self, strdate):
+        oneyear = relativedelta(years=1)
+        start_date = fields.Date.from_string(strdate)
+        return fields.Date.to_string(start_date + oneyear)
+
     log_maintenance = fields.One2many('fleet.vehicle.log.maintenance', 'vehicle_id', 'Maintenances Logs') 
     maintenance_count = fields.Integer(compute="_compute_count_maintenance", string='Maintenance')     
     log_images = fields.One2many('fleet.vehicle.log.images', 'vehicle_id', 'Images Logs') 
@@ -519,13 +512,25 @@ class InheritedFleetVehicle(models.Model):
                                'initial fields. When the changes is done this allows '
                                'changing the done fields.')
     #renovación del registro del vehículo
-    renovation_date = fields.Date('Matriculation Date', required=False, help='Date when the vehicle has been renovated')
+    renovation_date = fields.Date(
+        'Matriculation Date', 
+        required=True,
+        default = fields.date.today(),
+        help='Date when the vehicle has been renovated')
+    expiration_date = fields.Date(
+            'Placa Expiration Date', 
+            # default=lambda self:
+            # self.compute_next_year_date(self.env.vehicle),
+            default=lambda self:self.compute_next_year_date(fields.Date.context_today(self)),
+            compute='_compute_next_year_date',
+            help='Date when the coverage of the placa expirates (by default, one year after begin date)')
 
-    
-    # last_image_back = fields.Binary(compute='_get_last_back_image')
-    # last_image_left = fields.Binary(compute='_get_last_left_image')
-    # last_image_right = fields.Binary(compute='_get_last_right_image')
-
+    @api.depends('renovation_date')
+    def _compute_next_year_date(self):
+        for record in self:
+            oneyear = relativedelta(years=1)
+            start_date = fields.Date.from_string(record.renovation_date)
+            record.expiration_date = fields.Date.to_string(start_date + oneyear)      
 
     @api.depends('signature')
     def _compute_is_signed(self):
@@ -533,11 +538,23 @@ class InheritedFleetVehicle(models.Model):
             vehicle.is_signed = vehicle.signature
 
     def write(self, vals):
-
+        print("My vals", vals)
         res = super(InheritedFleetVehicle, self).write(vals)
         if vals.get('signature'):
             for vehicle in self:
                 vehicle._attach_sign()
+        #si cambia deberia actualizar el último proceso de matricula
+        #         if vals.get('renovation_date'):
+        # create matriculation
+        #     matriculate = self.env["fleet.vehicle.log.matriculation"].create(
+        #         {
+        #         "vehicle_id": res.id,
+        #         "renovation_date": res.renovation_date,
+        #         "expiration_date":res.expiration_date
+        #         "driver_id": record.driver_id.id, 
+        #         }
+        #     )
+
         return res
 
     def _attach_sign(self):
@@ -562,11 +579,25 @@ class InheritedFleetVehicle(models.Model):
         print("\n *********************************************** \n")
         print("\n **** def create(self, vals):     [Class SERVICES ] **** \n")
         print("\n *********************************************** \n")
-
+        print(vals)
         record = super(InheritedFleetVehicle, self).create(vals)
         print("ADD CHATTER!!")
         # record.enviar_mi_nueva_notificacion_chatter()
-    
+        # FleetMatriculation = self.env["fleet.vehicle.log.matriculation"]
+        # FleetMatriculation.create_matriculation(record)
+
+        #si cambia deberia actualizar el último proceso de matricula
+        if vals.get('renovation_date'):
+        #create matriculation
+            matriculate = self.env["fleet.vehicle.log.matriculation"].create(
+                {
+                "vehicle_id": record.id,
+                # "renovation_date": record.renovation_date,
+                "expiration_date":record.expiration_date,
+                # "driver_id": record.driver_id.id, 
+                }
+            )
+
         return record
     
     def enviar_mi_nueva_notificacion_chatter(self):
@@ -576,14 +607,6 @@ class InheritedFleetVehicle(models.Model):
             self.message_post(subject=subject, body=body, message_type='notification') #'fleet.vehicle.odometer' object has no attribute 'message_post'
         except AttributeError:
             print("No driver in vehicle!")
-
-
-        # for record in self
-        #     record.message_post(subject=subject, body=body)
-
-        # self.env['fleet.vehicle'].browse([])
-
-            # self.env['fleet.vehicle'].message_post(subject=subject, body=body) #wrong
         
         return True
     
@@ -713,36 +736,40 @@ class InheritFleetLogImage(models.Model):
 class InheritedFleetLogMatriculation(models.Model):
 
     _name = 'fleet.vehicle.log.matriculation'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Vehicle Matriculation'
     _order = 'state_matriculation desc'
 
-    def compute_next_year_date(self, vehicle):
+    def compute_next_year_date(self, strdate):
         oneyear = relativedelta(years=1)
-        start_date = fields.Date.from_string(vehicle.renovation_date)
+        start_date = fields.Date.from_string(strdate)
         return fields.Date.to_string(start_date + oneyear)
 
-
-    vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', required=True)
+    vehicle_id = fields.Many2one('fleet.vehicle', 'Vehículo', required=True)
     # default=lambda self: self._get_current_vehicle()
-    date = fields.Date(help='Date when the cost has been executed')
-    user_id = fields.Many2one('res.users', 'Responsible', default=lambda self: self.env.user, index=True)
-    expiration_date = fields.Date(
-        'Placa Expiration Date', 
-        # default=lambda self:
-        # self.compute_next_year_date(self.env.vehicle),
-        compute='_compute_next_year_date',
-        help='Date when the coverage of the placa expirates (by default, one year after begin date)')
-    days_left = fields.Integer(compute='_compute_days_left', string='Warning Date')
+    date = fields.Date(help='Date when the cost has been executed', string="Realizado el día")
+    amount = fields.Monetary('Cost')
+    # currency_id = fields.Many2one('res.currency', related='company_id.currency_id')
+    currency_id = fields.Many2one('res.currency', "Currency")
+
+    user_id = fields.Many2one('res.users', 'Responsable', default=lambda self: self.env.user, index=True)
+    days_left = fields.Integer(compute='_compute_days_left', string='Fecha de aviso')
     expires_today = fields.Boolean(compute='_compute_days_left')
     state_matriculation = fields.Selection(
         [
          ('open', 'In Progress'),
          ('expired', 'Expired'),
          ('closed', 'Closed')
-        ], 'Status', default='open', readonly=True,
+        ], 'Status', default='open',
         help='Choose whether the renovation is still valid or not',
-        tracking=True,
+        # tracking=True,
         copy=False)
+    expiration_date = fields.Date(
+            'Expiración de la Placa', 
+            # default=lambda self:
+            # self.compute_next_year_date(self.env.vehicle),
+            # compute='_compute_next_year_date',
+            help='Date when the coverage of the placa expirates (by default, one year after begin date)')
     notes = fields.Html('Terms and Conditions', copy=False)
     # cost_generated = fields.Monetary('Recurring Cost', tracking=True)
     cost_frequency = fields.Selection([
@@ -771,31 +798,37 @@ class InheritedFleetLogMatriculation(models.Model):
                 record.days_left = -1
                 record.expires_today = False
 
-    @api.depends('vehicle_id')
-    def _compute_next_year_date(self):
-        FleetVehical = self.env['fleet.vehicle']
-        for record in self:
-            if record.vehicle_id:
-                FleetVehical.search([('vehicle_id', '=', record.vehicle_id)], limit=1, order='create_date desc')
-                oneyear = relativedelta(years=1)
-                start_date = fields.Date.from_string(FleetVehical.renovation_date)
-                return fields.Date.to_string(start_date + oneyear)
-            else:
-                return fields.Date.to_string(fields.Date.today())
-    
-    # @api.model
-    # def _get_current_vehicle(self):
-    #     # Retrieve the current user
-    #     user = self.env.user
+    def write(self, vals):
+        print(vals)
+        self.ensure_one()
+        if len(vals)<=1 and vals.get('state_matriculation'):#si solo quieres cambiar el estado pero no añades el costo
+            if (vals['state_matriculation'] == "closed"):
+                if (float_is_zero(self.amount, 2)):
+                    raise exceptions.UserError('Matriculation cannot be done without cost. Set cost and try again!')
+        else:
+            if vals.get('amount') and vals.get('state_matriculation'):
+                if (vals['state_matriculation'] == "closed"):
+                    if not(float_is_zero(vals['amount'], 2)):
+                        vals['date']=fields.date.today()
+                else:
+                    raise exceptions.UserError('Matriculation cannot be done without cost. Set cost and try again!')
+            print("Antes de actualizar! \n", vals)
+        record = super(InheritedFleetLogMatriculation, self).write(vals) #if done return true
+        #si cambia deberia actualizar el último proceso de matricula
+        # #create matriculation
+        #     mycost = vals.get('date')
+        if (vals.get('date')):
+            Vehicle = self.env["fleet.vehicle"]
+            for record in self:
+                if record.vehicle_id:
+                    myvehicle=Vehicle.search([('id','=', record.vehicle_id.id)])
+                    myvehicle.write(
+                        {
+                        "renovation_date": vals["date"],
+                        }
+                    )
+        return record
 
-    #     # Here, you need to implement your logic to determine the current vehicle for the user
-    #     # It could be based on user preferences, assignments, or any other business logic
-    #     # For example, you can get the user's current vehicle from a related model or any other source
-
-    #     # Replace 'your_logic_to_get_current_vehicle' with your actual logic
-    #     current_vehicle = self.env['fleet.vehicle'].search([('your_field', '=', user.your_field)], limit=1)
-
-    #     return current_vehicle.id if current_vehicle else False
 
 class FleetVehicleLogMaintenance(models.Model):
     _name = 'fleet.vehicle.log.maintenance'
@@ -866,9 +899,6 @@ class FleetVehicleLogMaintenance(models.Model):
         today = fields.Date.from_string(fields.Date.today())
         for record in self:
             print("\n Entra en el for de _compute_kms_left")
-            # print("\n1. record.kms_next_estimate", record.kms_next_estimate )
-            # print("\n2. record.state_maintenance", record.state_maintenance )
-            # if record.kms_next_estimate and record.state_maintenance in ['open', 'closed', 'expired','futur']:
             renew_kms = record.set_kms
             # print("\n3. record.kms_next_estimate", record.kms_next_estimate)
             diff_kms = (renew_kms - record.odometer)
@@ -900,14 +930,7 @@ class FleetVehicleLogMaintenance(models.Model):
                 # print(record.kms_next_estimate,"vs last estimate", last_main.kms_next_estimate)
             else:
                 record.kms_next_estimate= (record.service_id.odometer_id.value + record.service_id.service_type_id.reference)
-                
-            # else:
-            #     print("LATEST VALUES ", last_main.kms_next_estimate, last_main.service_id)
-            #     if not last_main.kms_next_estimate > 0:
-            #         record.kms_next_estimate=20000
-            #         # raise exceptions.UserError('No se puede asignar el valor de Cero a el proximo mantenimiento!')
-            #     else:
-            #         record.kms_next_estimate=20000
+
             
 
     @api.depends('service_state')
@@ -920,13 +943,6 @@ class FleetVehicleLogMaintenance(models.Model):
 
         
         for maintenance in self:
-
-            # print("VALUES")
-
-            # for field_name, field in maintenance.fields_get().items():
-            #     if field_name in maintenance:
-            #         print(f"Campo: {field_name}, Valor: {maintenance[field_name]}")
-
             print("\n Entra en el for de _compute_maintenance_state")
             print("\n SERVICE DESCRIPTION:", maintenance.description)
             if maintenance.service_state:
