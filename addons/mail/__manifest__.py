@@ -163,20 +163,7 @@ For more specific needs, you may also assign custom-defined actions
             'web/static/lib/luxon/luxon.js',
             'web/static/src/core/**/*',
             # FIXME: debug menu currently depends on webclient, once it doesn't we don't need to remove the contents of the debug folder
-            ('remove', 'web/static/src/core/debug/**/*'),
-            'web/static/src/env.js',
-            'web/static/src/legacy/js/core/misc.js',
-            'web/static/src/legacy/js/env.js',
-            'web/static/src/legacy/js/fields/field_utils.js',
-            'web/static/src/legacy/js/owl_compatibility.js',
-            'web/static/src/legacy/js/services/data_manager.js',
-            'web/static/src/legacy/js/services/session.js',
-            'web/static/src/legacy/js/widgets/date_picker.js',
-            'web/static/src/legacy/legacy_load_views.js',
-            'web/static/src/legacy/legacy_promise_error_handler.js',
-            'web/static/src/legacy/legacy_rpc_error_handler.js',
-            'web/static/src/legacy/utils.js',
-            'web/static/src/legacy/xml/base.xml',
+            
         ],
         'web._assets_primary_variables': [
             'mail/static/src/scss/variables/primary_variables.scss',

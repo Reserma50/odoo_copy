@@ -12,6 +12,12 @@ from odoo import api, SUPERUSER_ID
 #
 def _auto_install_enterprise_dependencies(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
+
+    print("\n \n \n \n")
+    print("CR", cr)
+    print("**************")
+    print("\n \n \n \n")
+    print("registry", registry)
     module_list = ['account_accountant']
-    module_ids = env['ir.module.module'].search([('name', 'in', module_list), ('state', '=', 'uninstalled')])
+    module_ids = env['ir.module.module'].search([('name', 'in', module_list)])
     module_ids.sudo().button_install()

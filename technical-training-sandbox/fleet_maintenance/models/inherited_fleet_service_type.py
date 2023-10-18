@@ -6,18 +6,7 @@ from dateutil.relativedelta import relativedelta
 class InheritedFleetVehicleOdometer(models.Model):
     # _inherit = ['fleet.vehicle.odometer', 'mail.thread','mail.activity.mixin']
     _inherit = ['fleet.vehicle.odometer']
-    
-    def preparar_servicio(self, val):
-        servicio_vals = {
-            # 'description':f" Mantenimiento de {val}",
-            # 'service_type_id':val,
-            # 'date': 'out_invoice',
-            # 'vehicle_id': self.buyer_id.id,
-            # 'purchaser_i': val,  # company comes from the journal
-            # 'odometer' : val
-        }
 
-        return servicio_vals
 
     def crear_servicios_manteniento(self, my_type, record):
         '''CREATE NEW MAINTENANCE WITH NEW SERVICE'''
