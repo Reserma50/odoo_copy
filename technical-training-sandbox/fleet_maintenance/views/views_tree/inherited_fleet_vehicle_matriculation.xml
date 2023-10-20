@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='return_action_to_open']" position="after">
-                    <button 
+                    <!-- <button 
                    
                     type="action" 
                     name="%(fleet_maintenance.fleet_vehicle_log_matriculation_action)d"
@@ -17,9 +17,15 @@
                     help="show the matriculation logs for this vehicle" attrs="{'invisible': [('vehicle_type', '!=', 'car')]}">
                     <field name="matriculation_count" widget="statinfo" string="Matricula"/>
                     </button> 
+                     -->
                     <!-- context="{'xml_id':'fleet_vehicle_log_matriculation_action'}"  -->
                     <!-- name="return_action_to_open"  -->
                     <!-- context="{'vehicle_id':me}" -->
+
+                    <button name="open_matriculation_logs" type="object" class="oe_stat_button" icon="fa-fa-file-text">
+                        <field name="matriculate_count" widget="statinfo" string="Matricula" modifiers="{&quot;readonly&quot;: true}"/>
+                    </button>
+
                 </xpath>
             </field>
         </record>
