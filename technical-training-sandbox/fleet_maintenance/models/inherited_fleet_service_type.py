@@ -346,27 +346,38 @@ class InheritedFleetVehicleLogServices(models.Model):
     
     def write(self, vals):
         print("vals", vals)
-        record = super(InheritedFleetVehicleLogServices, self).write(vals)
+        myrecord = super(InheritedFleetVehicleLogServices, self).write(vals)
+        print("\n EL ESTADO DEL REGISTRO: usando self", self.state)
+
+        print("Contiene data el último mantenimiento?")
+        for field_name, field in self.fields_get().items():
+            if field_name in self:
+                print(f"Campo: {field_name}, Valor: {self[field_name]}")
+
+
+
         for record in self:
-            print("Contiene data el último mantenimiento?")
-            for field_name, field in record.fields_get().items():
-                if field_name in record:
-                    print(f"Campo: {field_name}, Valor: {record[field_name]}")
 
 
-        Odometer = self.env["fleet.vehicle.odometer"]
-        last_maintenance = self.env['fleet.vehicle.log.maintenance'].search([('service_id', '=', self.id)],limit=1,order='create_date desc')                     
-        vehicle_odometer = Odometer.search([('vehicle_id', '=', last_maintenance.vehicle_id.id)], limit=1, order='value desc')
-        if not last_maintenance.complete and record.state == "done":
-            last_maintenance.complete= True
-            last_maintenance.set_kms = vehicle_odometer.value + last_maintenance.service_id.service_type_id.reference
-        else:
-            print("No hacer nada") 
+            Odometer = self.env["fleet.vehicle.odometer"]
+            last_maintenance = self.env['fleet.vehicle.log.maintenance'].search([('service_id', '=', record.id)],limit=1,order='create_date desc')    
+            print("last main", last_maintenance)                 
+            vehicle_odometer = Odometer.search([('vehicle_id', '=', last_maintenance.vehicle_id.id)], limit=1, order='value desc')
+            print("EL ESTADO DEL REGISTRO:  usand record ", record.state)
+            print("last_maintenance.complete", last_maintenance.complete)
+            if not last_maintenance.complete and record.state == "done":
+                last_maintenance.complete = False
+                last_maintenance.set_kms = vehicle_odometer.value + last_maintenance.service_id.service_type_id.reference
+                print("Contrario a no hacer nada", last_maintenance.set_kms)
+                
+            else:
+                print("No hacer nada")
+                print("No hacer nada", last_maintenance.set_kms)
             #vehicle_odometer.update_service_maintenance(my_type=maintenance.service_type_id, last_maintenance=maintenance, maintenance=vehicle_odometer, state='done', update=True)
         # record.odometer_service_procedure(record)
         # record.maintenance_service_procedure(record)
         # print("Después de impresión!")
-        return record    
+        return myrecord    
 
     
 
@@ -429,7 +440,7 @@ class InheritedFleetVehicle(models.Model):
             vehicle.is_signed = vehicle.signature
 
     def write(self, vals):
-        print("My vals", vals)
+        # print("My vals", vals)
         res = super(InheritedFleetVehicle, self).write(vals)
         if vals.get('signature'):
             for vehicle in self:
@@ -786,18 +797,41 @@ class FleetVehicleLogMaintenance(models.Model):
         print("\n *********************************************** \n")
 
 
+        print("Evaluar la necesidad de manejar cuando es negativo!")
+        for record in self:
+            for field_name, field in record.fields_get().items():
+                if field_name in ["state_maintenance", "odometer", "service_state", "set_kms"]:
+                    if field_name in record:
+                        try:
+                            print(f"Campo: {field_name}, Valor: {record[field_name]}")
+                        except ValueError:
+                            print("ValueError: Wrong value for fleet.vehicle.log.maintenance.service_type_id: fleet.service.type(47,)")
+                        else:
+                            print("Continue!")
+
 
         today = fields.Date.from_string(fields.Date.today())
         for record in self:
             print("\n Entra en el for de _compute_kms_left")
             renew_kms = record.set_kms
             # print("\n3. record.kms_next_estimate", record.kms_next_estimate)
+
+            # if record.state_maintenance == "expired":
+            #     diff_kms = (renew_kms - record.odometer)
+            #     print("DIFF KMS 1", diff_kms, "diff_kms = (renew_kms - record.odometer)")
+            #     record.kms_left = diff_kms if diff_kms > 0 else diff_kms
+            #     record.do_today = diff_kms <= 0
+            # elif record.state_maintenance == "futur":    
+            #     diff_kms = (renew_kms - record.odometer)
+            #     print("DIFF KMS 2", diff_kms)        
+            #     record.kms_left = diff_kms if diff_kms > 0 else diff_kms * -1
+            # else:
+            #     diff_kms = (renew_kms - record.odometer)
+            #     print("DIFF KMS 3", diff_kms)
             diff_kms = (renew_kms - record.odometer)
             record.kms_left = diff_kms if diff_kms > 0 else diff_kms
             record.do_today = diff_kms <= 0
-            # else:
-                # record.kms_left = -1
-                # record.do_today = False
+
     
     @api.depends('service_state','odometer_id', 'service_type_id')
     def _compute_next_maintenance(self):
@@ -845,7 +879,7 @@ class FleetVehicleLogMaintenance(models.Model):
                     print("\n Here is where the data is chnaged!!")
                 elif maintenance.service_state == "cancelled":
                     maintenance.state_maintenance = "expired"
-                else: # cancelled
+                else: # closed
                     maintenance.state_maintenance = "expired"
 
 
