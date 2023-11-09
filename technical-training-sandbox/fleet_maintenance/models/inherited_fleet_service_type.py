@@ -682,19 +682,28 @@ class InheritedFleetLogMatriculation(models.Model):
         ('yearly', 'Yearly')
         ], 'Recurring Cost Frequency', default='yearly', required=True)
     
-    @api.depends('expiration_date', 'state_matriculation')
+    @api.depends('expiration_date', 'state_matriculation', 'vehicle_id' )
     def _compute_days_left(self):
         """return a dict with as value for each matriculate an integer
         if matriculate is in an open state and is overdue, return 0
         if matriculate is in a closed state, return -1
         otherwise return the number of days before the matriculate expires
         """
+        print("Compute days MATRICULATION!")
+
         today = fields.Date.from_string(fields.Date.today())
         for record in self:
-            if record.expiration_date and record.state_matriculation in ['open', 'expired']:
-                renew_date = fields.Date.from_string(record.expiration_date)
+            my_vehicle=self.env["fleet.vehicle"].search([('id', '=', record.vehicle_id.id)])
+            if my_vehicle.expiration_date and record.state_matriculation in ['open', 'expired']:
+                record.expiration_date = my_vehicle.expiration_date
+                print("my_vehicle.expiration_date", my_vehicle.expiration_date)
+                renew_date = fields.Date.from_string(my_vehicle.expiration_date)
+                print("Que es renew date", renew_date)
+                print("Today", today)
                 diff_time = (renew_date - today).days
-                record.days_left = diff_time if diff_time > 0 else 0
+                print("time diff", diff_time)
+                record.days_left = diff_time if diff_time > 0 else diff_time
+                record.state_matriculation = "expired" if diff_time < 0 else record.state_matriculation
                 record.expires_today = diff_time == 0
             else:
                 record.days_left = -1
