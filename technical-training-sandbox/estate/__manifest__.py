@@ -55,7 +55,10 @@
 
         #inherit res_users
         'views/my_users_maniputation_view/new_page_inside_notebook_users.xml',
-        # 'views/my_users_maniputation_view/users_order.xml',
+        # inherited user to fleet licence
+        'views/my_users_maniputation_view/new_tree_user_fleet.xml',
+        # inherited form user to edit licence value
+        'views/my_users_maniputation_view/new_form_user_fleet.xml',
         
 
         #reports and templates

@@ -45,9 +45,9 @@ class InheritedFleetVehicleOdometer(models.Model):
         
     def create_maintenance(self, my_type, record): #record from fleet.vehicle.odometer
         '''CREATE MAINTENANCE WITH NEW SERVICES '''
-        print("\n *********************************************** \n")
+        # print("\n *********************************************** \n")
         print("\n **** def create_maintenance(self, my_type, record):   CLASS [ODOMETER] **** \n")
-        print("\n *********************************************** \n")
+        # print("\n *********************************************** \n")
         for field_name, field in self.fields_get().items():
             if field_name in self:
                 print(f"Campo: {field_name}, Valor: {self[field_name]}")
@@ -703,7 +703,7 @@ class InheritedFleetLogMatriculation(models.Model):
                 diff_time = (renew_date - today).days
                 print("time diff", diff_time)
                 record.days_left = diff_time if diff_time > 0 else diff_time
-                record.state_matriculation = "expired" if diff_time < 0 else record.state_matriculation
+                record.state_matriculation = "expired" if diff_time < 0 else "open"
                 record.expires_today = diff_time == 0
             else:
                 record.days_left = -1

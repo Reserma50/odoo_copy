@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- main view for fleet-->
+    <record id="fleet_vehicle_employes_view_form" model="ir.ui.view">
+        <field name="name">fleet.vehicle.employes.log.view.form.inherit.res.user</field>
+        <field name="model">res.users</field>
+
+        <field name="inherit_id" ref="base.view_users_simple_form" />
+        <field name="arch" type="xml">
+  
+          <xpath expr="//field[@name='create_employee']" position="attributes">
+            <attribute name="readonly">1</attribute>
+            
+          </xpath>
+          <xpath expr="//field[@name='name']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='phone']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='image_1920']" position="attributes">
+            <attribute name="readonly">1</attribute>
+          </xpath>
+          <xpath expr="//field[@name='name']" position="after">
+            <label for="licence_renovation_date" string="Fecha de Vencimiento de Matrícula"/>
+            <field name="licence_renovation_date"/>
+          </xpath>
+          <xpath expr="//label[@for='name']" position="replace">
+            <!-- Puedes reemplazar la etiqueta por otro elemento o dejarla vacía -->
+            <!-- <label for="name" invisible="1"/> -->
+          </xpath>
+          <xpath expr="//label[@for='login']" position="replace">
+            <!-- Puedes reemplazar la etiqueta por otro elemento o dejarla vacía -->
+            <!-- <label for="login" invisible="1"/> -->
+          </xpath>
+          <xpath expr="//field[@name='mobile']" position="attributes">
+            <attribute name="attrs">{'invisible': 1}</attribute>
+            
+          </xpath>
+          <xpath expr="//field[@name='login']" position="attributes">
+            <attribute name="attrs">{'invisible': 1}</attribute>
+            
+          </xpath>
+          <xpath expr="//field[@name='company_id']" position="attributes">
+            <attribute name="attrs">{'invisible': 1}</attribute>
+            
+          </xpath>
+          <!-- 
+          <xpath expr="//field[@name='name']" position="replace">
+              Reemplaza el campo de texto con un elemento vacío
+              <field id="name" name="name" invisible="1"/>
+          </xpath> -->
+
+        </field>
+    </record>
+    
+
+</odoo>

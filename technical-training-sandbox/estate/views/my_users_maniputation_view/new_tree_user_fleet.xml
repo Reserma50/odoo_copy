@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- main view for fleet-->
+    <record id="fleet_vehicle_employes_view_list" model="ir.ui.view">
+        <field name="name">fleet.vehicle.employes.log.view.tree.inherit.res.user</field>
+        <field name="model">res.users</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="base.view_users_tree" />
+        <field name="arch" type="xml">
+              <xpath expr="//tree" position="attributes">
+                <!-- Add the decoration attributes to the existing tree -->
+                <attribute name="decoration-success">estado_licencia == 'Ok'</attribute>
+                <attribute name="decoration-warning">estado_licencia == 'Warning'</attribute>
+                <attribute name="decoration-danger">estado_licencia == 'Expired'</attribute>
+                <attribute name="editable"></attribute>
+            </xpath>
+            <field name="lang" position="attributes">
+              <attribute name="optional">hide</attribute>
+            </field>
+            <field name="company_id" position="attributes">
+              <attribute name="optional">hide</attribute>
+            </field>
+            <field name="state" position="attributes">
+              <attribute name="optional">hide</attribute>
+            </field>
+            <field name="login" position="after">  
+              <field name="licence_renovation_date" optional="show"/>
+              <field name="estado_licencia" optional="show"/>
+            </field>
+          
+        </field>
+    </record>
+</odoo>
