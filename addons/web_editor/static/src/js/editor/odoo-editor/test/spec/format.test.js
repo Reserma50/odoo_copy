@@ -158,6 +158,13 @@ describe('Format', () => {
                 </p>`),
             });
         });
+        it('should not format non-editable text (bold)', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>[a</p><p contenteditable="false">b</p><p>c]</p>',
+                stepFunction: bold,
+                contentAfter: `<p>${strong('[a')}</p><p contenteditable="false">b</p><p>${strong('c]')}</p>`,
+            });
+        });
 
         describe('inside container or inline with class already bold', () => {
             it('should force the font-weight to normal with an inline with class', async () => {
@@ -293,6 +300,13 @@ describe('Format', () => {
                 contentAfter: `<p>${em(`ab[]cd`)}</p>`,
             });
         });
+        it('should not format non-editable text (italic)', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>[a</p><p contenteditable="false">b</p><p>c]</p>',
+                stepFunction: italic,
+                contentAfter: `<p>${em('[a')}</p><p contenteditable="false">b</p><p>${em('c]')}</p>`,
+            });
+        });
     });
     describe('underline', () => {
         it('should make a few characters underline', async () => {
@@ -372,6 +386,13 @@ describe('Format', () => {
                 stepFunction: underline,
                 contentAfterEdit: `<p>${u(`ab`)}${span(`[]\u200B`, 'first')}${u(`cd`)}</p>`,
                 contentAfter: `<p>${u(`ab[]cd`)}</p>`,
+            });
+        });
+        it('should not format non-editable text (underline)', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>[a</p><p contenteditable="false">b</p><p>c]</p>',
+                stepFunction: underline,
+                contentAfter: `<p>${u('[a')}</p><p contenteditable="false">b</p><p>${u('c]')}</p>`,
             });
         });
     });
@@ -537,6 +558,13 @@ describe('Format', () => {
                 // It is arguable which version is better than the other but in
                 // any case this is a trade-off because it matches the native
                 // behavior of contentEditable in that case.
+            });
+        });
+        it('should not format non-editable text (strikeThrough)', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>[a</p><p contenteditable="false">b</p><p>c]</p>',
+                stepFunction: strikeThrough,
+                contentAfter: `<p>${s('[a')}</p><p contenteditable="false">b</p><p>${s('c]')}</p>`,
             });
         });
     });
@@ -780,6 +808,17 @@ describe('Format', () => {
                 contentAfter: '<p>[abc]</p>',
             });
         });
+        it('should not format non-editable text (setFontSize)', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<p>a[b</p><p contenteditable="false">c</p><p>d]e</p>',
+                stepFunction: setFontSize('10px'),
+                contentAfter: unformat(`
+                    <p>a<span style="font-size: 10px;">[b</span></p>
+                    <p contenteditable="false">c</p>
+                    <p><span style="font-size: 10px;">d]</span>e</p>
+                `),
+            });
+        });
     });
 
     it('should add style to a span parent of an inline', async () => {
@@ -829,6 +868,22 @@ describe('Format', () => {
                 contentBefore: `<p>a[b]c</p>`,
                 stepFunction: switchDirection,
                 contentAfter: `<p dir="rtl">a[b]c</p>`,
+            });
+        });
+        it('should not switch direction of non-editable elements', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: `<p>[before</p><p contenteditable="false">noneditable</p><p>after]</p>`,
+                stepFunction: switchDirection,
+                contentAfter: `<p dir="rtl">[before</p><p contenteditable="false">noneditable</p><p dir="rtl">after]</p>`,
+            });
+        });
+    });
+    describe('removeFormat', () => {
+        it('should remove the background image when clear the format', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<div><p><font class="text-gradient" style="background-image: linear-gradient(135deg, rgb(255, 204, 51) 0%, rgb(226, 51, 255) 100%);">[ab]</font></p></div>',
+                stepFunction: editor => editor.execCommand('removeFormat'),
+                contentAfter: '<div><p><span style="">[ab]</span></p></div>',
             });
         });
     });
@@ -893,6 +948,13 @@ describe('setTagName', () => {
                 contentAfter: '<table><tbody><tr><td><p>[]a</p></td><td><p>b</p></td><td><p>c</p></td></tr></tbody></table>',
             });
         });
+        it('should not set the tag of non-editable elements', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<h1>[before</h1><h1 contenteditable="false">noneditable</h1><h1>after]</h1>',
+                stepFunction: editor => editor.execCommand('setTag', 'p'),
+                contentAfter: '<p>[before</p><h1 contenteditable="false">noneditable</h1><p>after]</p>',
+            });
+        });
     });
     describe('to heading 1', () => {
         it('should turn a paragraph into a heading 1', async () => {
@@ -928,13 +990,6 @@ describe('setTagName', () => {
                 contentBefore: '<div>[ab]</div>',
                 stepFunction: editor => editor.execCommand('setTag', 'h1'),
                 contentAfter: '<div><h1>[ab]</h1></div>',
-            });
-        });
-        it('should remove the background image while turning a p>font into a heading 1>span', async () => {
-            await testEditor(BasicEditor, {
-                contentBefore: '<div><p><font class="text-gradient" style="background-image: linear-gradient(135deg, rgb(255, 204, 51) 0%, rgb(226, 51, 255) 100%);">[ab]</font></p></div>',
-                stepFunction: editor => editor.execCommand('setTag', 'h1'),
-                contentAfter: '<div><h1><span style="">[ab]</span></h1></div>',
             });
         });
         it('should turn three table cells with paragraph to table cells with heading 1', async () => {

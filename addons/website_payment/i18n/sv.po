@@ -70,7 +70,7 @@ msgstr "<b>Betalningsmetod:</b>"
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.payment_checkout
 msgid "<option value=\"\">Country...</option>"
-msgstr ""
+msgstr "<option value=\"\">Land...</option>"
 
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.donation_pay
@@ -214,7 +214,7 @@ msgstr ""
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.s_donation_options
 msgid "Descriptions"
-msgstr ""
+msgstr "Beskrivningar"
 
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.s_donation_options
@@ -232,12 +232,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_payment.payment_checkout
 #: model_terms:ir.ui.view,arch_db:website_payment.snippets
 msgid "Donation"
-msgstr ""
+msgstr "Donationer"
 
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.snippets
 msgid "Donation Button"
-msgstr ""
+msgstr "Donationsknapp"
 
 #. module: website_payment
 #. odoo-python
@@ -301,7 +301,7 @@ msgstr ""
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.s_donation_options
 msgid "Input"
-msgstr ""
+msgstr "Inmatning"
 
 #. module: website_payment
 #: model:ir.model.fields,field_description:website_payment.field_account_payment__is_donation
@@ -433,7 +433,7 @@ msgstr ""
 #. module: website_payment
 #: model_terms:ir.ui.view,arch_db:website_payment.s_donation_options
 msgid "Recipient Email"
-msgstr ""
+msgstr "Mottagarens E-post"
 
 #. module: website_payment
 #. odoo-javascript

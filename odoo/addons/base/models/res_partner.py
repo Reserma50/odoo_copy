@@ -322,8 +322,13 @@ class Partner(models.Model):
     def _compute_avatar(self, avatar_field, image_field):
         partners_with_internal_user = self.filtered(lambda partner: partner.user_ids - partner.user_ids.filtered('share'))
         super(Partner, partners_with_internal_user)._compute_avatar(avatar_field, image_field)
-        for partner in self - partners_with_internal_user:
-            partner[avatar_field] = partner[image_field] or base64.b64encode(partner._avatar_get_placeholder())
+        partners_without_image = (self - partners_with_internal_user).filtered(lambda p: not p[image_field])
+        for _, group in tools.groupby(partners_without_image, key=lambda p: p._avatar_get_placeholder_path()):
+            group_partners = self.env['res.partner'].concat(*group)
+            group_partners[avatar_field] = base64.b64encode(group_partners[0]._avatar_get_placeholder())
+
+        for partner in self - partners_with_internal_user - partners_without_image:
+            partner[avatar_field] = partner[image_field]
 
     def _avatar_get_placeholder_path(self):
         if self.is_company:
@@ -761,7 +766,7 @@ class Partner(models.Model):
                     if v:
                         to_write[f] = v.id if isinstance(v, models.BaseModel) else v
             if to_write:
-                self.browse(children).write(to_write)
+                self.sudo().browse(children).write(to_write)
 
         # do the second half of _fields_sync the "normal" way
         for partner, vals in zip(partners, vals_list):

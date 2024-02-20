@@ -427,7 +427,13 @@ class AccountBankStatementLine(models.Model):
     # -------------------------------------------------------------------------
 
     def _find_or_create_bank_account(self):
-        bank_account = self.env['res.partner.bank'].search([
+        self.ensure_one()
+        # There is a sql constraint on res.partner.bank ensuring an unique pair <partner, account number>.
+        # Since it's not dependent of the company, we need to search on others company too to avoid the creation
+        # of an extra res.partner.bank raising an error coming from this constraint.
+        # However, at the end, we need to filter out the results to not trigger the check_company when trying to
+        # assign a res.partner.bank owned by another company.
+        bank_account = self.env['res.partner.bank'].sudo().with_context(active_test=False).search([
             ('acc_number', '=', self.account_number),
             ('partner_id', '=', self.partner_id.id),
         ])
@@ -437,7 +443,7 @@ class AccountBankStatementLine(models.Model):
                 'partner_id': self.partner_id.id,
                 'journal_id': None,
             })
-        return bank_account
+        return bank_account.filtered(lambda x: x.company_id in (False, self.company_id))
 
     def _get_amounts_with_currencies(self):
         """
@@ -693,6 +699,9 @@ class AccountBankStatementLine(models.Model):
                 suspense_lines += line
             else:
                 other_lines += line
+        if not liquidity_lines:
+            liquidity_lines = self.move_id.line_ids.filtered(lambda l: l.account_id.account_type == 'asset_cash')
+            other_lines -= liquidity_lines
         return liquidity_lines, suspense_lines, other_lines
 
     # SYNCHRONIZATION account.bank.statement.line <-> account.move
@@ -740,8 +749,12 @@ class AccountBankStatementLine(models.Model):
                         'amount': liquidity_lines.balance,
                     })
 
-                if len(suspense_lines) == 1:
-
+                if len(suspense_lines) > 1:
+                    raise UserError(_(
+                        "%s reached an invalid state regarding its related statement line.\n"
+                        "To be consistent, the journal entry must always have exactly one suspense line.", st_line.move_id.display_name
+                    ))
+                elif len(suspense_lines) == 1:
                     if journal_currency and suspense_lines.currency_id == journal_currency:
 
                         # The suspense line is expressed in the journal's currency meaning the foreign currency

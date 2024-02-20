@@ -199,6 +199,8 @@ def html_normalize(src, filter_callback=None):
     src = doctype.sub(u"", src)
 
     try:
+        src = src.replace('--!>', '-->')
+        src = re.sub(r'(<!-->|<!--->)', '<!-- -->', src)
         doc = html.fromstring(src)
     except etree.ParserError as e:
         # HTML comment only string, whitespace only..
@@ -391,6 +393,7 @@ def html2plaintext(html, body_id=None, encoding='utf-8'):
     html = html.replace('&gt;', '>')
     html = html.replace('&lt;', '<')
     html = html.replace('&amp;', '&')
+    html = html.replace('&nbsp;', u'\N{NO-BREAK SPACE}')
 
     # strip all lines
     html = '\n'.join([x.strip() for x in html.splitlines()])

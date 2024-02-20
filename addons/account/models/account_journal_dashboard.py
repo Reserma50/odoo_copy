@@ -184,6 +184,7 @@ class account_journal(models.Model):
                 for i in range(30, 0, -5):
                     current_date = today + timedelta(days=-i)
                     data.append(build_graph_data(current_date, random.randint(-5, 15), currency))
+                    graph_key = _('Sample data')
             else:
                 last_balance = journal.current_statement_balance
                 data.append(build_graph_data(today, last_balance, currency))
@@ -193,7 +194,7 @@ class account_journal(models.Model):
                 #(graph is drawn backward)
                 for val in journal_result:
                     date = val['date']
-                    if date != today.strftime(DF):  # make sure the last point in the graph is today
+                    if date.strftime(DF) != today.strftime(DF):  # make sure the last point in the graph is today
                         data[:0] = [build_graph_data(date, amount, currency)]
                     amount -= val['amount']
 
@@ -403,7 +404,7 @@ class account_journal(models.Model):
         field_list = [
             "account_move.journal_id",
             "(CASE WHEN account_move.move_type IN ('out_refund', 'in_refund') THEN -1 ELSE 1 END) * account_move.amount_residual AS amount_total",
-            "account_move.amount_residual_signed AS amount_total_company",
+            "(CASE WHEN account_move.move_type IN ('in_invoice', 'in_refund', 'in_receipt') THEN -1 ELSE 1 END) * account_move.amount_residual_signed AS amount_total_company",
             "account_move.currency_id AS currency",
             "account_move.move_type",
             "account_move.invoice_date",
@@ -676,19 +677,20 @@ class account_journal(models.Model):
         action['context'] = context
         action['context'].update({
             'default_journal_id': self.id,
-            'search_default_journal_id': self.id,
         })
-
         domain_type_field = action['res_model'] == 'account.move.line' and 'move_id.move_type' or 'move_type' # The model can be either account.move or account.move.line
 
         # Override the domain only if the action was not explicitly specified in order to keep the
         # original action domain.
+        if action.get('domain') and isinstance(action['domain'], str):
+            action['domain'] = ast.literal_eval(action['domain'] or '[]')
         if not self._context.get('action_name'):
             if self.type == 'sale':
                 action['domain'] = [(domain_type_field, 'in', ('out_invoice', 'out_refund', 'out_receipt'))]
             elif self.type == 'purchase':
                 action['domain'] = [(domain_type_field, 'in', ('in_invoice', 'in_refund', 'in_receipt', 'entry'))]
 
+        action['domain'] = (action['domain'] or []) + [('journal_id', '=', self.id)]
         return action
 
     def open_spend_money(self):

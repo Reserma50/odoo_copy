@@ -106,7 +106,7 @@
     const HEADER_BORDER_COLOR = "#C0C0C0";
     const CELL_BORDER_COLOR = "#E2E3E3";
     const BACKGROUND_CHART_COLOR = "#FFFFFF";
-    const MENU_ITEM_DISABLED_COLOR = "#CACACA";
+    const DISABLED_TEXT_COLOR = "#CACACA";
     const DEFAULT_COLOR_SCALE_MIDPOINT_COLOR = 0xb6d7a8;
     const LINK_COLOR = "#01666b";
     const FILTERS_COLOR = "#188038";
@@ -720,12 +720,20 @@
             2 * PADDING_AUTORESIZE_VERTICAL);
     }
     function computeTextWidth(context, text, style) {
-        context.save();
-        context.font = computeTextFont(style);
-        const textWidth = context.measureText(text).width;
-        context.restore();
-        return textWidth;
+        const font = computeTextFont(style);
+        if (!textWidthCache[font]) {
+            textWidthCache[font] = {};
+        }
+        if (textWidthCache[font][text] === undefined) {
+            context.save();
+            context.font = font;
+            const textWidth = context.measureText(text).width;
+            context.restore();
+            textWidthCache[font][text] = textWidth;
+        }
+        return textWidthCache[font][text];
     }
+    const textWidthCache = {};
     function computeTextFont(style) {
         const italic = style.italic ? "italic " : "";
         const weight = style.bold ? "bold" : DEFAULT_FONT_WEIGHT;
@@ -1614,27 +1622,36 @@
         }
         return numberString.slice(0, i + 1) || undefined;
     }
+    const leadingZeroesRegexp = /^0+/;
     /**
      * Limit the size of the decimal part of a number to the given number of digits.
      */
     function limitDecimalDigits(decimalDigits, maxDecimals) {
+        var _a;
         let integerDigits = "0";
         let resultDecimalDigits = decimalDigits;
         // Note : we'd want to simply use number.toFixed() to handle the max digits & rounding,
         // but it has very strange behaviour. Ex: 12.345.toFixed(2) => "12.35", but 1.345.toFixed(2) => "1.34"
         let slicedDecimalDigits = decimalDigits.slice(0, maxDecimals);
         const i = maxDecimals;
-        if (Number(Number(decimalDigits[i]) < 5)) {
+        if (Number(decimalDigits[i]) < 5) {
             return { integerDigits, decimalDigits: slicedDecimalDigits };
         }
         // round up
+        const leadingZeroes = ((_a = slicedDecimalDigits.match(leadingZeroesRegexp)) === null || _a === void 0 ? void 0 : _a[0]) || "";
         const slicedRoundedUp = (Number(slicedDecimalDigits) + 1).toString();
-        if (slicedRoundedUp.length > slicedDecimalDigits.length) {
-            integerDigits = (Number(integerDigits) + 1).toString();
+        const withoutLeadingZeroes = slicedDecimalDigits.slice(leadingZeroes.length);
+        // e.g. carry over from 99 to 100
+        const carryOver = slicedRoundedUp.length > withoutLeadingZeroes.length;
+        if (carryOver && !leadingZeroes) {
+            integerDigits = "1";
             resultDecimalDigits = undefined;
         }
+        else if (carryOver) {
+            resultDecimalDigits = leadingZeroes.slice(0, -1) + slicedRoundedUp;
+        }
         else {
-            resultDecimalDigits = slicedRoundedUp;
+            resultDecimalDigits = leadingZeroes + slicedRoundedUp;
         }
         return { integerDigits, decimalDigits: resultDecimalDigits };
     }
@@ -3087,7 +3104,6 @@
         "SET_VIEWPORT_OFFSET",
         "SELECT_SEARCH_NEXT_MATCH",
         "SELECT_SEARCH_PREVIOUS_MATCH",
-        "REFRESH_SEARCH",
         "UPDATE_SEARCH",
         "CLEAR_SEARCH",
         "EVALUATE_CELLS",
@@ -4014,7 +4030,7 @@
         }
       }
       &.disabled {
-        color: ${MENU_ITEM_DISABLED_COLOR};
+        color: ${DISABLED_TEXT_COLOR};
         cursor: not-allowed;
       }
     }
@@ -8360,6 +8376,7 @@
     .o-color-picker-toggler {
       display: flex;
       .o-color-picker-toggler-sign {
+        display: flex;
         margin: auto auto;
         width: 55%;
         height: 55%;
@@ -9967,11 +9984,16 @@
         }
         setup() {
             this.showFormulaState = this.env.model.getters.shouldShowFormulas();
+            this.debouncedUpdateSearch = debounce(this.updateSearch.bind(this), 200);
             owl.onMounted(() => this.focusInput());
             owl.onWillUnmount(() => {
                 this.env.model.dispatch("CLEAR_SEARCH");
                 this.env.model.dispatch("SET_FORMULA_VISIBILITY", { show: this.showFormulaState });
             });
+            owl.useEffect(() => {
+                this.state.searchOptions.searchFormulas = this.env.model.getters.shouldShowFormulas();
+                this.searchFormulas();
+            }, () => [this.env.model.getters.shouldShowFormulas()]);
         }
         onInput(ev) {
             this.state.toSearch = ev.target.value;
@@ -9988,10 +10010,6 @@
                 ev.preventDefault();
                 this.replace();
             }
-        }
-        onFocusSidePanel() {
-            this.state.searchOptions.searchFormulas = this.env.model.getters.shouldShowFormulas();
-            this.env.model.dispatch("REFRESH_SEARCH");
         }
         searchFormulas() {
             this.env.model.dispatch("SET_FORMULA_VISIBILITY", {
@@ -10010,10 +10028,6 @@
                 toSearch: this.state.toSearch,
                 searchOptions: this.state.searchOptions,
             });
-        }
-        debouncedUpdateSearch() {
-            clearTimeout(this.inDebounce);
-            this.inDebounce = setTimeout(() => this.updateSearch.call(this), 400);
         }
         replace() {
             this.env.model.dispatch("REPLACE_SEARCH", {
@@ -20232,6 +20246,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     this.autocompleteAPI.moveDown();
                 }
             }
+            this.updateCursorIfNeeded();
         }
         processTabKey(ev) {
             ev.preventDefault();
@@ -20288,9 +20303,12 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             }
             else {
                 ev.stopPropagation();
+                this.updateCursorIfNeeded();
             }
-            const { start, end } = this.contentHelper.getCurrentSelection();
+        }
+        updateCursorIfNeeded() {
             if (!this.env.model.getters.isSelectingForComposer()) {
+                const { start, end } = this.contentHelper.getCurrentSelection();
                 this.env.model.dispatch("CHANGE_COMPOSER_CURSOR_SELECTION", { start, end });
                 this.isKeyStillDown = true;
             }
@@ -21137,6 +21155,14 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 }
                 if (dirY < 0) {
                     this.dnd.y = dndInitialY - deltaY;
+                }
+                if (this.dnd.x < 0) {
+                    this.dnd.width += this.dnd.x;
+                    this.dnd.x = 0;
+                }
+                if (this.dnd.y < 0) {
+                    this.dnd.height += this.dnd.y;
+                    this.dnd.y = 0;
                 }
             };
             const onMouseUp = (ev) => {
@@ -28630,7 +28656,14 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     this.history.update("tables", filterTables);
                     break;
                 case "DUPLICATE_SHEET":
-                    this.history.update("tables", cmd.sheetIdTo, deepCopy(this.tables[cmd.sheetId]));
+                    const tables = {};
+                    for (const filterTable of Object.values(this.tables[cmd.sheetId] || {})) {
+                        if (filterTable) {
+                            const newFilterTable = deepCopy(filterTable);
+                            tables[newFilterTable.id] = newFilterTable;
+                        }
+                    }
+                    this.history.update("tables", cmd.sheetIdTo, tables);
                     break;
                 case "ADD_COLUMNS_ROWS":
                     this.onAddColumnsRows(cmd);
@@ -28834,7 +28867,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             this.sizes = {};
         }
         handle(cmd) {
-            var _a, _b, _c;
+            var _a, _b;
             switch (cmd.type) {
                 case "CREATE_SHEET": {
                     const computedSizes = this.computeSheetSizes(cmd.sheetId);
@@ -28922,7 +28955,8 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     }
                     break;
                 case "UPDATE_CELL":
-                    if (!((_c = (_b = (_a = this.sizes[cmd.sheetId]) === null || _a === void 0 ? void 0 : _a["ROW"]) === null || _b === void 0 ? void 0 : _b[cmd.row]) === null || _c === void 0 ? void 0 : _c.manualSize)) {
+                    const row = (_b = (_a = this.sizes[cmd.sheetId]) === null || _a === void 0 ? void 0 : _a["ROW"]) === null || _b === void 0 ? void 0 : _b[cmd.row];
+                    if (row && !row.manualSize) {
                         const { sheetId, row } = cmd;
                         this.history.update("sizes", sheetId, "ROW", row, "computedSize", lazy(() => this.getRowTallestCellSize(sheetId, row)));
                     }
@@ -33038,6 +33072,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                     this.filterValues[cmd.sheetId] = {};
                     break;
                 case "HIDE_COLUMNS_ROWS":
+                case "UNHIDE_COLUMNS_ROWS":
                     this.updateHiddenRows();
                     break;
                 case "UPDATE_FILTER":
@@ -33179,14 +33214,19 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                         if (!filter)
                             continue;
                         const valuesInFilterZone = filter.filteredZone
-                            ? positions(filter.filteredZone)
-                                .map((pos) => { var _a; return (_a = this.getters.getCell(sheetData.id, pos.col, pos.row)) === null || _a === void 0 ? void 0 : _a.formattedValue; })
-                                .filter(isNonEmptyString)
+                            ? positions(filter.filteredZone).map((pos) => { var _a; return (_a = this.getters.getCell(sheetData.id, pos.col, pos.row)) === null || _a === void 0 ? void 0 : _a.formattedValue; })
                             : [];
-                        // In xlsx, filtered values = values that are displayed, not values that are hidden
-                        const xlsxFilteredValues = valuesInFilterZone.filter((val) => !filteredValues.includes(val));
-                        filters.push({ colId: i, filteredValues: [...new Set(xlsxFilteredValues)] });
-                        // In xlsx, filter header should ALWAYS be a string and should be unique
+                        if (filteredValues.length) {
+                            const xlsxDisplayedValues = valuesInFilterZone
+                                .filter(isNonEmptyString)
+                                .filter((val) => !filteredValues.includes(val));
+                            filters.push({
+                                colId: i,
+                                displayedValues: [...new Set(xlsxDisplayedValues)],
+                                displayBlanks: !filteredValues.includes("") && valuesInFilterZone.some((val) => !val),
+                            });
+                        }
+                        // In xlsx, filter header should ALWAYS be a string and should be unique in the table
                         const headerPosition = { col: filter.col, row: filter.zoneWithHeaders.top };
                         const headerString = (_a = this.getters.getCell(sheetData.id, headerPosition.col, headerPosition.row)) === null || _a === void 0 ? void 0 : _a.formattedValue;
                         const headerName = this.getUniqueColNameForExcel(i, headerString, headerNames);
@@ -33257,6 +33297,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 searchFormulas: false,
             };
             this.toSearch = "";
+            this.isSearchDirty = false;
         }
         // ---------------------------------------------------------------------------
         // Command Handling
@@ -33281,16 +33322,27 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                 case "REPLACE_ALL_SEARCH":
                     this.replaceAll(cmd.replaceWith);
                     break;
+                case "EVALUATE_CELLS":
+                case "UPDATE_CELL":
+                case "REMOVE_FILTER_TABLE":
+                case "UPDATE_FILTER":
+                    this.isSearchDirty = true;
+                    break;
                 case "UNDO":
                 case "REDO":
                 case "REMOVE_COLUMNS_ROWS":
+                case "HIDE_COLUMNS_ROWS":
+                case "UNHIDE_COLUMNS_ROWS":
                 case "ADD_COLUMNS_ROWS":
-                    this.clearSearch();
-                    break;
                 case "ACTIVATE_SHEET":
-                case "REFRESH_SEARCH":
                     this.refreshSearch();
                     break;
+            }
+        }
+        finalize() {
+            if (this.isSearchDirty) {
+                this.refreshSearch();
+                this.isSearchDirty = false;
             }
         }
         // ---------------------------------------------------------------------------
@@ -33342,11 +33394,17 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
          * Find matches using the current regex
          */
         findMatches() {
-            const activeSheetId = this.getters.getActiveSheetId();
-            const cells = this.getters.getCells(activeSheetId);
+            const sheetId = this.getters.getActiveSheetId();
+            const cells = this.getters.getCells(sheetId);
             const matches = [];
             if (this.toSearch) {
                 for (const cell of Object.values(cells)) {
+                    const { col, row } = this.getters.getCellPosition(cell.id);
+                    const isColHidden = this.getters.isColHidden(sheetId, col);
+                    const isRowHidden = this.getters.isRowHidden(sheetId, row);
+                    if (isColHidden || isRowHidden) {
+                        continue;
+                    }
                     if (cell &&
                         this.currentSearchRegex &&
                         this.currentSearchRegex.test(this.searchOptions.searchFormulas
@@ -35129,15 +35187,15 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
      * This plugin handles this internal state.
      */
     class SelectionInputsManagerPlugin extends UIPlugin {
+        get currentInput() {
+            return this.focusedInputId ? this.inputs[this.focusedInputId] : null;
+        }
         constructor(getters, state, dispatch, config, selection) {
             super(getters, state, dispatch, config, selection);
             this.state = state;
             this.config = config;
             this.inputs = {};
             this.focusedInputId = null;
-        }
-        get currentInput() {
-            return this.focusedInputId ? this.inputs[this.focusedInputId] : null;
         }
         // ---------------------------------------------------------------------------
         // Command Handling
@@ -37234,6 +37292,7 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
             const sortedIndexOfSortTypeCells = sortCells(sortingCells, sortDirection, Boolean(options.emptyCellAsZero));
             const sortedIndex = sortedIndexOfSortTypeCells.map((x) => x.index);
             const [width, height] = [cells.length, cells[0].length];
+            const cellUpdates = [];
             for (let c = 0; c < width; c++) {
                 for (let r = 0; r < height; r++) {
                     let cell = cells[c][sortedIndex[r]];
@@ -37244,7 +37303,6 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                         col: newCol,
                         row: newRow,
                         content: "",
-                        value: "",
                     };
                     if (cell) {
                         let content = cell.content;
@@ -37258,11 +37316,11 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
                         newCellValues.style = cell.style;
                         newCellValues.content = content;
                         newCellValues.format = cell.format;
-                        newCellValues.value = cell.evaluated.value;
                     }
-                    this.dispatch("UPDATE_CELL", newCellValues);
+                    cellUpdates.push(newCellValues);
                 }
             }
+            cellUpdates.forEach((cmdPayload) => this.dispatch("UPDATE_CELL", cmdPayload));
         }
         /**
          * Return the distances between main merge cells in the zone.
@@ -38024,6 +38082,11 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     .o-sidePanelButton:enabled {
       cursor: pointer;
     }
+
+    .o-sidePanelButton:disabled {
+      color: ${DISABLED_TEXT_COLOR};
+    }
+
     .o-sidePanelButton:last-child {
       margin-right: 0px;
     }
@@ -41877,15 +41940,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
   `;
     }
     function addFilterColumns(table) {
-        const tableZone = toZone(table.range);
         const columns = [];
-        for (const i of range(0, zoneToDimension(tableZone).width)) {
-            const filter = table.filters[i];
-            if (!filter || !filter.filteredValues.length) {
-                continue;
-            }
+        for (const filter of table.filters) {
             const colXml = escapeXml /*xml*/ `
-      <filterColumn ${formatAttributes([["colId", i]])}>
+      <filterColumn ${formatAttributes([["colId", filter.colId]])}>
         ${addFilter(filter)}
       </filterColumn>
       `;
@@ -41894,9 +41952,10 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
         return columns;
     }
     function addFilter(filter) {
-        const filterValues = filter.filteredValues.map((val) => escapeXml /*xml*/ `<filter ${formatAttributes([["val", val]])}/>`);
+        const filterValues = filter.displayedValues.map((val) => escapeXml /*xml*/ `<filter ${formatAttributes([["val", val]])}/>`);
+        const filterAttributes = filter.displayBlanks ? [["blank", 1]] : [];
         return escapeXml /*xml*/ `
-  <filters>
+  <filters ${formatAttributes(filterAttributes)}>
       ${joinXmlNodes(filterValues)}
   </filters>
 `;
@@ -42801,9 +42860,9 @@ day_count_convention (number, default=${DEFAULT_DAY_COUNT_CONVENTION} ) ${_lt("A
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '16.0.11';
-    __info__.date = '2023-05-25T13:09:25.316Z';
-    __info__.hash = 'd27e998';
+    __info__.version = '16.0.16';
+    __info__.date = '2023-08-09T11:56:18.091Z';
+    __info__.hash = 'd5d9d12';
 
 
 })(this.o_spreadsheet = this.o_spreadsheet || {}, owl);

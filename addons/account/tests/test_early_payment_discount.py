@@ -701,3 +701,90 @@ class TestAccountEarlyPaymentDiscount(AccountTestInvoicingCommon):
         self.assertEqual(len(inv.line_ids), 3) # 1 prod, 1 tax, 1 payment terms
         inv.write({'invoice_payment_term_id': self.early_pay_10_percents_10_days.id})
         self.assertEqual(len(inv.line_ids), 6)
+
+    def test_mixed_epd_with_tax_deleted_line(self):
+        self.env.company.early_pay_discount_computation = 'mixed'
+        tax_a = self.env['account.tax'].create({
+             'name': 'Test A',
+             'amount': 10,
+        })
+        tax_b = self.env['account.tax'].create({
+             'name': 'Test B',
+             'amount': 15,
+        })
+
+        inv = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_a.id,
+            'invoice_date': '2019-01-01',
+            'date': '2019-01-01',
+            'invoice_line_ids': [
+                Command.create({'name': 'line', 'price_unit': 100.0, 'tax_ids': [Command.set(tax_a.ids)]}),
+                Command.create({'name': 'line2', 'price_unit': 100.0, 'tax_ids': [Command.set(tax_b.ids)]}),
+            ],
+            'invoice_payment_term_id': self.early_pay_10_percents_10_days.id,
+        })
+        self.assertEqual(len(inv.line_ids), 10) # 2 prod, 2 tax, 3 epd, 2 epd tax discount, 1 payment terms
+        inv.invoice_line_ids[1].unlink()
+        self.assertEqual(len(inv.line_ids), 6) # 1 prod, 1 tax, 2 epd, 1 epd tax discount, 1 payment terms
+        self.assertEqual(inv.amount_tax, 9.00) # $100.0 @ 10% tax (-10% epd)
+
+    def test_mixed_epd_with_rounding_issue(self):
+        """
+        Ensure epd line will not unbalance the invoice
+        """
+        self.env.company.early_pay_discount_computation = 'mixed'
+        tax_6 = self.env['account.tax'].create({
+             'name': '6%',
+             'amount': 6,
+        })
+        tax_12 = self.env['account.tax'].create({
+             'name': '12%',
+             'amount': 12,
+        })
+        tax_136 = self.env['account.tax'].create({
+             'name': '136',
+             'amount': 0.136,
+             'amount_type': 'fixed',
+             'include_base_amount': True,
+        })
+        tax_176 = self.env['account.tax'].create({
+             'name': '176',
+             'amount': 0.176,
+             'amount_type': 'fixed',
+             'include_base_amount': True,
+        })
+
+        early_pay_1_percents_7_days = self.env['account.payment.term'].create({
+            'name': '1% discount if paid within 7 days',
+            'company_id': self.company_data['company'].id,
+            'line_ids': [Command.create({
+                'value': 'balance',
+                'days': 0,
+                'discount_percentage': 1,
+                'discount_days': 7,
+            })]
+        })
+
+        # The following vals will create a rounding issue
+        line_create_vals = [
+           (116, 6, tax_6),
+           (0.91, 350, tax_6),
+           (194.21, 1, tax_136 | tax_12),
+           (31.46, 5, tax_176 | tax_12)
+        ]
+
+        # If invoice is not balanced the following create will fail
+        self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_a.id,
+            'invoice_date': '2022-02-21',
+            'invoice_payment_term_id': early_pay_1_percents_7_days.id,
+            'invoice_line_ids': [
+                Command.create({
+                    'price_unit': price_unit,
+                    'quantity': quantity,
+                    'tax_ids': [Command.set(taxes.ids)]
+                }) for price_unit, quantity, taxes in line_create_vals
+            ]
+        })

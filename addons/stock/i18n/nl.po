@@ -4031,7 +4031,7 @@ msgstr "Is de hoeveelheid gereed te bewerken"
 #: code:addons/stock/models/stock_move_line.py:0
 #, python-format
 msgid ""
-"It is not allow to import reserved quantity, you have to use the quantity "
+"It is not allowed to import reserved quantity, you have to use the quantity "
 "directly."
 msgstr ""
 "Het is niet mogelijk een gereserveerde hoeveelheid te importeren, je moet "
@@ -5221,7 +5221,7 @@ msgstr "Aantal inkomende voorraadverplaatsingen in de afgelopen 12 maanden"
 #: model:ir.model.fields,help:stock.field_stock_lot__message_needaction_counter
 #: model:ir.model.fields,help:stock.field_stock_picking__message_needaction_counter
 #: model:ir.model.fields,help:stock.field_stock_scrap__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr "Aantal berichten die actie vereisen"
 
 #. module: stock
