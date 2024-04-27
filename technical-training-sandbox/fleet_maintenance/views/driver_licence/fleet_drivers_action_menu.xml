@@ -17,7 +17,7 @@
         </field>
     </record>
 
-    <menuitem name="Licences" action="fleet_vehicle_driver_licence_log_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_driver_licence_log_menu" sequence="6"/>
+    <menuitem name="Licencias" action="fleet_vehicle_driver_licence_log_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_driver_licence_log_menu" sequence="6"/>
 
     
 

@@ -11,4 +11,15 @@
         <field name="binding_model_id" ref="model_fleet_vehicle"/>
         <field name="binding_type">report</field>
     </record>
+    <record id="action_report_images_2_0" model="ir.actions.report">
+        <field name="name">Reporte de asignación</field>
+        <field name="model">fleet.vehicle.assignation.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">fleet_maintenance.report_car_images_asignation</field>
+        <field name="report_file">fleet_maintenance.report_car_images_asignation</field>
+        <field name="print_report_name">'Report_images_asignation'</field>
+        <!-- <field name="paperformat_id" ref="event.paperformat_euro_lowmargin"/> -->
+        <field name="binding_model_id" ref="model_fleet_vehicle_assignation_log"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

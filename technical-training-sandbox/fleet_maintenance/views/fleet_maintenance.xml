@@ -183,7 +183,7 @@
         </field>
     </record>
 
-    <menuitem name="Maintenances" action="fleet_vehicle_log_maintenance_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_maintenance_menu" sequence="5"/>
+    <menuitem name="Mantenimientos" action="fleet_vehicle_log_maintenance_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_maintenance_menu" sequence="5"/>
 
     
 

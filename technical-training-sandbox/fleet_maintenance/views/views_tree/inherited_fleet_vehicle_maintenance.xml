@@ -7,10 +7,15 @@
             <field name="model">fleet.vehicle</field>
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='description']" position="replace">
-                        <field name="log_maintenance" options="{'no_create': True}"/>
+                <!-- <xpath expr="//field[@name='description']" position="replace">
+                        
+                </xpath> -->
+                <xpath expr="//page[3]" position="before">
+                    <page string="Mantenimiento">
+                        <field name="log_maintenance" options="{'no_create': True}" class="mt-3"/>
                         <field name="maintenance_count" invisible="1"/>
                         <button name="action_set_maintenance" type="object" string="Calcular Próximos mantenimientos" attrs="{'invisible': [('maintenance_count', '!=', 0)]}"/>
+                    </page>
                 </xpath>
             </field>
         </record>

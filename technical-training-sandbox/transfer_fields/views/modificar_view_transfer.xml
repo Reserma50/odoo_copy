@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">inherited.model.form.inherit.test.transfer</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <!-- find field description and add the field
+                    new_field after it -->
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="new_field"/>
+                </xpath>
+                <!-- presentar la fecha efectiva -->
+                <!--<xpath expr="//field[@name='date_done']" position="attributes">-->
+                    <!-- <attribute name="attrs">{"invisible": [["state","==","done"]]}</attribute> -->
+                    <!--<attribute name="invisible">1</attribute>
+                    <attribute name="required">1</attribute>
+                    <attribute name="readonly">1</attribute> 
+                  </xpath>-->
+                  <xpath expr="//field[@name='date_done']" position="replace">
+                    <field name="date_done" string="Effective Date" attrs="{'invisible': ['|', ('state', '=', 'draft'), ('state', '=', 'waiting')], 'readonly': [('state', '=', 'done')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

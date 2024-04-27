@@ -163,7 +163,7 @@ class InheritedFleetVehicleOdometer(models.Model):
 
         
         order = "create_date DESC"
-        aviso_km = 10
+        aviso_km = 50
         #Extract services types
         all_types = self.env['fleet.service.type'].search([('category', '=', 'service')])
         for my_type in all_types:
@@ -268,19 +268,24 @@ class InheritedFleetVehicleOdometer(models.Model):
         vehicle_name = self.vehicle_id.name
         odometer_value = self.value
         service_name = service_type.name
+        my_vehicle=self.env["fleet.vehicle"].search([('id', '=', self.vehicle_id.id)])
 
         if created:
-            subject = _("New Service Maintenance for %s" % vehicle_name)
-            body = _("Una nueva lectura de %s fue registrada para el vechiculo %s, for instance we need to execute the maintenance %s" % (odometer_value, vehicle_name, service_name))
+            subject = _("Nuevo servicio de mantenimiento para %s" % vehicle_name)
+            body = _("Una nueva lectura de %s fue registrada para el vechiculo %s, por lo tanto se requiere ejecutar el servicio de %s" % (odometer_value, vehicle_name, service_name))
             
         if updated:
-            subject = _("Remind to execute Service Maintenance for %s" % vehicle_name)
+            subject = _("Recordatorio para ejecutar servicio de mantenimiento del %s" % vehicle_name)
             body = _("Una nueva lectura de %s fue registrada para el vechiculo %s, for instance we need to execute the last maintenance %s" % (odometer_value, vehicle_name, service_name))
-            
+        if my_vehicle.manager_id:
+            email_to_user = my_vehicle.manager_id.email
+        else:
+            email_to_user = 'joseph.19211@reserma.com'
+
         mail_values = {
             'subject': subject,
             'body_html': body,
-            'email_to': 'programador@reserma.com' #replace with the actual mail    
+            'email_to': email_to_user #replace with the actual mail    
         }
         mail = self.env['mail.mail'].create(mail_values)
         mail.send()
@@ -294,7 +299,7 @@ class InheritedFleetVehicleOdometer(models.Model):
             my_vehicle.activity_schedule(
             'mail.mail_activity_data_todo',
             user_id=my_vehicle.manager_id.id or self.env.user.id,
-            note=_('Service maintenance %s to do, %s ') % (service_name ,my_vehicle.driver_id.name))
+            note=_('Servicio de mantenimiento %s por hacer, %s ') % (service_name ,my_vehicle.driver_id.name))
         # if updated:
         #     my_vehicle.activity_schedule(
         #     'mail.mail_activity_data_todo',
@@ -395,32 +400,14 @@ class InheritedFleetVehicle(models.Model):
     #log matriculation
     log_matriculation = fields.One2many('fleet.vehicle.log.matriculation', 'vehicle_id', 'Matriculas Logs') 
     matriculation_count = fields.Integer(compute="_compute_count_matriculation", string='Matriculation')
-    last_image_front = fields.Binary(compute='_get_last_front_image',inverse='_set_front_image', string='Frontal',
-        help='Front side image of the vehicle at the moment of this log')
-    last_image_back = fields.Binary(string='Posterior',
-        help='Back side  image of the vehicle at the moment of this log')
-    last_image_right_side = fields.Binary(string='Lado Derecho',
-        help='right (copilot) side image of the vehicle at the moment of this log')
-    last_image_lefth_side = fields.Binary(string='Lado Izquierdo',
-        help='lefth (pilot) side image of the vehicle at the moment of this log')
-    last_image_fuel_level = fields.Binary(string='Nivel de Combustible',
-        help='Fuel image level of the vehicle at the moment of this log')
-    
-    
-    #signature
-    signature = fields.Image('Signature', help='Signature', copy=False, attachment=True)
-    is_signed = fields.Boolean('Is Signed', compute="_compute_is_signed")
-    is_locked = fields.Boolean(default=True, help='When the chages is not done this allows changing the '
-                               'initial fields. When the changes is done this allows '
-                               'changing the done fields.')
     #renovación del registro del vehículo
     renovation_date = fields.Date(
-        'Matriculation Date', 
+        'Fecha de Emisión Matricula', 
         required=True,
         default = fields.date.today(),
-        help='Date when the vehicle has been renovated')
+        help='Fecha del renocación de la placa del vehículo')
     expiration_date = fields.Date(
-            'Placa Expiration Date', 
+            'Fecha de Vencimiento de Placa', 
             # default=lambda self:
             # self.compute_next_year_date(self.env.vehicle),
             default=lambda self:self.compute_next_year_date(fields.Date.context_today(self)),
@@ -433,48 +420,6 @@ class InheritedFleetVehicle(models.Model):
             oneyear = relativedelta(years=1)
             start_date = fields.Date.from_string(record.renovation_date)
             record.expiration_date = fields.Date.to_string(start_date + oneyear)      
-
-    @api.depends('signature')
-    def _compute_is_signed(self):
-        for vehicle in self:
-            vehicle.is_signed = vehicle.signature
-
-    def write(self, vals):
-        # print("My vals", vals)
-        res = super(InheritedFleetVehicle, self).write(vals)
-        if vals.get('signature'):
-            for vehicle in self:
-                vehicle._attach_sign()
-        #si cambia deberia actualizar el último proceso de matricula
-        #         if vals.get('renovation_date'):
-        # create matriculation
-        #     matriculate = self.env["fleet.vehicle.log.matriculation"].create(
-        #         {
-        #         "vehicle_id": res.id,
-        #         "renovation_date": res.renovation_date,
-        #         "expiration_date":res.expiration_date
-        #         "driver_id": record.driver_id.id, 
-        #         }
-        #     )
-
-        return res
-
-    def _attach_sign(self):
-        """ Render the changes report in pdf and attach it to the picking in `self`. """
-        self.ensure_one()
-        # report = self.env['ir.actions.report']._render_qweb_pdf("stock.action_report_delivery", self.id) #modificando el reporte
-        report = self.env['ir.actions.report']._render_qweb_pdf("fleet_maintenance.action_report_images", self.id) #modificando el reporte
-        
-        filename = "%s_signed_car_changes" % self.name
-        if self.driver_id:
-            message = _('Vehicle verification signed by %s') % (self.driver_id.name)
-        else:
-            message = _('vehicle verification')
-        self.message_post(
-            attachments=[('%s.pdf' % filename, report[0])],
-            body=message,
-        )
-        return True
 
     @api.model
     def create(self, vals):
@@ -589,7 +534,8 @@ class InheritedFleetVehicle(models.Model):
                 vehicle.matriculation_count = 0
 
     def _get_last_front_image(self):
-        FleetVehicalImage = self.env['fleet.vehicle.log.images']
+        # FleetVehicalImage = self.env['fleet.vehicle.log.images']
+        FleetVehicalImage = self.env['fleet.vehicle.assignation.log']
         for record in self:
             vehicle_image = FleetVehicalImage.search([('vehicle_id', '=', record.id)], limit=1, order='create_date desc')
             if vehicle_image:
@@ -605,20 +551,20 @@ class InheritedFleetVehicle(models.Model):
                 record.last_image_lefth_side = None
                 record.last_image_fuel_level = None
 
-    def _set_front_image(self):
-        for record in self:
-            if record.last_image_front:
-                date = fields.Date.context_today(record)
-                data = {
-                    'car_image_front': record.last_image_front,
-                    'car_image_back':record.last_image_back,
-                    'car_image_izq':record.last_image_right_side,
-                    'car_image_der':record.last_image_lefth_side,
-                    'car_image_fuel': record.last_image_fuel_level,
+    # def _set_front_image(self):
+    #     for record in self:
+    #         if record.last_image_front:
+    #             date = fields.Date.context_today(record)
+    #             data = {
+    #                 'car_image_front': record.last_image_front,
+    #                 'car_image_back':record.last_image_back,
+    #                 'car_image_izq':record.last_image_right_side,
+    #                 'car_image_der':record.last_image_lefth_side,
+    #                 'car_image_fuel': record.last_image_fuel_level,
 
-                    'date': date,
-                    'vehicle_id': record.id}
-                self.env['fleet.vehicle.log.images'].create(data)
+    #                 'date': date,
+    #                 'vehicle_id': record.id}
+    #             self.env['fleet.vehicle.log.images'].create(data)
 
 class InheritFleetLogImage(models.Model):
 

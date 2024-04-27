@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
             <field name="arch" type="xml">
                 
-                <xpath expr="//notebook[1]" position="before">
+                <!-- <xpath expr="//notebook[1]" position="before">
                     <group col="2" string="Combustible"   name="fuel">
                         <group>
                             <field name="last_image_fuel_level"/>
@@ -26,18 +26,16 @@
                             <field name="last_image_lefth_side"/>
                         </group>
                     </group>
-                </xpath>
+                </xpath> -->
 
-                <xpath expr="//button[@name='action_accept_driver_change']" position="after">
+                <!-- <xpath expr="//button[@name='action_accept_driver_change']" position="after">
                     <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
-                </xpath>
+                </xpath> -->
                 <!-- 
                 <xpath expr="//button[@name='action_open_employee']" position="after">
                     <widget name="signature" string="Firmar" highlight="1" full_name="driver_id"/>
                 </xpath> 
                 -->
-                
-
                 <xpath expr="//field[@name='location']" position="after">
                     <field name="renovation_date" />
                     <field name="expiration_date" />

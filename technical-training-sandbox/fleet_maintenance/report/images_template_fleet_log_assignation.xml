@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<template id="report_car_images_asignation">
+    <t t-foreach="docs" t-as="assignation">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page text-center" style="width:90%; hight:60%">
+                    <h2 class="">
+                        <span  t-if="assignation.vehicle_id.name" t-field="assignation.vehicle_id.name"/>
+                    </h2>
+                    <div class="row">
+                        <div class="col-6 justify-content-center">
+                            <img class="mx-auto d-block" t-if="assignation.image_front" t-att-src="image_data_uri(assignation.image_front)" style="width:90%" alt="vehicle front"/>
+                        </div>
+                        <div class="col-6 justify-content-center">
+                            <img class="mx-auto d-block" t-if="assignation.image_back" t-att-src="image_data_uri(assignation.image_back)" style="width:90%" alt="vehicle back"/>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 justify-content-center">
+                            <img class="mx-auto d-block" t-if="assignation.image_lefth_side" t-att-src="image_data_uri(assignation.image_lefth_side)" style="width:90%" alt="vehicle left side"/>
+                        </div>
+                        <div class="col-6 justify-content-center">
+                            <img class="mx-auto d-block" t-if="assignation.image_right_side" t-att-src="image_data_uri(assignation.image_right_side)" style="width:90%" alt="vehicle right side"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row justify-content-end">
+                        <div class="col-6">
+                            <img class="mx-auto d-block" t-if="assignation.image_fuel_level" t-att-src="image_data_uri(assignation.image_fuel_level)" style="width:90%" alt="vehicle fuel"/>
+                        </div>
+                        <div class="col-6">
+                            <div t-if="assignation.signature" class="mt32 ml64 mr4" name="signature">
+                                <div class="offset-4">
+                                    <strong>Signature</strong>
+                                </div>
+                                <div class="offset-4">
+                                    <img t-att-src="image_data_uri(assignation.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                                </div>
+                                <div class="offset-4 text-center">
+                                    <p t-field="assignation.driver_id.name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <img class="mx-auto d-block" t-if="assignation.image_front" t-att-src="image_data_uri(assignation.image_front)" style="width:50%" alt="TANQUE DE COMBUSTIBLE"/> -->
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+
+</template>
+</odoo>

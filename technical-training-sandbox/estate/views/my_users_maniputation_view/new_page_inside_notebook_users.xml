@@ -10,10 +10,18 @@
                     <div class="o_group ">
                         <field name="test"/>
                         <field name="property_ids"/>
+                        
+                    </div>
+                    <sheet>
+                        <h3>Datos de Flota </h3>
+                        <group>
+                            
                         <field string="Licencía (Frontal)" name="last_licence_front"/>
                         <field string="Licencía (Posterior)" name="last_licence_back"/>
                         <field string="Fecha de expiración de Licencia" name="licence_renovation_date"/>
-                    </div>
+                    
+                        </group>
+                    </sheet>
                   </page>
                 </xpath>
             </field>

@@ -86,6 +86,6 @@
           </p>
         </field>
     </record>
-    <menuitem name="Matriculation" action="fleet_vehicle_log_matriculation_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_matriculation_menu" sequence="6"/>
+    <menuitem name="Matricula" action="fleet_vehicle_log_matriculation_action" parent="fleet.fleet_vehicles" id="fleet_vehicle_log_matriculation_menu" sequence="6"/>
 
 </odoo>

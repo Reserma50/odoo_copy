@@ -345,3 +345,14 @@ new_compras #STABLE VERSION 9/18/2023
 NO ES LO MISMO que
 
 ,model
+
+
+admin
+admin
+
+
+# levantar la base de datos
+# crear usando scafold
+# ejecutar o activar el ambiente virtual
+
+./odoo-bin scaffold sale_fields technical-training-sandbox/

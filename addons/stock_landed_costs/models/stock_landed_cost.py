@@ -116,6 +116,10 @@ class StockLandedCost(models.Model):
         for cost in self:
             cost = cost.with_company(cost.company_id)
             move = self.env['account.move']
+            print("################################### COST DATE #########################")
+            print("cost.date", cost.date)
+            print("################################### COST DATE #########################")
+
             move_vals = {
                 'journal_id': cost.account_journal_id.id,
                 'date': cost.date,

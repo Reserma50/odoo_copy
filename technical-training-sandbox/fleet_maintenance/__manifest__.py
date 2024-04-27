@@ -1,7 +1,7 @@
 {
     'name': "Fleet Maintenance",
     'version': '1.0',
-    'depends': ['base','fleet', 'hr'],
+    'depends': ['base','fleet', 'mail'],
     'author': "Joseph González",
     'category': 'App',
     'description': """
@@ -14,7 +14,7 @@
         'views/views_tree/inherited_fleet_service_type.xml',
         'views/views_tree/inherited_fleet_vehicle_maintenance.xml',
         # 'views/views_tree/inherited_fleet_vehicle_matriculation.xml',
-        'views/views_tree/inherited_fleet_vehicle_image.xml',
+        'views/views_forms/inherited_fleet_vehicle_image.xml',
         'views/views_tree/inherited_fleet_new_driver_id.xml',
         'views/fleet_maintenance.xml',
         'views/fleet_matriculation.xml',
@@ -29,6 +29,7 @@
         #report
         'report/images_report.xml',
         'report/images_template.xml',
+        'report/images_template_fleet_log_assignation.xml'
 
     ],
     'assets': {
@@ -38,6 +39,7 @@
     'demo': [
         #'demo/demo_data.xml',
     ],
+    # 'js':['fleet_maintenance/static/fleet_logs_action/fleet_log.js'],
     'application': False,
     'license': 'LGPL-3',
 

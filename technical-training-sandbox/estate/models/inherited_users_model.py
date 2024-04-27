@@ -23,7 +23,7 @@ class UsersModelFields(models.Model):
          ('Ok', 'Vigente'),
          ('Warning', 'Requiere atención'),
          ('Expired', 'Expirada')
-        ], 'Status', default='Ok',
+        ], 'Estado de Licencia', default='Ok',
         help='Escoge si la licencia esta vigente o no',
         # tracking=True,
         compute = '_compute_estate',
