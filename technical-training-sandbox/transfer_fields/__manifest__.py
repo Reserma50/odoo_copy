@@ -28,9 +28,12 @@
         'views/views.xml',
         'views/templates.xml',
         'views/modificar_view_transfer.xml',
-        'views/modificar_view_lote_form.xml',
+        'views/modificar_view_location_form.xml',
         'views/modificar_view_maintenence_form.xml',
-        'views/modificar_view_partner_form.xml'
+        'views/modificar_view_partner_form.xml',
+        'views/modificar_view_lote_form.xml',
+        'views/modificar_view_stock_tree.xml',
+        'views/modificar_view_product_form.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

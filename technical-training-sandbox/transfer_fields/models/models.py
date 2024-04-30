@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-
+mdl_res_partner = "res.partner"
+mdl_stock_location = "stock.location"
 
 class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
@@ -49,21 +50,24 @@ class InheritedModelStockMove(models.Model):
     
 
 class InheritedModelStockLocation(models.Model):
-    _inherit = "stock.location"
+    _inherit = mdl_stock_location
 
-    clienteref_ids = fields.Many2many("res.partner", string="Clientes")
+    clienteref_ids = fields.Many2many(mdl_res_partner, string="Clientes")
+
+    region_id = fields.Many2one("res.country.state", string="Region", domain=[("country_id","=", "Panama")])
+    # region_name = fields.Char(string="Provincia", related="region_id.name")
 
 class InheritedModelResPartner(models.Model):
-    _inherit = "res.partner"
+    _inherit = mdl_res_partner
 
-    locations_ids = fields.Many2many("stock.location", string="Ubicaciones")
+    locations_ids = fields.Many2many(mdl_stock_location, string="Ubicaciones")
 
 
 class InheritedModelMaintenenceRequest(models.Model):
     _inherit = "maintenance.request"
 
-    partner_id = fields.Many2one("res.partner", string="Cliente")
-    locationmain_id = fields.Many2one("stock.location", string="Institución", domain=[("location_id","=", 3)])
+    partner_id = fields.Many2one(mdl_res_partner, string="Cliente")
+    locationmain_id = fields.Many2one(mdl_stock_location, string="Institución", domain=[("location_id","=", 3)])
     tecnicos_ids = fields.Many2many("res.users", string="Tecnicos Acompañantes")
 
 
@@ -99,5 +103,47 @@ class InheritedModelMaintenenceRequest(models.Model):
             else:
                 #self.locationmain_id = [(5,)]
                 return {'domain':{'partner_id': []}}
+
+class InheritedModelLote(models.Model):
+    _inherit = "stock.lot"
+
+    opciones = [
+        ("funcional","Funcional"),
+        ("desconocido","Desconocido"),
+        ("no_funcional","No Funcional"),
+        ("pendiente","Pendiente Instalación"),
+    ]
+    encargados = [
+        ("tecnico", "Servicio Tecnico"),
+        ("it", "IT")
+    ]
+    garantia = fields.Integer(string="Garantia (Meses)")
+    state_equipment = fields.Selection(opciones, string="Estado del Equipo")
+    modalidad_encar = fields.Selection(encargados, string="Modalidad Encargada")
+    orden_compra = fields.Char(string="Orden de Compra", default="N/A")
+    contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
+    ficha = fields.Char(string="Ficha tecnica", default="N/A")
+
+class InheritedModeProduct(models.Model):
+    _inherit = "product.product"
+
+    #relacionados
+    marca = fields.Char("Marca", defaul="N/A")
+    modelo = fields.Char("Modelo", default ="N/A")
+
+class InheritedModeQuant(models.Model):
+    _inherit = "stock.quant"
+
+    #relacionados
+    garantia_rl = fields.Integer("Garantia lote", related="lot_id.garantia")
+    ficha_rl = fields.Char("Ficha", related="lot_id.ficha")
+    marca_rl = fields.Char("Marca", related="product_id.marca")
+    modelo_rl = fields.Char("Modelo", related="product_id.modelo")
+    region_rl = fields.Char("Region", related="location_id.region_id.name")
+
+
+
+
+
 
     

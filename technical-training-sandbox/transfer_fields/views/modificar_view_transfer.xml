@@ -7,9 +7,9 @@
             <field name="arch" type="xml">
                 <!-- find field description and add the field
                     new_field after it -->
-                <xpath expr="//field[@name='origin']" position="after">
+                <!-- <xpath expr="//field[@name='origin']" position="after">
                     <field name="new_field"/>
-                </xpath>
+                </xpath> -->
                 <!-- presentar la fecha efectiva -->
                 <!--<xpath expr="//field[@name='date_done']" position="attributes">-->
                     <!-- <attribute name="attrs">{"invisible": [["state","==","done"]]}</attribute> -->
@@ -17,9 +17,14 @@
                     <attribute name="required">1</attribute>
                     <attribute name="readonly">1</attribute> 
                   </xpath>-->
+                  <!-- Set attr y context action -->
+                  <xpath expr="/form[1]/header[1]/button[@name='button_validate']">
+                    <attribute name="context">{'force_period_date': date_done}</attribute>
+                  </xpath>
+
                   <xpath expr="//field[@name='date_done']" position="replace">
                     <field name="date_done" string="Effective Date" attrs="{'invisible': ['|', ('state', '=', 'draft'), ('state', '=', 'waiting')], 'readonly': [('state', '=', 'done')]}"/>
-                </xpath>
+                  </xpath>
             </field>
         </record>
     </data>

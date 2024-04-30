@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">inherited.model.form.inherit.test.location</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <!-- add manytomany field to lote form -->
+                <xpath expr="//field[@name='barcode']" position="after">
+                    <field name="marca" />
+                    <field name="modelo" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
