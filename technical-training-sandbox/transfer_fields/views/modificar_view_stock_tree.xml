@@ -11,6 +11,7 @@
                         <field name="modelo_rl"/>
                         <field name="garantia_rl"/>
                         <field name="ficha_rl"/>
+                        <field name="install_rl"/>
                         <!-- <field name="product_id" string="name"/>
                         <field name="lot_id" context="{'default_product_id': product_id, 'default_company_id': company_id}" string="Garantia" related="lot_id.garantia"/> -->
                     </xpath>

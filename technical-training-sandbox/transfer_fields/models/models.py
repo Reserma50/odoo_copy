@@ -123,12 +123,13 @@ class InheritedModelLote(models.Model):
     orden_compra = fields.Char(string="Orden de Compra", default="N/A")
     contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     ficha = fields.Char(string="Ficha tecnica", default="N/A")
+    install_date = fields.Date(string="Fecha de instalación")
 
 class InheritedModeProduct(models.Model):
     _inherit = "product.product"
 
     #relacionados
-    marca = fields.Char("Marca", defaul="N/A")
+    marca = fields.Char("Marca", default="N/A")
     modelo = fields.Char("Modelo", default ="N/A")
 
 class InheritedModeQuant(models.Model):
@@ -137,6 +138,7 @@ class InheritedModeQuant(models.Model):
     #relacionados
     garantia_rl = fields.Integer("Garantia lote", related="lot_id.garantia")
     ficha_rl = fields.Char("Ficha", related="lot_id.ficha")
+    install_rl = fields.Date("Fecha de Instalación", related="lot_id.install_date")
     marca_rl = fields.Char("Marca", related="product_id.marca")
     modelo_rl = fields.Char("Modelo", related="product_id.modelo")
     region_rl = fields.Char("Region", related="location_id.region_id.name")
