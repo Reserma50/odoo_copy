@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record id="view_order_form_modificado" model="ir.ui.view">
+            <field name="name">inherited.model.form.inherit.test.sale</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- add manytomany field to lote form -->
+                <xpath expr="/form/sheet/notebook/page[@name='myannex']" position="after">
+
+                    <page string="Datos de Contrato" name="contrac">
+                        <group>
+                            <field name="contract_oc"/>
+                            <field name="inicio_contrato"/>
+                            <field name="observacion"/>
+                            <field name="frecuencia"/>
+                            <field name="is_suscription"/>
+                            <field name="contrato_old"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

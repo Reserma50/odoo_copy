@@ -17,7 +17,26 @@
                 <xpath expr="/form[1]/sheet[1]/group[2]" position="after">
                     <notebook>
                         <page string="Products Location" name="product_location">
-                            
+                            <!-- <tree string="Tests"> -->
+                                <!-- <field name="quants_modificado_id" context="{'tree_view_ref': 'stock.view_stock_quant_tree_editable'}">
+                                
+                                </field> -->
+                            <!-- </tree> -->
+                            <field name="quants_ids_rl">
+                                <tree string="Productos Ubicados">
+                                    <field name="region_rl"/>
+                                    <field name="tipo_rl"/>
+                                    <field name="product_id"/>
+                                    <field name="lot_id" />
+                                    <field name="marca_rl" optional="show"/>
+                                    <field name="modelo_rl"/>
+                                    <field name="ficha_rl" optional="show"/>
+                                    <field name="install_rl"/>
+                                    <field name="cliente_lot_rl"/>
+                                    <field name="contrato_oc_rl"/>
+                                    <!-- Contart is not in stock.quant model -->
+                                </tree>
+                            </field>
                         </page>
                         <page string="Other Info" name="other_information">
 

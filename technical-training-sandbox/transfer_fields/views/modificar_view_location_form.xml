@@ -10,8 +10,9 @@
                     <field name="clienteref_ids" widget="many2many_tags"/>
                 </xpath>
                 <xpath expr="/form[1]/sheet[1]/group[1]/group[3]" position="after">
-                    <group string="Region">
+                    <group string="Anexo">
                         <field name="region_id"/>
+                        <field name="tipo"/>
                     </group>
                 </xpath>
             </field>

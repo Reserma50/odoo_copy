@@ -18,13 +18,34 @@
                                     <field name="state_equipment" options="{'no_create': True}"/>
                                     <field name="modalidad_encar" options="{'no_create': True}"/>
                                     <field name="install_date" options="{'no_create': True}"/>
+                                    <field name="contact" options="{'no_create': True}"/>
+                                    <field name="tel_contact" options="{'no_create': True}"/>
 
                                 </group>
                                 <group string="Ventas">
-                                    <field name="garantia" options="{'no_create': True}"/>
-                                    <field name="orden_compra" options="{'no_create': True}"/>
-                                    <field name="contrato_old" options="{'no_create': True}"/>
-
+                                    
+                                </group>
+                                <group string="Compras">
+                                    <group>
+                                        <field name="garantia_fab_inicio"></field>
+                                        <field name="garantia_fab_fin"></field>
+                                        <field name="garantia_fab"></field>
+                                    </group>
+                                    <group>
+                                        <field name="gar_extend"></field>
+                                        <field name="vencimiento_gar_extend"></field>
+                                    </group>
+                                </group>
+                                <group string="Contrato">
+                                    <!-- <field name="orden_compra" options="{'no_create': True}"/> -->
+                                    <field name="sale_id" options="{'no_create': True}"/>
+                                    <!-- Descomentar -->
+                                    <field name="cliente_id_rl"/>
+                                    <field name="garantia_rl" options="{'no_create': True}"/>
+                                    <field name="contrat_oc_rl" options="{'no_create': True}"/>
+                                    <field name="fecha_contrato_rl" options="{'no_create': True}"/>
+                                    <field name="frecuencia_rl" options="{'no_create': True}"/>
+                                    <field name="contrato_old_rl" options="{'no_create': True}"/>
                                 </group>
                             </group>
                         </page>

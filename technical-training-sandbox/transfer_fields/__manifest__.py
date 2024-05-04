@@ -33,7 +33,8 @@
         'views/modificar_view_partner_form.xml',
         'views/modificar_view_lote_form.xml',
         'views/modificar_view_stock_tree.xml',
-        'views/modificar_view_product_form.xml'
+        'views/modificar_view_product_form.xml',
+        'views/modificar_view_sale_form.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
