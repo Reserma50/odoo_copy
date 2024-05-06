@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 mdl_res_partner = "res.partner"
 mdl_stock_location = "stock.location"
 
@@ -93,7 +93,8 @@ class InheritedModelMaintenenceRequest(models.Model):
                 # Construct a list of IDs of the fetched sales orders
                 my_locations_ids = list(record.partner_id.locations_ids.ids)
                 #self.locationmain_id = [(6, 0, my_locations_ids)]
-                domain = {'domain':{'locationmain_id': [("location_id","=", 3), ('id', 'in', my_locations_ids)], 'quants_ids_rl':[('cliente_lot_rl', '=', record.partner_id)]}} 
+                # domain = {'domain':{'locationmain_id': [("location_id","=", 3), ('id', 'in', my_locations_ids)], 'quants_ids_rl':[('cliente_lot_rl', '=', record.partner_id)]}} 
+                domain = {'domain':{'locationmain_id': [("location_id","=", 3), ('id', 'in', my_locations_ids)]}} 
                 #print("LOS RECORDS ASOCIADOS: ", if record.quants_ids_rl.cliente_lot_rl)
                 # for r in  record.quants_ids_rl:
                 #     if r.cliente_lot_rl == record.partner_id:
@@ -144,7 +145,8 @@ class InheritedModelLote(models.Model):
     #contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     ficha = fields.Char(string="Ficha tecnica", default="N/A")
     install_date = fields.Date(string="Fecha de instalación")
-    frecuencia_mantenimiento = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
+    # este campo proviene del sale.order por eso sta comentado
+    #frecuencia_mantenimiento = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
 
     #Contact Fields
     contact = fields.Char(string="Contacto" , default="N/A")
@@ -158,16 +160,18 @@ class InheritedModelLote(models.Model):
     gar_extend = fields.Char(string="Garantia extendida", default="N/A")
     vencimiento_gar_extend = fields.Date(string="Vencimiento de Garantia Extendida")
 
-    #sale id
-    sale_id = fields.Many2one("sale.order", string="Suscription", domain=[("is_suscription","=", True)])
-    # descomentar
-    garantia_rl = fields.Char("Garantia", related="sale_id.warranty_duration")
-    contrat_oc_rl = fields.Char("Contrato/OC", related="sale_id.contract_oc")
-    frecuencia_rl = fields.Integer(string="Frecuencia de Mantenimiento (Meses)", related="sale_id.frecuencia")
-    contrato_old_rl = fields.Char("Contrato Viejo", related="sale_id.contrato_old")
-    fecha_contrato_rl = fields.Date("Fecha de inicio de Contrato / Orden de Compra", related="sale_id.inicio_contrato")
-    #cliente del contrato y por tanto dueño del equipo
-    cliente_id_rl = fields.Many2one(string="Cliente", related="sale_id.partner_id")
+    #sale id #no esta bien definido la siguiente relacion porque un lote puede temas de un registro desde venta
+    #sale_id = fields.Many2one("sale.order", string="Suscription", domain=[("is_suscription","=", True)])
+    # descomentar 
+    # garantia_rl = fields.Char("Garantia", related="sale_id.warranty_duration")
+    # contrat_oc_rl = fields.Char("Contrato/OC", related="sale_id.contract_oc")
+    # frecuencia_rl = fields.Integer(string="Frecuencia de Mantenimiento (Meses)", related="sale_id.frecuencia")
+    # contrato_old_rl = fields.Char("Contrato Viejo", related="sale_id.contrato_old")
+    # fecha_contrato_rl = fields.Date("Fecha de inicio de Contrato / Orden de Compra", related="sale_id.inicio_contrato")
+    #cliente del contrato y por tanto dueño del equipo #loca campos anteriores se comentan para no llamarlos individualmente
+    # cliente_id_rl = fields.Many2one(string="Cliente", related="sale_id.partner_id")
+    # CONTRATOS/VENTAS
+    sale_ids = fields.Many2many(comodel_name="sale.order", string="Ventas/Contratos")
 
     @api.onchange("garantia_fab_inicio", "garantia_fab_fin")
     def _onchange_garantia(self):
@@ -178,7 +182,7 @@ class InheritedModelLote(models.Model):
             delta = (delta.days/30)
             self.garantia_fab = (delta/12)
         else:
-            self.garantia_fab=0
+            self.garantia_fab = 0
 
 class InheritedModeProduct(models.Model):
     _inherit = "product.product"
@@ -194,8 +198,10 @@ class InheritedModeQuant(models.Model):
     #garantia_rl = fields.Integer("Garantia lote", related="lot_id.garantia_rl")
     ficha_rl = fields.Char("Ficha", related="lot_id.ficha")
     install_rl = fields.Date("Fecha de Instalación", related="lot_id.install_date")
-    contrato_oc_rl = fields.Char("Contrato/OC", related="lot_id.contrat_oc_rl")
-    cliente_lot_rl = fields.Many2one(string="Contrato/OC", related="lot_id.cliente_id_rl")
+    # " se comenta" para evitar error
+    # contrato_oc_rl = fields.Char("Contrato/OC", related="lot_id.contrat_oc_rl")
+    # se comenta para evitar errores
+    # cliente_lot_rl = fields.Many2one(string="Contrato/OC", related="lot_id.cliente_id_rl")
     marca_rl = fields.Char("Marca", related="product_id.marca")
     modelo_rl = fields.Char("Modelo", related="product_id.modelo")
     region_rl = fields.Char("Region", related="location_id.region_id.name")
@@ -211,6 +217,43 @@ class InheritModelSale(models.Model):
     is_suscription = fields.Boolean("Is Suscription?", default=False)
     contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     inicio_contrato = fields.Date(string="Fecha de inicio de Contrato / Orden de Compra")
+    #lotes y series
+    serie_ids = fields.Many2many(comodel_name="stock.lot", name="Series/Lote")
+    ticket_install_created = fields.Boolean(default=False, string="Ticket de instalación creado?")
+
+    def action_set_install_ticket(self):
+        '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
+        for record in self:
+            if not record.ticket_install_created and record.state != 'cancel':
+                # self.env['maintenance.request'].
+                self.preparar_ticket_install()
+                record.ticket_install_created = True
+            else:
+                raise exceptions.UserError('Ticket already exist!.')
+        # isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface
+        return True
+    
+    def preparar_ticket_install(self):
+        '''
+        Prepare dict with values to create a new maintenance
+        '''
+        self.ensure_one()
+        maintenance_type = "Install"
+        maintenance = self.env['maintenance.team'].search([('name', '=', maintenance_type)], limit = 1)
+        print("Maintenece Type, ID", maintenance)
+        if len(self.serie_ids) == 0:
+            raise exceptions.UserError(('Porfavor seleccionar lote/serie para asignar al mantenimiento.'))
+        else:
+            lote_serie = self.serie_ids[0]
+            # location = self.serie_ids[0].quant_ids.
+        print("El lote o la serie es :", lote_serie)
+        print("El producto :", lote_serie.product_id)
+        if self.partner_id is None:
+            raise exceptions.UserError(('Porfavor definir un cliente para asignar al mantenimiento.'))
+        
+        
+
+
 
 
 

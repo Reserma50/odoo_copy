@@ -18,6 +18,20 @@
                             <field name="contrato_old"/>
                         </group>
                     </page>
+                    <page string="Lote/Serie Relacionados" name="lote_serie">
+                        <group>
+                            <field name="serie_ids" string=" "></field>
+                        </group>
+                    </page>
+                    <page string="Ticket de Instalación" name="install">
+                        <group>
+                            <button name="action_set_install_ticket" type="object" string="SET TICKET" class="oe_highlight" attrs="{'invisible': ['|', ('state', '=', 'sent'), ('state', '=', 'cancel')]}"/>
+                            
+                        </group>
+                        <div>
+                            <field name="ticket_install_created" string="Ticket de instalación creado?"/>
+                        </div>
+                    </page>
                 </xpath>
             </field>
         </record>

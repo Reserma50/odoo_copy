@@ -22,9 +22,6 @@
                                     <field name="tel_contact" options="{'no_create': True}"/>
 
                                 </group>
-                                <group string="Ventas">
-                                    
-                                </group>
                                 <group string="Compras">
                                     <group>
                                         <field name="garantia_fab_inicio"></field>
@@ -36,17 +33,34 @@
                                         <field name="vencimiento_gar_extend"></field>
                                     </group>
                                 </group>
-                                <group string="Contrato">
-                                    <!-- <field name="orden_compra" options="{'no_create': True}"/> -->
-                                    <field name="sale_id" options="{'no_create': True}"/>
+                                
+                                <!-- <group string="Ventas/Contrato"> -->
+
+                                    <field name="sale_ids">
+                                        <tree string="Ventas/Contratos relacionados">
+                                            <field name="name"/>
+                                            <!-- NAME = S00{ID}  -->
+                                            <field name="partner_id" string="Cliente"/>
+                                            <field name="is_suscription" string="Es suscripción?"/>
+                                            
+                                            <field name="warranty_duration" string="Garantia"/>
+                                            <field name="contract_oc"/>
+                                            <field name="inicio_contrato"/>
+                                            <field name="frecuencia"/>
+                                        </tree>
+                                    </field>
+                                    <!-- <field name="sale_id" options="{'no_create': True}"/> -->
                                     <!-- Descomentar -->
-                                    <field name="cliente_id_rl"/>
-                                    <field name="garantia_rl" options="{'no_create': True}"/>
-                                    <field name="contrat_oc_rl" options="{'no_create': True}"/>
-                                    <field name="fecha_contrato_rl" options="{'no_create': True}"/>
-                                    <field name="frecuencia_rl" options="{'no_create': True}"/>
-                                    <field name="contrato_old_rl" options="{'no_create': True}"/>
-                                </group>
+                                    <!-- <field name="cliente_id_rl"/> -->
+                                    <!-- <field name="garantia_rl" options="{'no_create': True}"/> -->
+                                    <!-- <field name="contrat_oc_rl" options="{'no_create': True}"/> -->
+                                    <!-- <field name="fecha_contrato_rl" options="{'no_create': True}"/> -->
+                                    <!-- <field name="frecuencia_rl" options="{'no_create': True}"/> -->
+                                    <!-- <field name="contrato_old_rl" options="{'no_create': True}"/> -->
+
+                                    <!-- Add ids from sale_order -->
+
+                                <!-- </group> -->
                             </group>
                         </page>
                 </xpath>

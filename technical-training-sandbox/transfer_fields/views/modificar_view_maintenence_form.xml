@@ -32,8 +32,8 @@
                                     <field name="modelo_rl"/>
                                     <field name="ficha_rl" optional="show"/>
                                     <field name="install_rl"/>
-                                    <field name="cliente_lot_rl"/>
-                                    <field name="contrato_oc_rl"/>
+                                    <!-- <field name="cliente_lot_rl"/>
+                                    <field name="contrato_oc_rl"/> -->
                                     <!-- Contart is not in stock.quant model -->
                                 </tree>
                             </field>
