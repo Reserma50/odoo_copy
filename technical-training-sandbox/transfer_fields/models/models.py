@@ -1,8 +1,9 @@
 #-*- coding: utf-8 -*-
 
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api, exceptions, _, Command
 mdl_res_partner = "res.partner"
 mdl_stock_location = "stock.location"
+mld_sale_order = "sale.order"
 
 class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
@@ -60,7 +61,7 @@ class InheritedModelStockLocation(models.Model):
         ]
 
     clienteref_ids = fields.Many2many(mdl_res_partner, string="Clientes")
-
+    maintenance_ids = fields.One2many(comodel_name = "maintenance.request", inverse_name="locationmain_id", string="Mantenimientos")
     region_id = fields.Many2one("res.country.state", string="Region", domain=[("country_id","=", "Panama")])
     # region_name = fields.Char(string="Provincia", related="region_id.name")
     tipo = fields.Selection(tipo_opciones, string="Tipo de Institución")
@@ -81,6 +82,7 @@ class InheritedModelMaintenenceRequest(models.Model):
     # quants_modificado_ids = fields.One2many(comodel_name = "stock.quant", inverse_name="maintenance_id",string="Productos Ubicados")
     # quants_modificado_id = fields.Many2one(comodel_name = "stock.quant", string="Productos Ubicados")
     quants_ids_rl = fields.One2many(string="Cantidades", related="locationmain_id.quant_ids")
+    sale_id = fields.Many2one(string="Venta/Suscripción", comodel_name = mld_sale_order)
 
     @api.onchange("partner_id")
     def _onchange_partner_id_domain_location(self):
@@ -220,13 +222,17 @@ class InheritModelSale(models.Model):
     #lotes y series
     serie_ids = fields.Many2many(comodel_name="stock.lot", name="Series/Lote")
     ticket_install_created = fields.Boolean(default=False, string="Ticket de instalación creado?")
+    fecha_prevista_install = fields.Date(string="Fecha prevista para Instalación")
+    maintenance_ids = fields.One2many(comodel_name="maintenance.request", string="Mantenimientos", inverse_name="sale_id")
 
     def action_set_install_ticket(self):
         '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
         for record in self:
             if not record.ticket_install_created and record.state != 'cancel':
                 # self.env['maintenance.request'].
-                self.preparar_ticket_install()
+                maintenance_vals = self.preparar_ticket_install()
+                request = self.env['maintenance.request'].create(maintenance_vals)
+                print("my_request", request)
                 record.ticket_install_created = True
             else:
                 raise exceptions.UserError('Ticket already exist!.')
@@ -246,11 +252,37 @@ class InheritModelSale(models.Model):
         else:
             lote_serie = self.serie_ids[0]
             # location = self.serie_ids[0].quant_ids.
-        print("El lote o la serie es :", lote_serie)
-        print("El producto :", lote_serie.product_id)
+            print("El lote o la serie es :", lote_serie)
+            print("El producto :", lote_serie.product_id)
+            
+            print("Locations (all):", lote_serie.quant_ids.ids)
+            # Assuming you want to filter stock.quant records with IDs 64 and 65 and quantity equals 1
+            quant_record = self.env['stock.quant'].search([('id', 'in', lote_serie.quant_ids.ids), ('quantity', '=', 1)], limit = 1)
+            print("Locations (1 quantity):", quant_record)
+
         if self.partner_id is None:
             raise exceptions.UserError(('Porfavor definir un cliente para asignar al mantenimiento.'))
         
+        myname = ' '.join(('Instalación de ', str(lote_serie.product_id.name), str(quant_record.location_id.name))) 
+        maintenance_vals = {
+                'name': myname,
+                'partner_id': self.partner_id.id,
+                'locationmain_id': quant_record.location_id.id,
+                'sale_id': self.id,
+                'maintenance_team_id': maintenance.id, 
+                'description': lote_serie.name, 
+            }
+        if self.fecha_prevista_install:
+            maintenance_vals['schedule_date']=self.fecha_prevista_install
+        # else:
+        #     message = _('El ticket de instalación no tiene fecha agendad. Desea proceder?')
+        #     # mess= {
+        #     #         'title': _('Not date schedule!'),
+        #     #         'message' : message
+        #     #     }
+        #     raise exceptions.AccessDenied
+            
+        return maintenance_vals
         
 
 

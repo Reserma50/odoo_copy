@@ -20,18 +20,43 @@
                     </page>
                     <page string="Lote/Serie Relacionados" name="lote_serie">
                         <group>
-                            <field name="serie_ids" string=" "></field>
+                            <field name="serie_ids" string=" ">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="ficha"/>
+                                    
+                                    <!-- <field name="garantia_fab" optional="show"/> -->
+                                    <field name="garantia_fab_inicio" optional="show"/>
+                                    <field name="garantia_fab_fin" optional="show"/>
+
+                                    <!-- <field name="gar_extend" optional="show"/>
+                                    <field name="vencimiento_gar_extend" optional="show"/> -->
+                                </tree>
+                            </field>
                         </group>
                     </page>
                     <page string="Ticket de Instalación" name="install">
                         <group>
-                            <button name="action_set_install_ticket" type="object" string="SET TICKET" class="oe_highlight" attrs="{'invisible': ['|', ('state', '=', 'sent'), ('state', '=', 'cancel')]}"/>
-                            
+                            <field name="ticket_install_created" />
+                            <field name="fecha_prevista_install" />
+                            <field name="maintenance_ids">
+                                <tree>
+                                    <field name="name" string="Título"/>
+                                    <field name="request_date" string="Creado"/>
+                                    <field name="user_id" string="Responsable"/>
+                                    <field name="tecnicos_ids" string="Tecnicos Acompañante"/>
+                                    <field name="maintenance_team_id" string="Tipo"/>
+                                    <field name="schedule_date" string="Agendado"/>
+                                </tree>
+                            </field>
                         </group>
-                        <div>
-                            <field name="ticket_install_created" string="Ticket de instalación creado?"/>
-                        </div>
                     </page>
+                </xpath>
+                <xpath expr="/form/header/button[@name='action_draft']" position="after">
+                    <button name="action_set_install_ticket" type="object" string="Crear Ticket de Instalación" class="oe_highlight" attrs="{'invisible': ['|', ('state', '!=', 'sale'), ('ticket_install_created', '=', True)]}" 
+                    confirm = "¿Esta seguro que desea crear el ticket de instalación?"/>
+                    <!-- attrs="{'invisible': ['|', '|', ('state', '=', 'sent'), ('state', '=', 'cancel'), ('ticket_install_created', '=', True)]}" -->
                 </xpath>
             </field>
         </record>

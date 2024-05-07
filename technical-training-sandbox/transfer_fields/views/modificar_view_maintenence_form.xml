@@ -9,6 +9,8 @@
                 <xpath expr="//field[@name='maintenance_type']" position="after">
                     <field name="partner_id" options="{'no_create': True}"/>
                     <field name="locationmain_id" options="{'no_create': True}"/>
+                    <field name="sale_id" options="{'no_create': True}"/>
+                    
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="tecnicos_ids" widget="many2many_tags" options="{'no_create': True}"/>
