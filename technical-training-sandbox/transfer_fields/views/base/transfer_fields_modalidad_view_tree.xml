@@ -1,0 +1,17 @@
+<odoo>
+    <data>    
+    <record id="transfer_fields_modalidad_view_tree" model="ir.ui.view">
+        <field name="name">transfer.fields.modalidad.view.tree</field>
+        <field name="model">transfer_fields.transfer_fields</field>
+        <field name="arch" type="xml">
+            <tree string="Modalidades" editable="bottom">
+                <field name="name_modalidad"/>
+                <field name="code_modalidad"/>
+                <field name="producto_ids" />
+         
+            </tree>
+
+        </field>
+    </record>
+    </data>
+</odoo>

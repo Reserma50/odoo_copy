@@ -34,8 +34,10 @@
         'views/modificar_view_partner_form.xml',
         'views/modificar_view_lote_form.xml',
         'views/modificar_view_stock_tree.xml',
-        'views/modificar_view_product_form.xml',
-        'views/modificar_view_sale_form.xml'
+        'views/modificar_view_product_template_form.xml',
+        'views/modificar_view_sale_form.xml',
+        #base
+        'views/base/transfer_fields_modalidad_view_tree.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

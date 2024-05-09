@@ -9,7 +9,10 @@ class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
     _description = 'transfer_fields.transfer_fields'
 
-    name_test = fields.Char()
+    name_modalidad = fields.Char(string="Nombre")
+    code_modalidad = fields.Integer(string="Código")
+    producto_ids = fields.One2many(comodel_name = "product.product", inverse_name="modalidad_id",string="Productos")
+
 #     value = fields.Integer()
 #     value2 = fields.Float(compute="_value_pc", store=True)
 #     description = fields.Text()
@@ -187,11 +190,12 @@ class InheritedModelLote(models.Model):
             self.garantia_fab = 0
 
 class InheritedModeProduct(models.Model):
-    _inherit = "product.product"
+    _inherit = "product.template"
 
     #relacionados
     marca = fields.Char("Marca", default="N/A")
-    modelo = fields.Char("Modelo", default ="N/A")
+    modelo = fields.Char("Modelo", default ="N/A") 
+    modalidad_id = fields.Many2one(comodel_name="transfer_fields.transfer_fields", string="Modalidad Relacionada")#by convention
 
 class InheritedModeQuant(models.Model):
     _inherit = "stock.quant"
@@ -219,11 +223,13 @@ class InheritModelSale(models.Model):
     is_suscription = fields.Boolean("Is Suscription?", default=False)
     contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     inicio_contrato = fields.Date(string="Fecha de inicio de Contrato / Orden de Compra")
+    fin_contrato = fields.Date(string="Fecha de fin de Contrato / Orden de Compra")
     #lotes y series
     serie_ids = fields.Many2many(comodel_name="stock.lot", name="Series/Lote")
     ticket_install_created = fields.Boolean(default=False, string="Ticket de instalación creado?")
     fecha_prevista_install = fields.Date(string="Fecha prevista para Instalación")
     maintenance_ids = fields.One2many(comodel_name="maintenance.request", string="Mantenimientos", inverse_name="sale_id")
+    response_time = fields.Integer(string=" Tiempor de respuesta (Horas)")
 
     def action_set_install_ticket(self):
         '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
@@ -283,7 +289,21 @@ class InheritModelSale(models.Model):
         #     raise exceptions.AccessDenied
             
         return maintenance_vals
-        
+
+#add field to move line
+# class InheritModelStockMoveLine(models.Model):
+#     _inherit = "stock.move.line"
+
+#     fabrica_gar_start = fields.Datetime(
+#         string='Garantia con Fabrica Inicio', 
+#         help='This is the date on which the product with this Serial Number may'
+#         ' become inside warranty .')    
+#     fabrica_gar_end = fields.Datetime(
+#         string='Garantia con Fabrica Fin', 
+#         help='This is the date on which the goods with this Serial Number may'
+#         ' become out of warranty and ant the company must buy not an extend warranty.')   
+
+    #compute='_compute_expiration_date', store=True,     
 
 
 

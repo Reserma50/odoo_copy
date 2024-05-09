@@ -12,8 +12,10 @@
                         <group>
                             <field name="contract_oc"/>
                             <field name="inicio_contrato"/>
+                            <field name="fin_contrato"/>
                             <field name="observacion"/>
                             <field name="frecuencia"/>
+                            <field name="response_time"/>
                             <field name="is_suscription"/>
                             <field name="contrato_old"/>
                         </group>
