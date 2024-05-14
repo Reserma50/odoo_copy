@@ -10,14 +10,18 @@
 
                     <page string="Datos de Contrato" name="contrac">
                         <group>
-                            <field name="contract_oc"/>
-                            <field name="inicio_contrato"/>
-                            <field name="fin_contrato"/>
-                            <field name="observacion"/>
-                            <field name="frecuencia"/>
-                            <field name="response_time"/>
-                            <field name="is_suscription"/>
-                            <field name="contrato_old"/>
+                            <group>
+                                <field name="contract_oc"/>
+                                <field name="inicio_contrato"/>
+                                <field name="fin_contrato"/>
+                                <field name="observacion"/>
+                            </group>
+                            <group>
+                                <field name="frecuencia"/>
+                                <field name="response_time"/>
+                                <field name="is_suscription"/>
+                                <field name="contrato_old"/>
+                            </group>
                         </group>
                     </page>
                     <page string="Lote/Serie Relacionados" name="lote_serie">
@@ -27,11 +31,9 @@
                                     <field name="name"/>
                                     <field name="product_id"/>
                                     <field name="ficha"/>
-                                    
                                     <!-- <field name="garantia_fab" optional="show"/> -->
                                     <field name="garantia_fab_inicio" optional="show"/>
                                     <field name="garantia_fab_fin" optional="show"/>
-
                                     <!-- <field name="gar_extend" optional="show"/>
                                     <field name="vencimiento_gar_extend" optional="show"/> -->
                                 </tree>

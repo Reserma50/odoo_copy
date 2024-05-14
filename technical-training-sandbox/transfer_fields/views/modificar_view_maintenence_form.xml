@@ -10,10 +10,12 @@
                     <field name="partner_id" options="{'no_create': True}"/>
                     <field name="locationmain_id" options="{'no_create': True}"/>
                     <field name="sale_id" options="{'no_create': True}"/>
-                    
+                    <field name="nf_product_id" options="{'no_create': True}"/>  
+                    <field name="nf_lot_id" options="{'no_create': True}"/>  
                 </xpath>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="tecnicos_ids" widget="many2many_tags" options="{'no_create': True}"/>
+
                 </xpath>
                 <!-- Add pages -->
                 <xpath expr="/form[1]/sheet[1]/group[2]" position="after">
@@ -30,13 +32,15 @@
                                     <field name="tipo_rl"/>
                                     <field name="product_id"/>
                                     <field name="lot_id" />
-                                    <field name="marca_rl" optional="show"/>
-                                    <field name="modelo_rl"/>
+                                    <field name="marca_rl" optional="hide"/>
+                                    <field name="modelo_rl" optionla="hide"/>
                                     <field name="ficha_rl" optional="show"/>
                                     <field name="install_rl"/>
                                     <!-- <field name="cliente_lot_rl"/>
                                     <field name="contrato_oc_rl"/> -->
                                     <!-- Contart is not in stock.quant model -->
+                                    <!-- <button name="action_get_attachment_view" string="Adjuntos" type="object" icon="fa-paperclip"/> -->
+                                    <button string="Generar Ticket" type="object" name="open_form_action" class="oe_highlight"/>
                                 </tree>
                             </field>
                         </page>

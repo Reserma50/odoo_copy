@@ -17,8 +17,8 @@
     # Check https://github.com/odoo/odoo/blob/16.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': '0.1',
-    'licence': 'LGPL-3',
+    'version': '1.1',
+    'license': 'LGPL-3',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'stock', 'account', 'sale','maintenance'],
@@ -36,7 +36,7 @@
         'views/modificar_view_stock_tree.xml',
         'views/modificar_view_product_template_form.xml',
         'views/modificar_view_sale_form.xml',
-        #base
+        # base
         'views/base/transfer_fields_modalidad_view_tree.xml'
     ],
     # only loaded in demonstration mode

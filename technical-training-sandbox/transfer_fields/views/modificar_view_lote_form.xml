@@ -9,7 +9,9 @@
                 <!-- Add pages -->
                 <xpath expr="/form[1]/sheet[1]/notebook[1]/page[@name='description']" position="after">
                         <page string="Contacto" name="contact">
-                            
+                            <group>
+                                <field name="lot_id"/>
+                            </group>
                         </page>
                         <page string="Datos Madre" name="other_information">
                             <group name="First Info">
@@ -32,7 +34,10 @@
                                         <field name="gar_extend"></field>
                                         <field name="vencimiento_gar_extend"></field>
                                     </group>
+                                    
                                 </group>
+
+                                
                                 
                                 <!-- <group string="Ventas/Contrato"> -->
 
@@ -49,6 +54,8 @@
                                             <field name="frecuencia"/>
                                         </tree>
                                     </field>
+                                    <h4>Hijos</h4>
+                                    <field name="child_lot_ids"/>
                                     <!-- <field name="sale_id" options="{'no_create': True}"/> -->
                                     <!-- Descomentar -->
                                     <!-- <field name="cliente_id_rl"/> -->
@@ -59,6 +66,17 @@
                                     <!-- <field name="contrato_old_rl" options="{'no_create': True}"/> -->
 
                                     <!-- Add ids from sale_order -->
+
+                                    
+                                    <group string="Datos IT">
+                                        <group>
+                                            <field name="ip_field"/>
+                                            <field name="loc_institution_id"/>
+                                            
+                                        </group>
+                                        
+
+                                    </group>
 
                                 <!-- </group> -->
                             </group>

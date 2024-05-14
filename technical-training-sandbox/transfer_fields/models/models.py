@@ -1,9 +1,12 @@
 #-*- coding: utf-8 -*-
 
 from odoo import models, fields, api, exceptions, _, Command
+import re
 mdl_res_partner = "res.partner"
 mdl_stock_location = "stock.location"
 mld_sale_order = "sale.order"
+mdl_product_product = "product.product"
+mdl_stock_lot = "stock.lot"
 
 class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
@@ -11,7 +14,15 @@ class transfer_fields(models.Model):
 
     name_modalidad = fields.Char(string="Nombre")
     code_modalidad = fields.Integer(string="Código")
-    producto_ids = fields.One2many(comodel_name = "product.product", inverse_name="modalidad_id",string="Productos")
+    producto_ids = fields.One2many(comodel_name = mdl_product_product, inverse_name="modalidad_id",string="Productos")
+
+class location_fields(models.Model):
+    _name = 'location_fields.location_fields'
+    _description = 'location_fields.location_fields'
+
+    name = fields.Char(string="Nombre")
+    code_location = fields.Integer(string="Código")
+    lotes_series_ids = fields.One2many(comodel_name = mdl_stock_lot, inverse_name="loc_institution_id",string="Lotes/Series")
 
 #     value = fields.Integer()
 #     value2 = fields.Float(compute="_value_pc", store=True)
@@ -84,11 +95,19 @@ class InheritedModelMaintenenceRequest(models.Model):
     #quants_ids
     # quants_modificado_ids = fields.One2many(comodel_name = "stock.quant", inverse_name="maintenance_id",string="Productos Ubicados")
     # quants_modificado_id = fields.Many2one(comodel_name = "stock.quant", string="Productos Ubicados")
-    quants_ids_rl = fields.One2many(string="Cantidades", related="locationmain_id.quant_ids")
+    
+    quants_ids_rl = fields.One2many(string="Cantidades", related="locationmain_id.quant_ids") #descomentar porque es funcional
+    # quants_ids = fields.One2many(comodel_name="" ,string="Cantidades")
     sale_id = fields.Many2one(string="Venta/Suscripción", comodel_name = mld_sale_order)
+    
+    nf_product_id = fields.Many2one(mdl_product_product, string="Producto")
+    nf_lot_id = fields.Many2one(mdl_stock_location, string="Lote / Serie")
+    
+    # @api.onchange("")
 
     @api.onchange("partner_id")
     def _onchange_partner_id_domain_location(self):
+        print("HELLO#")
         domain = []
         for record in self:
         #print("soy yo")
@@ -99,17 +118,19 @@ class InheritedModelMaintenenceRequest(models.Model):
                 my_locations_ids = list(record.partner_id.locations_ids.ids)
                 #self.locationmain_id = [(6, 0, my_locations_ids)]
                 # domain = {'domain':{'locationmain_id': [("location_id","=", 3), ('id', 'in', my_locations_ids)], 'quants_ids_rl':[('cliente_lot_rl', '=', record.partner_id)]}} 
-                domain = {'domain':{'locationmain_id': [("location_id","=", 3), ('id', 'in', my_locations_ids)]}} 
+                domain = {'domain':{'locationmain_id': ["&", ("location_id","=", 3),('id', 'in', my_locations_ids)]}} 
                 #print("LOS RECORDS ASOCIADOS: ", if record.quants_ids_rl.cliente_lot_rl)
                 # for r in  record.quants_ids_rl:
                 #     if r.cliente_lot_rl == record.partner_id:
                 #         print("My cliente", r.cliente_lot_rl)
                 #         self.quants_ids_rl = r
                 #añade dominio cuando cliente cambia
+                #'&'
                 
                 return domain
             else:
                 #self.locationmain_id = [(5,)]
+                print("NO esta haciendo nada!.")
                 return {'domain':{'locationmain_id': []}}
 
     @api.onchange("locationmain_id")
@@ -122,12 +143,59 @@ class InheritedModelMaintenenceRequest(models.Model):
                 print("Clientes", record.locationmain_id.clienteref_ids)
                 # Construct a list of IDs of the fetched sales orders
                 my_clients_ids = list(record.locationmain_id.clienteref_ids.ids)
-                domain = {'domain':{'partner_id': [('id', 'in', my_clients_ids)]}} 
+                products = record.quants_ids_rl.product_id.ids
+                
                 #,'quants_modificado_ids':[('id', 'in', record.locationmain_id.quant_ids.ids)]
+                print("Product", products)
+                
+                # my_list_ser = record.quants_ids_rl.lot_id.ids
+                # print("Serie", my_list_ser)
+                # for field_name, field in products.fields_get().items():
+                #     if field_name in self:my_list_ser
+                #         print(f"Campo: {field_name}, Valor: {self[field_name]}")
+                
+                # add product domai
+                
+                domain = {'domain':{'nf_product_id': [('id', 'in', products)]}} 
+                 
                 return domain
             else:
                 #self.locationmain_id = [(5,)]
                 return {'domain':{'partner_id': []}}
+            
+    @api.onchange("nf_product_id")
+    def _onchange_nf_product_id_domain_lot_id(self):
+        domain = []
+        for record in self:
+            product = record.nf_product_id
+        #print("soy yo")
+            if  product:
+                # print("Ubicación", record.locationmain_id)
+                # print("Clientes", record.locationmain_id.clienteref_ids)
+                # Construct a list of IDs of the fetched sales orders
+                # my_clients_ids = list(record.locationmain_id.clienteref_ids.ids)
+                products = record.quants_ids_rl.product_id.ids
+                
+                #,'quants_modificado_ids':[('id', 'in', record.locationmain_id.quant_ids.ids)]
+                print("Product", products)
+                if product in products:
+                    print("EL OBJETIVO", products.index(product))
+
+                
+                    my_list_ser = record.quants_ids_rl.lot_id.ids
+                    print("Serie", my_list_ser)
+                # for field_name, field in products.fields_get().items():
+                #     if field_name in self:my_list_ser
+                #         print(f"Campo: {field_name}, Valor: {self[field_name]}")
+                
+                # add product domai
+                
+                domain = {'domain':{'nf_lot_id': [('id', 'in', products)]}} 
+                 
+                return domain
+            else:
+                #self.locationmain_id = [(5,)]
+                return {'domain':{'nf_lot_id': []}}
 
 class InheritedModelLote(models.Model):
     _inherit = "stock.lot"
@@ -176,7 +244,16 @@ class InheritedModelLote(models.Model):
     #cliente del contrato y por tanto dueño del equipo #loca campos anteriores se comentan para no llamarlos individualmente
     # cliente_id_rl = fields.Many2one(string="Cliente", related="sale_id.partner_id")
     # CONTRATOS/VENTAS
-    sale_ids = fields.Many2many(comodel_name="sale.order", string="Ventas/Contratos")
+    sale_ids = fields.Many2many(comodel_name=mld_sale_order, string="Ventas/Contratos")
+    #CHILDS
+    lot_id = fields.Many2one(comodel_name=mdl_stock_lot, string='Parent Lot', index=True, ondelete='cascade',
+        help="The parent lote that includes this lote. Example : The 'Dispatch Zone' is the 'Gate 1' parent location.")
+
+    child_lot_ids = fields.One2many(comodel_name=mdl_stock_lot, inverse_name='lot_id', string='Contains Lot')
+    # DATA IT
+    ip_field = fields.Char(string="IP")
+    loc_institution_id = fields.Many2one(comodel_name="location_fields.location_fields", string="Ubicación en sitio")#by convention
+
 
     @api.onchange("garantia_fab_inicio", "garantia_fab_fin")
     def _onchange_garantia(self):
@@ -197,35 +274,59 @@ class InheritedModeProduct(models.Model):
     modelo = fields.Char("Modelo", default ="N/A") 
     modalidad_id = fields.Many2one(comodel_name="transfer_fields.transfer_fields", string="Modalidad Relacionada")#by convention
 
+
 class InheritedModeQuant(models.Model):
     _inherit = "stock.quant"
 
     #relacionadosS
     #garantia_rl = fields.Integer("Garantia lote", related="lot_id.garantia_rl")
-    ficha_rl = fields.Char("Ficha", related="lot_id.ficha")
-    install_rl = fields.Date("Fecha de Instalación", related="lot_id.install_date")
+    ficha_rl = fields.Char(related="lot_id.ficha", string="Ficha")
+    install_rl = fields.Date(related="lot_id.install_date", string="Fecha de Instalación")
     # " se comenta" para evitar error
     # contrato_oc_rl = fields.Char("Contrato/OC", related="lot_id.contrat_oc_rl")
     # se comenta para evitar errores
     # cliente_lot_rl = fields.Many2one(string="Contrato/OC", related="lot_id.cliente_id_rl")
-    marca_rl = fields.Char("Marca", related="product_id.marca")
-    modelo_rl = fields.Char("Modelo", related="product_id.modelo")
-    region_rl = fields.Char("Region", related="location_id.region_id.name")
-    tipo_rl = fields.Selection("Tipo de Institución", related="location_id.tipo")
+    marca_rl = fields.Char(related="product_id.marca", string="Marca")
+    modelo_rl = fields.Char(related="product_id.modelo", string="Modelo")
+    region_rl = fields.Char(related="location_id.region_id.name", string="Region")
+    tipo_rl = fields.Selection(related="location_id.tipo", string="Tipo de Institución")
     # maintenance_id = fields.Many2one(comodel_name = "maintenance.request",inverse='quants_modificado_ids', string="Solicitud de Mantenimiento")
+
+    # Work around to open the model
+    def open_form_action(self):
+        # Retrieve the record ID from the context or any other source
+        # print("THIS IS MY RECORD_ID", record_id)
+        if self.id:
+            action = self.open_record_form_view(self.id)
+            return action
+        return False
+    
+    @api.model
+    def open_record_form_view(self, record_id):
+        print("WE ARE HERE")
+        action = {
+            'name': 'Edit Record',
+            'type': 'ir.actions.act_window',
+            'res_model': 'stock.quant',
+            'view_mode': 'form',
+            'res_id': record_id,
+            'target': 'current',
+        }
+        return action
+
 
 class InheritModelSale(models.Model):
     _inherit = "sale.order"
 
-    contract_oc = fields.Char(string= "Orden de Compra/Contrato")
+    contract_oc = fields.Char(string= "Orden de Compra/Contrato", )
     observacion = fields.Char(string= "Observación")
     frecuencia = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
     is_suscription = fields.Boolean("Is Suscription?", default=False)
     contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
-    inicio_contrato = fields.Date(string="Fecha de inicio de Contrato / Orden de Compra")
+    inicio_contrato = fields.Date(string="Fecha de inicio de Contrato / Orden de Compra", help="Este campo esta dentro del apartado información adicional, de la versión enterprise.")
     fin_contrato = fields.Date(string="Fecha de fin de Contrato / Orden de Compra")
     #lotes y series
-    serie_ids = fields.Many2many(comodel_name="stock.lot", name="Series/Lote")
+    serie_ids = fields.Many2many(comodel_name=mdl_stock_lot, name="Series/Lote")
     ticket_install_created = fields.Boolean(default=False, string="Ticket de instalación creado?")
     fecha_prevista_install = fields.Date(string="Fecha prevista para Instalación")
     maintenance_ids = fields.One2many(comodel_name="maintenance.request", string="Mantenimientos", inverse_name="sale_id")
@@ -280,15 +381,60 @@ class InheritModelSale(models.Model):
             }
         if self.fecha_prevista_install:
             maintenance_vals['schedule_date']=self.fecha_prevista_install
-        # else:
-        #     message = _('El ticket de instalación no tiene fecha agendad. Desea proceder?')
-        #     # mess= {
-        #     #         'title': _('Not date schedule!'),
-        #     #         'message' : message
-        #     #     }
-        #     raise exceptions.AccessDenied
             
+
         return maintenance_vals
+    
+    @api.constrains('contract_oc')
+    def _check_contract_oc(self):
+        for record in self:
+            if record.contract_oc:
+                txt = record.contract_oc
+                self.validar_cadena(txt)
+    
+    @api.constrains('contrato_old')
+    def _check_contrato_viejo(self):
+        for record in self:
+            if record.contrato_old:
+                txt = record.contrato_old
+                self.validar_cadena(txt)
+
+    def validar_cadena(self, cadena):
+        # La expresión regular permite solo letras y números
+        # patron = r'^[a-zA-Z0-9]+$'
+        patron = r'^[a-zA-Z0-9/-]+$'
+        # Comprobamos si la cadena cumple con el patrón
+        if re.match(patron, cadena):
+            return True
+        else:
+            raise exceptions.ValidationError("Ha ingresado un dato errado! Nota: Solo se permiten palabras, Números y símbolos especiales como guión (-) barra (/).")
+
+    def name_get(self):
+        '''SOBREESCRIBIENDO LA FUNCION NAME_GET DEL MODELO SALE.ORDER (SI, EXISTE)'''
+        
+        # if self._context.get('sale_show_partner_name'):
+        result = []
+        for record in self:
+            if record.contract_oc:
+                name = "%s - %s" % (record.name, record.contract_oc)
+            else:
+                name = record.name
+            result.append((record.id, name))
+            print("Here we are!")
+        return result
+        # return super().name_get()
+        
+
+    # def name_get(self):
+    #     if self._context.get('sale_show_partner_name'):
+    #         res = []
+    #         for order in self:
+    #             name = order.name
+    #             if order.partner_id.name:
+    #                 name = '%s - %s' % (name, order.partner_id.name)
+    #             res.append((order.id, name))
+    #         return res
+    #     return super().name_get()
 
 #add field to move line
 # class InheritModelStockMoveLine(models.Model):
@@ -303,7 +449,7 @@ class InheritModelSale(models.Model):
 #         help='This is the date on which the goods with this Serial Number may'
 #         ' become out of warranty and ant the company must buy not an extend warranty.')   
 
-    #compute='_compute_expiration_date', store=True,     
+#     compute='_compute_expiration_date', store=True
 
 
 
