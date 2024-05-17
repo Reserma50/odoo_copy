@@ -19,7 +19,7 @@
                             <group>
                                 <field name="frecuencia"/>
                                 <field name="response_time"/>
-                                <field name="is_suscription"/>
+                                <field name="is_suscription" widget="boolean_button"/>
                                 <field name="contrato_old"/>
                             </group>
                         </group>

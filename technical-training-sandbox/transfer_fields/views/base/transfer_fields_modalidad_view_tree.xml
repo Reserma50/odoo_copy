@@ -5,7 +5,7 @@
         <field name="model">transfer_fields.transfer_fields</field>
         <field name="arch" type="xml">
             <tree string="Modalidades" editable="bottom">
-                <field name="name_modalidad"/>
+                <field name="name"/>
                 <field name="code_modalidad"/>
                 <field name="producto_ids" />
          

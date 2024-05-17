@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- equiment.request : views -->
+    <record id="maintenance_request_view_search_inherit_transfer" model="ir.ui.view">
+        <field name="name">maintenance.request.view.search.inherit.transfer</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="field[@name='employee_id']" position="after">
+                <field name="tecnicos_ids"/>
+            </xpath> -->
+            <xpath expr="//filter[@name='my_maintenances']" position="after">
+                <filter string="My Maintenances como acompañante" name="my_maintenances_partner" domain="[('tecnicos_ids', 'in', uid)]"/>
+            </xpath>
+            <!-- 
+                <xpath expr="//filter[@name='created_by']" position="replace">
+                    <filter string='Created By' name='created_by' domain="[]" context="{'group_by': 'employee_id'}"/>
+                </xpath> 
+            -->
+        </field>
+    </record>
+</odoo>

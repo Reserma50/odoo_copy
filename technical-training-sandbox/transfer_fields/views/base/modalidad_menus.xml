@@ -1,0 +1,23 @@
+<odoo>
+  <data>
+    <!-- Top-level menu item "Estate" -->
+    <menuitem id="estate_menu_root" name="Modalidades">
+
+      <!-- Submenu item "First Level" -->
+      <menuitem id="estate_first_level_menu" name="Advertisements">
+        <menuitem id="estate_property_menu_action" action="transfer_field_action"/>
+      </menuitem>
+
+      <!-- Second menu item -->
+      <!-- <menuitem id="estate_second_level_menu" name="Settings"> -->
+        <!-- New action under the second menu -->
+       <!-- <menuitem id="estate_property_type_menu_action" action="estate_property_type_action"/>
+       <menuitem id="estate_property_tag_menu_action" action="estate_property_tag_action"/> -->
+       <!-- Proyecto para compras -->
+       <!-- <menuitem id="estate_property_proyect_menu_action" action="estate_property_proyect_action"/> -->
+
+     <!-- </menuitem> -->
+      
+    </menuitem>
+  </data>
+</odoo>

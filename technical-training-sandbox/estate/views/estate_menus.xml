@@ -17,10 +17,7 @@
         <!-- <menuitem id="estate_property_proyect_menu_action" action="estate_property_proyect_action"/> -->
 
       </menuitem>
-
-
-
-
+      
     </menuitem>
   </data>
 </odoo>

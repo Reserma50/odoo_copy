@@ -1,0 +1,83 @@
+<odoo>
+  <data>
+    <!--  MAIN BASE ORIGIN -->
+    <!-- explicit list view definition / replace transfer_fields x modalidades-->
+
+    <!-- <record model="ir.ui.view" id="transfer_fields.list">
+      <field name="name">Modalidades list</field>
+      <field name="model">transfer_fields.transfer_fields</field>
+      <field name="arch" type="xml">
+        <tree string="Modalidades" editable="bottom">
+          <field name="name"/>
+          <field name="code_modalidad"/>
+          <field name="producto_ids" />
+        </tree>
+      </field>
+    </record> -->
+
+    <!-- Explicit form -->
+    <!-- <record model="ir.ui.view" id="transfer_fields.form">
+      <field name="name">Modalidades form</field>
+      <field name="model">transfer_fields.transfer_fields</field>
+      <field name="arch" type="xml">
+        <form string="Modalidades" >
+          <field name="name"/>
+          
+          <field name="producto_ids" />
+          <field name="code_modalidad"/>
+        </form>
+      </field>
+    </record> -->
+
+    <!-- actions opening views on models transfer_fields-->
+
+    <record model="ir.actions.act_window" id="transfer_fields.action_window">
+      <field name="name">Modalidades para equipo</field>
+      <field name="res_model">transfer_fields.transfer_fields</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="transfer_fields.action_server">
+      <field name="name">Modalidades server</field>
+      <field name="model_id" ref="model_transfer_fields_transfer_fields"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+
+    <!-- Top menu item -->
+
+    <!-- <menuitem name="Modalidades" id="transfer_fields.menu_root"/> -->
+
+    <!-- menu categories -->
+
+    <!-- <menuitem name="Menu 1" id="transfer_fields.menu_1" parent="transfer_fields.menu_root"/> -->
+    <!-- <menuitem name="Menu 2" id="transfer_fields.menu_2" parent="transfer_fields.menu_root"/> -->
+
+    <!-- actions -->
+
+    <!-- <menuitem name="List" id="transfer_fields.menu_1_list" parent="transfer_fields.menu_1"
+              action="transfer_fields.action_window"/>
+    <menuitem name="Server to list" id="transfer_fields" parent="transfer_fields.menu_2"
+              action="transfer_fields.action_server"/> -->
+
+
+
+    <!-- insert new action to execute auto increment -->
+    <record id="increment_your_field_sequence" model="ir.sequence">
+      <field name="name">Field Incrementation</field>
+      <field name="code">increment_your_field</field>
+      <field name="prefix"></field>
+      <field name="padding">3</field>
+      <field name="company_id" eval="False"/>
+    </record>
+
+  </data>
+</odoo>

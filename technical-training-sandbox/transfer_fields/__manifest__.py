@@ -26,18 +26,28 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
-        'views/modificar_view_transfer.xml',
-        'views/modificar_view_location_form.xml',
-        'views/modificar_view_maintenence_form.xml',
-        'views/modificar_view_partner_form.xml',
-        'views/modificar_view_lote_form.xml',
-        'views/modificar_view_stock_tree.xml',
-        'views/modificar_view_product_template_form.xml',
-        'views/modificar_view_sale_form.xml',
-        # base
-        'views/base/transfer_fields_modalidad_view_tree.xml'
+        # Base 
+
+        'views/base/templates.xml',
+        # my mantenance
+        'views/inherited/modf_view_search_maintenance.xml',
+
+        'views/base/views_tranfer_fields_model.xml',
+        'views/base/views_marcaftk_fields_model.xml',
+        'views/base/views_location_fields_model.xml',
+        'views/inherited/modificar_view_transfer.xml',
+        'views/inherited/modificar_view_location_form.xml',
+        'views/inherited/modificar_view_maintenence_form.xml',
+        'views/inherited/modificar_view_partner_form.xml',
+        'views/inherited/modificar_view_lote_form.xml',
+        'views/inherited/modificar_view_stock_tree.xml',
+        'views/inherited/modificar_view_product_template_form.xml',
+        'views/inherited/modificar_view_sale_form.xml',
+        # Base 
+        # 'views/base/transfer_fields_modalidad_view_tree.xml',
+        # 'views/base/transfer_fields_modalidades_views.xml',
+
+
     ],
     # only loaded in demonstration mode
     'demo': [

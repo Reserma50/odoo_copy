@@ -8,8 +8,8 @@
                 <!-- add manytomany field to lote form -->
                 <xpath expr="//field[@name='maintenance_type']" position="after">
                     <field name="partner_id" options="{'no_create': True}"/>
-                    <field name="locationmain_id" options="{'no_create': True}"/>
                     <field name="sale_id" options="{'no_create': True}"/>
+                    <field name="locationmain_id" options="{'no_create': True}"/>
                     <field name="nf_product_id" options="{'no_create': True}"/>  
                     <field name="nf_lot_id" options="{'no_create': True}"/>  
                 </xpath>
@@ -34,13 +34,15 @@
                                     <field name="lot_id" />
                                     <field name="marca_rl" optional="hide"/>
                                     <field name="modelo_rl" optionla="hide"/>
-                                    <field name="ficha_rl" optional="show"/>
+                                    <field name="ficha_rl" optional="hide"/>
+                                    <field name="cliente_rl"/>
                                     <field name="install_rl"/>
                                     <!-- <field name="cliente_lot_rl"/>
                                     <field name="contrato_oc_rl"/> -->
                                     <!-- Contart is not in stock.quant model -->
                                     <!-- <button name="action_get_attachment_view" string="Adjuntos" type="object" icon="fa-paperclip"/> -->
-                                    <button string="Generar Ticket" type="object" name="open_form_action" class="oe_highlight"/>
+                                    <button string="Generar Ticket" type="object" name="open_form_action" class="oe_highlight" context="{'partner_id':cliente_rl,'Lot_id': lot_id}"/>
+                                    <button string="Ver detalles" type="object" name="open_form_action"/>
                                 </tree>
                             </field>
                         </page>
@@ -52,5 +54,36 @@
                 </xpath>
             </field>
         </record>
+
+        <menuitem
+            name="Product Modality"
+            sequence="4"
+            id="menu_maintenance_product_modalidad_configuration"
+            parent="maintenance.menu_maintenance_configuration"
+            action="transfer_fields.action_window"
+            groups="base.group_user"/>
+        
+        <menuitem
+            name="Product Locations"
+            sequence="5"
+            id="menu_maintenance_product_location_configuration"
+            parent="maintenance.menu_maintenance_configuration"
+            action="location_fields_action_window"
+            groups="base.group_no_one"/>
+      
+        <menuitem
+            name="Product Marca"
+            sequence="6"
+            id="menu_maintenance_product_marca_configuration"
+            parent="maintenance.menu_maintenance_configuration"
+            action="marcaftk_fields_action_window"
+            groups="base.group_no_one"/>
+        
+        <menuitem
+            id="menu_product_form2"
+            name="Products"
+            parent="maintenance.menu_maintenance_title"
+            action="mrp_product_variant_action"
+            sequence="3"/>
     </data>
 </odoo>

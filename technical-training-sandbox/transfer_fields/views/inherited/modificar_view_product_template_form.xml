@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <record id="product_template_only_form_view_test" model="ir.ui.view">
+            <field name="name">inherited.model.form.inherit.test.prduct</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <!-- add manytomany field to lote form -->
+                <xpath expr="//field[@name='barcode']" position="after">
+                    <field name="marca" />
+                    <field name="modelo" />
+                    <field name="marca_id" options="{'no_create': True}"/>
+                    <field name="modalidad_id" options="{'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem name="Modalidades"
+                  sequence="7"
+                  id="menu_mi_modulo_root"
+                  parent="stock.menu_stock_inventory_control"
+                  action="transfer_fields.action_window"
+                  groups="base.group_no_one"/>
+
+        <!-- <menuitem id="menu_stock_inventory_control" name="Products" parent="menu_stock_root" sequence="4"/> -->
+    
+        <menuitem name="Marcas"
+                  sequence="8"
+                  id="menu_mi_modulo_root2"
+                  parent="stock.menu_stock_inventory_control"
+                  action="marcaftk_fields_action_window"
+                  groups="base.group_no_one"/>
+
+        <menuitem name="Ubicaciones por departamento"
+                  sequence="9"
+                  id="menu_mi_modulo_root3"
+                  parent="stock.menu_stock_inventory_control"
+                  action="location_fields_action_window"
+                  groups="base.group_no_one"/>
+    </data>
+</odoo>

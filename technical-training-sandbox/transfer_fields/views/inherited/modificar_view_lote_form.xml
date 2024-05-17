@@ -10,6 +10,7 @@
                 <xpath expr="/form[1]/sheet[1]/notebook[1]/page[@name='description']" position="after">
                         <page string="Contacto" name="contact">
                             <group>
+                                <field name="thepartner_id" optional="hide"/>
                                 <field name="lot_id"/>
                             </group>
                         </page>
@@ -40,7 +41,7 @@
                                 
                                 
                                 <!-- <group string="Ventas/Contrato"> -->
-
+                                    <h4 class="mt-2">Ordenenes de compra / Contrato</h4>
                                     <field name="sale_ids">
                                         <tree string="Ventas/Contratos relacionados">
                                             <field name="name"/>
