@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <record id="stock_picking_field_form" model="ir.ui.view">
+            <field name="name">stock.picking.view.inherit.field.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
+                </xpath>
+                <xpath expr="//group[@name='other_infos']" position="after">
+                    <group string="Entregado a" name="other_infos_solicitante">
+                        <field name="department_stock_field" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <!-- <field name="partner_id" string="Enviar a:" domain="[('is_company','=',True)]" /> -->
+                        <field name="partner_id_supervisor" string="Autorizado por el jefe del departamento:" domain="[('is_company','=',False)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="partner_id_employee" string="Solicitado por Técnico (a) - Ingeniero (a) - Vendedor (a):" domain="[('is_company','=',False)]" />
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="before">
+                    <field name="partner_id" nolabel="1" domain="[('is_company','=',True)]" />
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="before">
+                    <field name="calidad_stock_field" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//group[@name='other_infos']" position="after">
+                    <group string="Documentación adicional" name="Documentación de Origen">
+                        <field name="orden_cotiz_stock_field" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="proyecto_stock_field" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="invoice_stock_field" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//widget[@name='signature']" position="after"> 
+                    <!-- <attribute name="attrs">"{'invisible': ['|', ('id', '=', False), ('state', '!=', 'done')]}"</attribute> -->
+                    <!-- <widget name="signature" string="Firmar Reporte" highlight="1" full_name="partner_id" confirm = "La firma de este documento generara un envio de correo ¿Desea Proceder?"/> -->
+                    <widget name="signature" string="Firmar Reporte" highlight="1" attrs="{'invisible': ['|', '|', ('id', '=', False),('picking_type_code', '!=', 'internal'), ('state', '!=', 'done')]}" full_name="partner_id" groups="stock.group_stock_sign_delivery"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

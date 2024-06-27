@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data> 
+        <template id="report_report_traslado"  inherit_id="stock.report_picking">
+
+            <!-- <xpath expr="//p//i[hasclass('fa-exclamation-triangle')]" position="before">
+
+                <h2>HI</h2>
+            </xpath> -->
+
+            <xpath expr="//p[@t-field='o.note']" position="before">
+                <div class="row">
+                    <div t-if="o.calidad_stock_field" class="mt-2 col-4">
+                        <span>
+                            <strong>En calidad de:</strong> 
+                        </span>
+                        <div t-field="o.calidad_stock_field"></div>
+                    </div>
+                    <div t-if="o.orden_cotiz_stock_field" class="mt-2 col-4">
+                        <span>
+                            <strong>Orden de Compra/Cotización:</strong> 
+                        </span>
+                        <div t-field="o.orden_cotiz_stock_field"></div>
+                    </div>
+                    <div t-if="o.proyecto_stock_field" class="mt-2 col-4">
+                        <span>
+                            <strong>Proyecto:</strong> 
+                        </span>
+                        <div t-field="o.proyecto_stock_field"></div>
+                    </div>
+                </div>
+                <div class="container mt-4" >
+                    <div t-if="o.signature" class="mt32 ml64 mr4" name="signature">
+                        <div class="offset-8">
+                            <strong>Firma</strong>
+                        </div>
+                        <div class="offset-8">
+                            <img t-att-src="image_data_uri(o.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                        </div>
+                        <div class="offset-8 text-center">
+                            <p t-field="o.partner_id_employee"/>
+                            <filter name="today" string="Today" domain="[('date','=',time.strftime('%%Y-%%m-%%d'))]"/>
+                        </div>
+                    </div>
+
+                </div>
+
+            </xpath>
+            <xpath expr="//div[@name='div_outgoing_address']" position="replace">
+                <div class="col-6" name="div_outgoing_address">
+                    <div t-if="o.should_print_delivery_address()">
+                        <span><strong>Delivery Address:</strong></span>
+                        <div t-field="o.move_ids[0].partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+                    <div t-elif="o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                        <span><strong>Warehouse Address:</strong></span>
+                        <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+                    <div t-elif="o.picking_type_id.code == 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                        <span><strong>Detalle de Operación:</strong></span>
+                        <div t-if="o.department_stock_field" class="col-auto col-6 mw-100">
+                            <strong>Departamento:</strong>
+                            <span class="m-0" t-field="o.department_stock_field"/>
+                        </div>
+                        <div t-if="o.partner_id_employee" class="col-auto col-6 mw-100">
+                            <strong >Solicitado por:</strong>
+                            <span class="m-0" t-field="o.partner_id_employee"/>
+                        </div>
+                        <div t-if="o.partner_id_supervisor" class="col-auto col-6 mw-100">
+                            <strong >Autorizado por:</strong>
+                            <span class="m-0" t-field="o.partner_id_supervisor"/>
+                        </div>
+
+                        <!-- <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/> -->
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='div_incoming_address']" position="replace">
+                <div class="col-5 offset-1" name="div_incoming_address">
+                    <!-- <h3>DOUBT</h3> -->
+                    <t t-set="show_partner" t-value="False" />
+                    <div t-if="o.picking_type_id.code=='incoming' and o.partner_id">
+                        <span><strong>Vendor Address:</strong></span>
+                        <t t-set="show_partner" t-value="True" />
+                    </div>
+                    <div t-if="o.picking_type_id.code=='internal' and o.partner_id">
+                        <span><strong>Cliente:</strong></span>
+                        <t t-set="show_partner" t-value="True" />
+                    </div>
+                    <div t-if="o.picking_type_id.code=='outgoing' and o.partner_id and o.partner_id != o.partner_id.commercial_partner_id">
+                        <span><strong>Customer Address:</strong></span>
+                        <t t-set="show_partner" t-value="True" />
+                    </div>
+                    <div t-if="show_partner" name="partner_header">
+                        <div t-field="o.partner_id.commercial_partner_id"
+                                t-options='{"widget": "contact", "fields": ["name", "phone", "vat"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+
+                    <span class="mt-2"><strong>Responsable de Bodega:</strong></span>
+                        <div t-field="o.user_id"></div>
+                </div>
+            </xpath>
+
+        </template>
+    </data>
+ </odoo>

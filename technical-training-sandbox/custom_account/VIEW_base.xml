@@ -1,0 +1,469 @@
+<form string="Ticket de servicio de asistencia">
+    <header>
+        <button name="assign_ticket_to_self" string="Asignar a mí" type="object"
+            class="oe_highlight" data-hotkey="q"
+            modifiers="{&quot;invisible&quot;: [[&quot;user_id&quot;, &quot;!=&quot;, false]]}" />
+        <field name="display_timer"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timesheet_timer" on_change="1"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="timer_pause" on_change="1"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timer_start_primary"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timer_start_secondary"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timer_stop"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timer_pause"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="display_timer_resume"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="encode_uom_in_days" on_change="1"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <button class="btn-primary" name="action_timer_start" type="object" string="Iniciar"
+            data-hotkey="z" title="Iniciar temporizador" icon="fa-clock-o"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;display_timer_start_primary&quot;, &quot;=&quot;, false], [&quot;display_timer&quot;, &quot;=&quot;, false]]}" />
+        <button class="btn-secondary" name="action_timer_start" type="object" string="Iniciar"
+            data-hotkey="z" title="Iniciar temporizador" icon="fa-clock-o"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;display_timer_start_secondary&quot;, &quot;=&quot;, false], [&quot;display_timer&quot;, &quot;=&quot;, false]]}" />
+        <button class="btn-primary o_fsm_stop" name="action_timer_stop" type="object"
+            string="Detener" data-hotkey="z" title="Detener temporizador" icon="fa-clock-o"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;display_timer_stop&quot;, &quot;=&quot;, false], [&quot;display_timer&quot;, &quot;=&quot;, false]]}" />
+        <button class="btn-secondary" name="action_timer_pause" type="object" string="Pausa"
+            data-hotkey="w" title="Pausar temporizador"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;display_timer_pause&quot;, &quot;=&quot;, false], [&quot;display_timer&quot;, &quot;=&quot;, false]]}" />
+        <button class="btn-secondary" name="action_timer_resume" type="object" string="Reanudar"
+            data-hotkey="w" title="Reanudar temporizador"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;display_timer_resume&quot;, &quot;=&quot;, false], [&quot;display_timer&quot;, &quot;=&quot;, false]]}" />
+        <field name="timer_start" widget="timer_start_field"
+            class="text-secondary d-flex align-self-center me-auto h2 ms-2 ms-sm-0 fw-bold"
+            on_change="1"
+            modifiers="{&quot;invisible&quot;: [[&quot;display_timer&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+        <field name="has_partner_picking"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="use_product_returns"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <button type="action" name="212" string="Devolver"
+            context="{'default_ticket_id': id, 'default_company_id': company_id}" data-hotkey="q"
+            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;has_partner_picking&quot;, &quot;=&quot;, false], [&quot;use_product_returns&quot;, &quot;=&quot;, false]]}" />
+        <field name="use_product_repairs"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <button name="1014" type="action" string="Solucionar"
+            context="{'default_product_id': product_id, 'default_lot_id': lot_id, 'default_partner_id': partner_id, 'default_ticket_id': id, 'default_company_id': company_id}"
+            data-hotkey="t"
+            modifiers="{&quot;invisible&quot;: [[&quot;use_product_repairs&quot;, &quot;=&quot;, false]]}" />
+        <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"
+            class="ms-2" on_change="1" can_create="true" can_write="true" />
+        <field name="use_fsm" modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <button class="btn btn-secondary" name="action_generate_fsm_task" type="object"
+            string="Crear tarea" data-hotkey="w"
+            modifiers="{&quot;invisible&quot;: [[&quot;use_fsm&quot;, &quot;=&quot;, false]]}" />
+    </header>
+    <sheet>
+        <field name="legend_blocked"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="legend_normal"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="legend_done"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="rating_count"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="use_rating"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="rating_avg" on_change="1"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <field name="company_id"
+            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <div class="oe_button_box" name="button_box">
+            <button class="oe_stat_button" name="action_view_pickings" icon="fa-truck" type="object"
+                modifiers="{&quot;invisible&quot;: [[&quot;pickings_count&quot;, &quot;=&quot;, 0]]}">
+                <field name="pickings_count" string="Devoluciones" widget="statinfo"
+                    modifiers="{&quot;readonly&quot;: true}" />
+            </button>
+            <button class="oe_stat_button" name="action_view_repairs" icon="fa-wrench" type="object"
+                modifiers="{&quot;invisible&quot;: [[&quot;repairs_count&quot;, &quot;=&quot;, 0]]}">
+                <field name="repairs_count" string="Reparaciones" widget="statinfo"
+                    modifiers="{&quot;readonly&quot;: true}" />
+            </button>
+            <button class="oe_stat_button" type="object" name="action_view_so" icon="fa-dollar"
+                string="Orden de venta"
+                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;use_helpdesk_sale_timesheet&quot;, &quot;=&quot;, false], &quot;&amp;&quot;, [&quot;sale_order_id&quot;, &quot;=&quot;, false], [&quot;sale_line_id&quot;, &quot;=&quot;, false]]}" />
+            <button class="oe_stat_button" name="action_view_fsm_tasks" type="object"
+                icon="fa-tasks"
+                modifiers="{&quot;invisible&quot;: [[&quot;fsm_task_count&quot;, &quot;=&quot;, 0]]}">
+                <field string="Tareas" name="fsm_task_count" widget="statinfo"
+                    modifiers="{&quot;readonly&quot;: true}" />
+            </button>
+            <button class="oe_stat_button" type="object" name="action_open_helpdesk_ticket"
+                icon="fa-life-ring"
+                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;partner_id&quot;, &quot;=&quot;, false], [&quot;partner_ticket_count&quot;, &quot;=&quot;, 0]]}">
+                <div class="o_field_widget o_stat_info">
+                    <span class="o_stat_value">
+                        <field name="partner_ticket_count" nolabel="1"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <span class="text-secondary fw-normal">Tickets</span>
+                    </span>
+                    <span class="o_stat_value">
+                        <field name="partner_open_ticket_count" nolabel="1"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <span class="text-secondary fw-normal"> Abrir</span>
+                    </span>
+                </div>
+            </button>
+        </div>
+        <widget name="web_ribbon" title="Archivado" bg_color="bg-danger"
+            modifiers="{&quot;invisible&quot;: [[&quot;active&quot;, &quot;=&quot;, true]]}" />
+        <field name="kanban_state" widget="state_selection" modifiers="{&quot;required&quot;: true}" />
+        <field name="use_sla" modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+        <div class="oe_title">
+            <h1>
+                <field name="name" class="field_name" placeholder="p. ej. El producto llegó dañado"
+                    modifiers="{&quot;required&quot;: true}" />
+            </h1>
+            <field name="sla_status_ids" widget="helpdesk_sla_many2many_tags"
+                options="{'color_field': 'color', 'no_edit_color': True}" on_change="1"
+                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;use_sla&quot;, &quot;=&quot;, false], [&quot;sla_status_ids&quot;, &quot;=&quot;, []]], &quot;readonly&quot;: true}" />
+            <span class="mx-2 text-muted"
+                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;sla_deadline&quot;, &quot;=&quot;, false], [&quot;use_sla&quot;, &quot;=&quot;, false]]}">
+                <i class="fa fa-lg fa-clock-o me-2" aria-label="Fecha límite de Sla"
+                    title="Fecha límite de Sla" />
+                <field name="sla_deadline" widget="remaining_days"
+                    modifiers="{&quot;readonly&quot;: true}" />
+            </span>
+        </div>
+        <group class="mb-0 mt-4">
+            <group>
+                <field name="active" modifiers="{&quot;invisible&quot;: true}" />
+                <field name="team_id"
+                    context="{'kanban_view_ref': 'helpdesk.helpdesk_team_view_kanban_mobile', 'default_use_sla': True}"
+                    on_change="1" modifiers="{&quot;required&quot;: true}" can_create="true"
+                    can_write="true" />
+                <field name="user_id" class="field_user_id"
+                    domain="['&amp;', ('id', 'in', domain_user_ids), ('share', '=', False)]"
+                    widget="many2one_avatar_user" can_create="true" can_write="true" />
+                <field name="additional_people_ids" widget="many2many_tags" can_create="true"
+                    can_write="true" />
+                <field name="stock_location_id" on_change="1" can_create="true" can_write="true" />
+                <field name="nf_product_id" options="{'no_create': True}" on_change="1"
+                    can_create="true" can_write="true" />
+                <field name="nf_lot_id" options="{'no_create': True}"
+                    modifiers="{&quot;invisible&quot;: [[&quot;nf_product_id&quot;, &quot;=&quot;, false]]}"
+                    can_create="true" can_write="true" />
+                <field name="custom_product_id" on_change="1" can_create="true" can_write="true" />
+                <field name="valores_para_dominio"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="valores_para_dominio_stock"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="valores_para_dominio_sale_line" />
+                <field name="marca"
+                    modifiers="{&quot;invisible&quot;: [[&quot;nf_product_id&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="modelo"
+                    modifiers="{&quot;invisible&quot;: [[&quot;nf_product_id&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="numero_activo"
+                    modifiers="{&quot;invisible&quot;: [[&quot;custom_product_id&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+
+
+                <field name="lugar" />
+                <field name="ubicacion" />
+                <field name="observaciones" />
+
+
+                <field name="garantia_extendida"
+                    modifiers="{&quot;invisible&quot;: [[&quot;garantia_extendida&quot;, &quot;=&quot;, &quot;&quot;]], &quot;readonly&quot;: true}" />
+                <field name="domain_user_ids"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="priority" widget="priority" />
+                <field name="ticket_type_id" string="Tipo de Servicio" can_create="true"
+                    can_write="true" />
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"
+                    can_create="true" can_write="true" />
+                <field name="company_id" context="{'create': False}"
+                    modifiers="{&quot;readonly&quot;: true}" />
+            </group>
+            <group>
+                <field name="partner_id" class="field_partner_id"
+                    domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+                    widget="res_partner_many2one"
+                    context="{'res_partner_search_mode': 'customer',&#10;                                            'default_name': partner_name,&#10;                                            'default_email': partner_email,&#10;                                            'default_phone': partner_phone}"
+                    options="{'always_reload': True}" on_change="1" can_create="true"
+                    can_write="true" />
+                <field name="partner_name"
+                    modifiers="{&quot;invisible&quot;: [[&quot;partner_id&quot;, &quot;!=&quot;, false]]}" />
+                <field name="is_partner_email_update"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="is_partner_phone_update"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <label for="partner_email" string="Correo electrónico" />
+                <div class="o_row o_row_readonly">
+                    <field name="partner_email" widget="email" string="correo electrónico"
+                        on_change="1" />
+                    <span class="fa fa-exclamation-triangle text-warning oe_edit_only"
+                        title="Si guarda este cambio también se actualizará el correo del cliente"
+                        modifiers="{&quot;invisible&quot;: [[&quot;is_partner_email_update&quot;, &quot;=&quot;, false]]}" />
+                </div>
+                <label for="partner_phone" string="Teléfono" />
+                <div class="o_row o_row_readonly">
+                    <field name="partner_phone" widget="phone" string="Teléfono" on_change="1" />
+                    <span class="fa fa-exclamation-triangle text-warning oe_edit_only"
+                        title="Si guarda este cambio también se actualizará el número telefónico del cliente"
+                        modifiers="{&quot;invisible&quot;: [[&quot;is_partner_phone_update&quot;, &quot;=&quot;, false]]}" />
+                </div>
+                <field name="sale_client_id" can_create="true" can_write="true" />
+                <field name="email_cc" />
+                <field name="fecha_inicio" />
+                <field name="use_helpdesk_timesheet" on_change="1"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="use_helpdesk_sale_timesheet" on_change="1"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="project_id" on_change="1"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="fecha_fin" />
+                <field name="vigencia"
+                    modifiers="{&quot;invisible&quot;: [[&quot;vigencia&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="fecha_fin_garantia"
+                    modifiers="{&quot;invisible&quot;: [[&quot;fecha_fin_garantia&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="numero_contrato"
+                    modifiers="{&quot;invisible&quot;: [[&quot;numero_contrato&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="fecha_inicio_garantia"
+                    modifiers="{&quot;invisible&quot;: [[&quot;fecha_inicio_garantia&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+                <field name="lot_id"
+                    context="{'default_product_id': product_id, 'default_company_id': company_id}"
+                    modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;tracking&quot;, &quot;in&quot;, [&quot;none&quot;, false]], &quot;&amp;&quot;, &quot;&amp;&quot;, [&quot;use_credit_notes&quot;, &quot;=&quot;, false], [&quot;use_product_returns&quot;, &quot;=&quot;, false], [&quot;use_product_repairs&quot;, &quot;=&quot;, false]]}"
+                    can_create="true" can_write="true" />
+
+
+                <field name="analytic_account_id" modifiers="{&quot;invisible&quot;: true}"
+                    can_create="true" can_write="true" />
+                <field name="commercial_partner_id" on_change="1"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="use_credit_notes"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="use_product_returns"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="use_product_repairs"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="suitable_product_ids" on_change="1"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                <field name="product_id" options="{'no_create': True, 'no_create_edit': True}"
+                    on_change="1" modifiers="{&quot;invisible&quot;: true}" can_create="true"
+                    can_write="true" />
+                <field name="tracking"
+                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+
+
+                <field name="sale_order_id" options="{&quot;no_create&quot;: True}"
+                    modifiers="{&quot;invisible&quot;: true}" can_create="true" can_write="true" />
+                <field name="lot_id" modifiers="{&quot;invisible&quot;: true}" can_create="true"
+                    can_write="true" />
+            </group>
+        </group>
+        <div colspan="8"
+            modifiers="{&quot;invisible&quot;: [[&quot;team_id&quot;, &quot;=&quot;, false]]}">
+            <field name="properties" nolabel="1" columns="2" hideKanbanOption="1" />
+        </div>
+        <notebook>
+            <page string="Instrucciones" name="trabajos_realizar">
+                <field name="trabajo_realizar" />
+            </page>
+            <page string="Descripción" name="description">
+                <field name="description" placeholder="Descripción del ticket..." />
+            </page>
+            <page string="Hojas de horas" name="timesheets"
+                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;project_id&quot;, &quot;=&quot;, false], [&quot;use_helpdesk_timesheet&quot;, &quot;=&quot;, false]]}">
+                <field name="timesheet_ids" mode="tree,kanban"
+                    context="{'default_project_id': project_id}" widget="so_line_one2many"
+                    on_change="1">
+                    <tree editable="bottom" string="Actividades de la hoja de horas"
+                        default_order="date" decoration-muted="timesheet_invoice_id != False">
+                        <field name="date" modifiers="{&quot;required&quot;: true}" />
+                        <field name="user_id" modifiers="{&quot;column_invisible&quot;: true}"
+                            can_create="true" can_write="true" />
+                        <field name="employee_id" widget="many2one_avatar_employee" on_change="1"
+                            modifiers="{&quot;required&quot;: true}" can_create="true"
+                            can_write="true" />
+                        <field name="name" />
+                        <field name="so_line"
+                            domain="[('is_service', '=', True), ('order_partner_id', 'child_of', parent.commercial_partner_id), ('is_expense', '=', False), ('state', 'in', ['sale', 'done'])]"
+                            context="{'with_remaining_hours': True, 'with_price_unit': True}"
+                            optional="hide" options="{'no_create': True}"
+                            modifiers="{&quot;column_invisible&quot;: [&quot;|&quot;, [&quot;parent.use_helpdesk_sale_timesheet&quot;, &quot;=&quot;, false], [&quot;parent.partner_id&quot;, &quot;=&quot;, false]]}"
+                            can_create="true" can_write="true" />
+                        <field name="unit_amount" widget="timesheet_uom"
+                            decoration-danger="unit_amount &gt; 24" string="Horas dedicado"
+                            on_change="1" />
+                        <field name="project_id" on_change="1"
+                            modifiers="{&quot;column_invisible&quot;: true}" can_create="true"
+                            can_write="true" />
+                        <field name="task_id" on_change="1"
+                            modifiers="{&quot;column_invisible&quot;: true}" can_create="true"
+                            can_write="true" />
+                        <field name="company_id"
+                            modifiers="{&quot;readonly&quot;: true, &quot;required&quot;: true, &quot;column_invisible&quot;: true}" />
+                        <field name="timesheet_invoice_id" on_change="1"
+                            modifiers="{&quot;readonly&quot;: true, &quot;column_invisible&quot;: true}" />
+                        <field name="is_so_line_edited"
+                            modifiers="{&quot;column_invisible&quot;: true}" />
+                    </tree>
+                    <kanban class="o_kanban_mobile">
+                        <field name="date" modifiers="{&quot;required&quot;: true}" />
+                        <field name="user_id" />
+                        <field name="employee_id" on_change="1" />
+                        <field name="name" modifiers="{&quot;required&quot;: true}" />
+                        <field name="unit_amount" on_change="1" />
+                        <field name="project_id" on_change="1" />
+                        <templates>
+                            <t t-name="kanban-box">
+                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong>
+                                                <span>
+                                                    <t t-esc="record.employee_id.value" />
+                                                </span>
+                                            </strong>
+                                        </div>
+                                        <div class="col-6 float-end text-end">
+                                            <strong>
+                                                <t t-esc="record.date.value" />
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 text-muted">
+                                            <span>
+                                                <t t-esc="record.name.value" />
+                                            </span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="float-end text-end">
+                                                <field name="unit_amount" widget="float_time"
+                                                    decoration-danger="unit_amount &gt; 24"
+                                                    on_change="1" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </templates>
+                    </kanban>
+                    <form string="Actividades de la hoja de horas">
+                        <sheet>
+                            <group>
+                                <field name="date" modifiers="{&quot;required&quot;: true}" />
+                                <field name="user_id" modifiers="{&quot;invisible&quot;: true}"
+                                    can_create="true" can_write="true" />
+                                <field name="employee_id" on_change="1"
+                                    modifiers="{&quot;required&quot;: true}" can_create="true"
+                                    can_write="true" />
+                                <field name="name" />
+                                <field name="unit_amount" string="Duración" widget="float_time"
+                                    decoration-danger="unit_amount &gt; 24" on_change="1" />
+                                <field name="project_id" on_change="1"
+                                    modifiers="{&quot;invisible&quot;: true}" can_create="true"
+                                    can_write="true" />
+                                <field name="company_id"
+                                    modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true, &quot;required&quot;: true}" />
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+                <group>
+                    <group class="oe_subtotal_footer oe_right" name="ticket_hours">
+                        <span>
+                            <label class="fw-bold" for="total_hours_spent" string="Horas dedicadas"
+                                modifiers="{&quot;invisible&quot;: [[&quot;encode_uom_in_days&quot;, &quot;=&quot;, true]]}" />
+                            <label class="fw-bold" for="total_hours_spent" string="Días dedicados"
+                                modifiers="{&quot;invisible&quot;: [[&quot;encode_uom_in_days&quot;, &quot;=&quot;, false]]}" />
+                        </span>
+                        <field name="total_hours_spent" widget="timesheet_uom" nolabel="1"
+                            on_change="1" modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="remaining_hours_available"
+                            modifiers="{&quot;invisible&quot;: true, &quot;readonly&quot;: true}" />
+                        <span id="remaining_hours_so_label"
+                            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, &quot;|&quot;, &quot;|&quot;, &quot;|&quot;, [&quot;sale_order_id&quot;, &quot;=&quot;, false], [&quot;use_helpdesk_sale_timesheet&quot;, &quot;=&quot;, false], [&quot;partner_id&quot;, &quot;=&quot;, false], [&quot;sale_line_id&quot;, &quot;=&quot;, false], [&quot;remaining_hours_available&quot;, &quot;=&quot;, false]]}">
+                            <label class="fw-bold" for="remaining_hours_so"
+                                string="Horas restantes en la orden de venta"
+                                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;encode_uom_in_days&quot;, &quot;=&quot;, true], [&quot;remaining_hours_so&quot;, &quot;&lt;&quot;, 0]]}" />
+                            <label class="fw-bold" for="remaining_hours_so"
+                                string="Días restantes en la orden de venta"
+                                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;encode_uom_in_days&quot;, &quot;=&quot;, false], [&quot;remaining_hours_so&quot;, &quot;&lt;&quot;, 0]]}" />
+                            <label class="fw-bold text-danger" for="remaining_hours_so"
+                                string="Horas restantes en la orden de venta"
+                                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;encode_uom_in_days&quot;, &quot;=&quot;, true], [&quot;remaining_hours_so&quot;, &quot;&gt;=&quot;, 0]]}" />
+                            <label class="fw-bold text-danger" for="remaining_hours_so"
+                                string="Días restantes en la orden de venta"
+                                modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;encode_uom_in_days&quot;, &quot;=&quot;, false], [&quot;remaining_hours_so&quot;, &quot;&gt;=&quot;, 0]]}" />
+                        </span>
+                        <field name="remaining_hours_so" nolabel="1" widget="timesheet_uom"
+                            decoration-danger="remaining_hours_so &lt; 0"
+                            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, &quot;|&quot;, &quot;|&quot;, &quot;|&quot;, [&quot;sale_order_id&quot;, &quot;=&quot;, false], [&quot;use_helpdesk_sale_timesheet&quot;, &quot;=&quot;, false], [&quot;partner_id&quot;, &quot;=&quot;, false], [&quot;sale_line_id&quot;, &quot;=&quot;, false], [&quot;remaining_hours_available&quot;, &quot;=&quot;, false]], &quot;readonly&quot;: true}" />
+
+                    </group>
+                </group>
+            </page>
+            <page string="Productos en Ubicación" name="product_location">
+                <!-- <tree string="Tests"> -->
+                <!-- <field name="quants_modificado_id" context="{'tree_view_ref':
+                'stock.view_stock_quant_tree_editable'}">
+                    
+                    </field> -->
+                <!-- </tree> -->
+                <field name="quants_ids_rl" modifiers="{&quot;readonly&quot;: true}">
+                    <tree string="Productos Ubicados" edit="true" delete="false">
+                        <field name="region_rl" optional="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="tipo_rl" optional="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="product_id" on_change="1"
+                            modifiers="{&quot;required&quot;: true}" />
+                        <field name="marca_rl" optional="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="modelo_rl" optionla="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="ficha_rl" optional="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="cliente_rl" optional="hide"
+                            modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="loc_institu_rl" modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="install_rl" modifiers="{&quot;readonly&quot;: true}" />
+                        <field name="lot_id" on_change="1" />
+                        <field name="ip_field_rl" modifiers="{&quot;readonly&quot;: true}" />
+
+                        <!-- <field name="cliente_lot_rl"/>
+                        <field name="contrato_oc_rl"/> -->
+                        <!-- Contart is not in stock.quant model -->
+                        <!-- <button name="action_get_attachment_view" string="Adjuntos"
+                        type="object" icon="fa-paperclip"/> -->
+                        <button string="Generar Ticket" type="object" name="open_form_action"
+                            class="oe_highlight"
+                            context="{'prod_id':product_id,'partner_id':cliente_rl,'Lot_id': lot_id}" />
+                        <!-- <button string="Ver detalles" type="object" name="open_form_action"/> -->
+                    </tree>
+                </field>
+            </page>
+            <page string="New Page" name="studio_page_WsWWX"
+                modifiers="{&quot;invisible&quot;: true}">
+                <group name="studio_group_WsWWX">
+                    <group name="studio_group_WsWWX_left">
+                        <field name="sale_line_id" options="{'no_create': True}"
+                            context="{'with_remaining_hours': True, 'with_price_unit': True, 'create': False, 'edit': False}"
+                            on_change="1"
+                            modifiers="{&quot;invisible&quot;: [&quot;|&quot;, [&quot;use_helpdesk_sale_timesheet&quot;, &quot;=&quot;, false], [&quot;partner_id&quot;, &quot;=&quot;, false]]}"
+                            can_create="true" can_write="true" />
+                    </group>
+                    <group name="studio_group_WsWWX_right" />
+                </group>
+            </page>
+        </notebook>
+        <group string="Incidentes Relacionados">
+            <field name="custom_partner_ticket_ids" widget="many2many"
+                modifiers="{&quot;readonly&quot;: true}" />
+        </group>
+    </sheet>
+    <div class="oe_chatter">
+        <field name="message_follower_ids" />
+        <field name="activity_ids" />
+        <field name="message_ids" options="{'post_refresh': 'recipients'}" />
+    </div>
+</form>

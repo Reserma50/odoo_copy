@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+      <!-- Security -->
+      <record id="group_period_lock" model="res.groups">
+        <field name="name">Account Period Lock Super User </field>
+      </record>
+    </data>
+  </odoo>
+  

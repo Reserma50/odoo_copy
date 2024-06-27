@@ -364,6 +364,25 @@ class AccountAccount(models.Model):
         }
         for record in self:
             record.current_balance = balances.get(record.id, 0)
+    # import datetime
+
+    def compute_current_balance_extracto(self, my_account_id, target_date):
+        target_date = fields.Date.from_string(target_date)
+        my_account = self.browse(my_account_id)
+        balances = {
+            read['account_id'][0]: read['balance']
+            for read in self.env['account.move.line']._read_group(
+                domain=[('account_id', '=', my_account), ('parent_state', '=', 'posted'), ('date.month', '=', target_date.month), ('date.year', '=', target_date.year)],
+                fields=['balance', 'account_id'],
+                groupby=['account_id'],
+            )
+        }
+        # for record in self:
+        return balances.get(my_account_id, 0)
+        
+        # print(x.strftime("%Y")) # full year
+        # print(x.strftime("%m")) # full month
+
 
     def _compute_related_taxes_amount(self):
         for record in self:

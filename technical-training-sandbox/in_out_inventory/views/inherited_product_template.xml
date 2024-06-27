@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+        <record id="product_template_field_form" model="ir.ui.view">
+            <field name="name">product.template.view.inherit.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//field[@name='barcode']" position="after">
+                    <field name="inventory_fields_ubicacion" />
+                </xpath> -->
+                <!-- CHNAFE COMPORTAMIENTO -->
+                
+                <!-- <xpath expr="//field[@name='categ_id'][1]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+
+                <!-- <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="categ_id" domain="[('detailed_type_prod', '=', detailed_type)]"/>
+                </xpath> -->
+                <!--  -->
+                <xpath expr="//field[@name='categ_id']" position="attributes">
+                    <attribute name="domain">[('detailed_type_prod', '=', detailed_type)]</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='variants']" position="before">
+                    <page name="Detalles adicionales" string="Información adicional" >
+                        <group name="group_inventory_fields_first">
+                            <field name="inventory_fields_marca"></field>
+                            <field name="inventory_fields_descripcion"></field>
+                            <!-- CHNAFE COMPORTAMIENTO -->
+                            <!-- <field name="categ_id" domain="[('detailed_type_prod', '=', detailed_type)]"/> -->
+                        </group> 
+                        <group name="group_inventory_fields_second" string="Desperfecto">
+                            <field name="inventory_fields_estado"></field>
+                            <field name="inventory_fields_damage"></field>
+                        </group>
+                        <p class="oe_grey oe_edit_only">
+                            <strong>Datos relevantes</strong>: Estos datos fueron cargados a través de la plantilla de producto.
+                        </p>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

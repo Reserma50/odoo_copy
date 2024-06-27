@@ -79,11 +79,11 @@
             action="marcaftk_fields_action_window"
             groups="base.group_no_one"/>
         
-        <menuitem
+        <!-- <menuitem
             id="menu_product_form2"
             name="Products"
             parent="maintenance.menu_maintenance_title"
             action="mrp_product_variant_action"
-            sequence="3"/>
+            sequence="3"/> -->
     </data>
 </odoo>

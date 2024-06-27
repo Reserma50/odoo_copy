@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_traslado" model="ir.actions.report">
+        <field name="name">Reporte de Operaciones Traslado</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in_out_inventory.report_report_traslado</field>
+        <field name="report_file">in_out_inventory.report_report_traslado</field>
+        <field name="print_report_name">'Report_product_entrada_salida'</field>
+        <!-- <field name="paperformat_id" ref="event.paperformat_euro_lowmargin"/> -->
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
+    <!-- <record id="action_report_entrega" model="ir.actions.report">
+        <field name="name">Reporte de Entrega (modificado)</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in_out_inventory.report_report_entrega</field>
+        <field name="report_file">in_out_inventory.report_report_entrega</field>
+        <field name="print_report_name">'Report_product_entrega'</field>
+        #<field name="paperformat_id" ref="event.paperformat_euro_lowmargin"/> 
+        <field name="binding_model_id" ref="model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record> -->

@@ -62,6 +62,18 @@
                     confirm = "¿Esta seguro que desea crear el ticket de instalación?"/>
                     <!-- attrs="{'invisible': ['|', '|', ('state', '=', 'sent'), ('state', '=', 'cancel'), ('ticket_install_created', '=', True)]}" -->
                 </xpath>
+
+                <!-- TAX IDS REQUIRED -->
+                <xpath expr="/form/sheet/notebook/page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='tax_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('qty_invoiced', '&gt;', 0)], 'required':True}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='tax_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('qty_invoiced', '&gt;', 0)],  'required':True}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='order_lines']/field[@name='order_line']/kanban/field[@name='tax_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
             </field>
         </record>
     </data>
