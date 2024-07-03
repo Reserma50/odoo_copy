@@ -12,14 +12,37 @@ class AccountPayment(models.Model):
 
     def action_post(self):
         res = super(AccountPayment,self).action_post()
-        
-        lock_period = self.env['period.lock'].search([('state','=','lock')])        
-        logging.info('********** \nField: %s', self)
-        logging.info("Raise Error:::::::::::" + str("Invoice Date False"))
-        for lp in lock_period:
-            self.validar_periodos(res, lp)
+        lock_period = self.env['period.lock'].search([('state','=','lock')])
+        for record in self:
+            logging.info('********** \nField: %s', self)
+            logging.info("Raise Error:::::::::::" + str("Invoice Date False"))
+            for lp in lock_period:
+                self.validar_periodos(objeto_bloqueo = lp)
 
         return res
+
+    def validar_periodos(self, objeto_move=None, objeto_bloqueo=None):
+        '''Raise Error is Date is in Periodos'''
+        if objeto_move is None:
+            objeto_move = self
+
+        if objeto_move.invoice_date: #Facturas
+            logging.info("Invoice Date :::::::::::" + str(objeto_move.invoice_date))
+            self.verification(objeto_bloqueo, objeto_move.invoice_date, objeto_move.journal_id)
+
+        elif objeto_move.date and objeto_move.invoice_date == False: #Asientos
+            logging.info("Raise Error :::::::::::" + str("Invoice Date False"))
+            self.verification(objeto_bloqueo, objeto_move.date, objeto_move.journal_id)
+
+        else: #Pagos
+            logging.info("Fechas en pagos vacios :::::::::::")
+
+    def verification(self, objeto_bloqueo, fecha, journal):
+        if objeto_bloqueo.from_date <= fecha and objeto_bloqueo.to_date >= fecha:
+            logging.info("Date:::::::::::" + str(fecha))
+            if journal in objeto_bloqueo.journal_ids:
+                msg="Accounting period locked from "+str(objeto_bloqueo.from_date)+ " to "+ str(objeto_bloqueo.to_date)+" Dates for this journal: "+str(journal.name)+"..!"  
+                raise ValidationError(_(msg))
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -27,7 +50,6 @@ class AccountMove(models.Model):
     def action_post(self):
         res = super(AccountMove,self).action_post()
         lock_period = self.env['period.lock'].search([('state','=','lock')])
-
 
         if not self.env.user.has_group('period_lock.group_period_lock'):
             for lp in lock_period:
@@ -48,7 +70,7 @@ class AccountMove(models.Model):
 
         if not self.env.user.has_group('period_lock.group_period_lock'):
             for lp in lock_period:
-                self.validar_periodos(res, lp)
+                self.validar_periodos(objeto_move = res, objeto_bloqueo = lp)
         return res
     
     def validar_periodos(self, objeto_move=None, objeto_bloqueo=None):
@@ -57,24 +79,26 @@ class AccountMove(models.Model):
             objeto_move = self
 
         if objeto_move.invoice_date: #Facturas
-            logging.info("Invoice Date:::::::::::" + str(self.invoice_date))
-            if objeto_bloqueo.from_date <= objeto_move.invoice_date and objeto_bloqueo.to_date >= objeto_move.invoice_date:
-                if objeto_move.journal_id in  objeto_bloqueo.journal_ids:
-                    msg="Accounting period locked from "+str(objeto_bloqueo.from_date)+ " to "+ str(objeto_bloqueo.to_date)+" Dates for this journal: "+str(objeto_move.journal_id.name)+"..!"  
-                    raise ValidationError(_(msg))
+            logging.info("Invoice Date :::::::::::" + str(objeto_move.invoice_date))
+            self.verification(objeto_bloqueo, objeto_move.invoice_date, objeto_move.journal_id)
+
         elif objeto_move.date and objeto_move.invoice_date == False: #Asientos
-            logging.info("Raise Error:::::::::::" + str("Invoice Date False"))
-            if objeto_bloqueo.from_date <= objeto_move.date and objeto_bloqueo.to_date >= objeto_move.date:
-                logging.info("Date:::::::::::" + str(self.date))
-                if objeto_move.journal_id in  objeto_bloqueo.journal_ids:
-                    msg="Accounting period locked from "+str(objeto_bloqueo.from_date)+ " to "+ str(objeto_bloqueo.to_date)+" Dates for this journal: "+str(objeto_move.journal_id.name)+"..!"  
-                    raise ValidationError(_(msg))
+            logging.info("Raise Error :::::::::::" + str("Invoice Date False"))
+            self.verification(objeto_bloqueo, objeto_move.date, objeto_move.journal_id)
+
         else: #Pagos
-            logging.info("Buscar Fecha:::::::::::")
+            logging.info("Fechas en pagos vacios :::::::::::")
+
+    def verification(self, objeto_bloqueo, fecha, journal):
+        if objeto_bloqueo.from_date <= fecha and objeto_bloqueo.to_date >= fecha:
+            logging.info("Date:::::::::::" + str(fecha))
+            if journal in objeto_bloqueo.journal_ids:
+                msg="Accounting period locked from "+str(objeto_bloqueo.from_date)+ " to "+ str(objeto_bloqueo.to_date)+" Dates for this journal: "+str(journal.name)+"..!"  
+                raise ValidationError(_(msg))
 
     @api.model
     def button_draft(self):
-        res = super(AccountMove,self).button_draft() 
+        
         for record in self:
             logging.info('Record ID: %s', record.id)
             for field_name in record._fields:
@@ -85,7 +109,7 @@ class AccountMove(models.Model):
         lock_period = self.env['period.lock'].search([('state','=','lock')])
         if not self.env.user.has_group('period_lock.group_period_lock'):
             for lp in lock_period:
-                self.validar_periodos(res, lp)
+                self.validar_periodos(objeto_bloqueo = lp)
                         
-        
+        res = super(AccountMove,self).button_draft() 
         return res
