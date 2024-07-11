@@ -40,6 +40,18 @@ class InheritedMoveLine(models.Model):
     @api.depends('display_type', 'company_id')
     def _compute_account_id(self):
        
+        #Account Payable
+        # account_type = line.account_id.account_type
+
        res = super(InheritedMoveLine,self)._compute_account_id()
-       logging.info("Date:::::::::::" + str(res))
-       return res
+       logging.info("Antes del recorrido del objeto")
+       myaccount = self.env['account.account'].search([('code', '=', '612000')], limit=1)
+       for line in self:
+            if not line.display_type == 'payment_term':
+                logging.info("Antes:::::::::::" + str(line.account_id))
+                logging.info("Antes:::::::::::" + str(line.account_id.name))
+                line.account_id = myaccount.id ## ID TO CHANGE 612000 #28
+                logging.info("Después:::::::::::" + str(line.account_id))
+                logging.info("Después:::::::::::" + str(line.account_id.name))
+           
+       
