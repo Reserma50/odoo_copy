@@ -174,3 +174,5 @@ class InheritedProductCategory(models.Model):
              'A consumable product is a product for which stock is not managed.\n'
              'A service is a non-material product you provide.')
     
+
+

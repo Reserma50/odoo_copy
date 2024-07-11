@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="stock_valuation_field_form" model="ir.ui.view">
+            <field name="name">stock.valuation.view.inherit.field.form</field>
+            <field name="model">stock.valuation.layer</field>
+            <field name="inherit_id" ref="stock_account.stock_valuation_layer_tree"/>
+            <field name="arch" type="xml">
+                <!-- Hide default values | Add new realted fields -->
+                <xpath expr="//field[@name='reference']" position="replace">
+                    <field name="reference" optional="hide"/>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="replace">
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </xpath>
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="categ_id"/>
+                    <!-- <field name="mrc_rel1" optional="hide"/>
+                    <field name="mrc_rel2" optional="hide"/> -->
+                    <field name="detail_type_rel"/>
+                    <field name="barcode_rel"/>
+                </xpath>
+                
+
+            </field>
+        </record>
+    </data>
+</odoo>

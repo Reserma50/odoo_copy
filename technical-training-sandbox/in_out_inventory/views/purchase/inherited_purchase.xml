@@ -1,0 +1,21 @@
+<odoo>
+    <data>
+        <record id="purchase_view_inherit_field_form" model="ir.ui.view">
+            <field name="name">purchase.view.inherit.field.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group/group/field[@name='currency_id'][1]" position="after">
+                    <field name="purchase_type"/>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='name']" position="after">
+                    <field name="our_default_account_id" domain="[('company_id', '=', parent.company_id)]" attrs='{"invisible": [("parent.purchase_type", "!=", "servicio")], "readonly": [("state", "in", ("purchase", "to approve","done", "cancel"))]}'/>
+                    <!-- "required": [("parent.purchase_type", "==", "servicio")] -->
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

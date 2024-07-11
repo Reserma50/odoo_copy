@@ -90,8 +90,8 @@
     <menuitem name="Period Lock" id="period_lock_action_menu" parent="account.menu_finance"
               action="period_lock.action_window"/>
 
-    <menuitem name="Period Lock" id="period_lock_action_menu" parent="account.menu_finance_reports"
-              action="period_lock.action_window"/>
+    <!-- <menuitem name="Period Lock" id="period_lock_action_menu" parent="account.menu_finance_reports"
+              action="period_lock.action_window"/> -->
 
 <!--    <menuitem name="Server to list" id="period_lock" parent="period_lock.menu_2"
               action="period_lock.action_server"/>

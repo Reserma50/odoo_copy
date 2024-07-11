@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'stock', 'project'],
+    'depends': ['base', 'stock', 'project', 'purchase'],
 
     # always loaded
     'data': [
@@ -33,6 +33,10 @@
         'report/inherited_stock_report_reception.xml',
         'report/submenu_report_button.xml',
         'views/inherited_product_category.xml',
+        #pedidos
+        'views/purchase/inherited_purchase.xml',
+        #valuation
+        'views/valuation/inherited_stock_picking.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
