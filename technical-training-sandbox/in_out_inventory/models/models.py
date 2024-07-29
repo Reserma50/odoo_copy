@@ -162,9 +162,19 @@ class FieldsInventoryTemplate(models.Model):
 
     categ_id = fields.Many2one(
         'product.category', 'Product Category', default=None)
+    
+    @api.depends('detailed_type')
+    def _compute_category_type(self):
+        for test in self:
+            if test.detailed_type:
+                test.categ_id = test.detailed_type
+            else:
+                test.categ_id = False
 
 class InheritedProductCategory(models.Model):
     _inherit = 'product.category'
+
+    detailed_type_ids = fields.Many2many("category.tag", string="Categories")
 
     detailed_type_prod = fields.Selection([
         ('product', 'Storable Product'),
@@ -174,5 +184,16 @@ class InheritedProductCategory(models.Model):
              'A consumable product is a product for which stock is not managed.\n'
              'A service is a non-material product you provide.')
     
+class CategoryTag(models.Model):
+    _name = "category.tag"
+    _description = "Category Tag"
+    _order = "name"
 
+    name = fields.Char('Categoria',required=True)
+    color = fields.Integer('Color')
+    
+
+    _sql_constraints = [
+        ('category_tag_unique_name', 'UNIQUE(name)','The name of category tag must be unique.'),
+    ]
 

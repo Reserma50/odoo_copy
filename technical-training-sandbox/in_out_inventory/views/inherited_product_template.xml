@@ -18,6 +18,9 @@
                     <field name="categ_id" domain="[('detailed_type_prod', '=', detailed_type)]"/>
                 </xpath> -->
                 <!--  -->
+                <!-- <xpath expr="//field[@name='categ_id']" position="attributes">
+                    <attribute name="domain">[('detailed_type_prod', '=', detailed_type)]</attribute>
+                </xpath> -->
                 <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="domain">[('detailed_type_prod', '=', detailed_type)]</attribute>
                 </xpath>
