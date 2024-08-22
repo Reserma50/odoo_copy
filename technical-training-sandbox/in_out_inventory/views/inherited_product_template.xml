@@ -21,17 +21,16 @@
                 <!-- <xpath expr="//field[@name='categ_id']" position="attributes">
                     <attribute name="domain">[('detailed_type_prod', '=', detailed_type)]</attribute>
                 </xpath> -->
-                <xpath expr="//field[@name='categ_id']" position="attributes">
-                    <attribute name="domain">[('detailed_type_prod', '=', detailed_type)]</attribute>
-                </xpath>
-
+                <!-- <xpath expr="//field[@name='categ_id']" position="attributes">
+                    <attribute name="domain">[('ID', 'in', detailed_type.categ_ids)]</attribute>
+                </xpath> -->
                 <xpath expr="//page[@name='variants']" position="before">
                     <page name="Detalles adicionales" string="Información adicional" >
                         <group name="group_inventory_fields_first">
                             <field name="inventory_fields_marca"></field>
                             <field name="inventory_fields_descripcion"></field>
                             <!-- CHNAFE COMPORTAMIENTO -->
-                            <!-- <field name="categ_id" domain="[('detailed_type_prod', '=', detailed_type)]"/> -->
+                            <field name="categ_id" domain="[('detailed_type_prod', '=', detailed_type)]"/>
                         </group> 
                         <group name="group_inventory_fields_second" string="Desperfecto">
                             <field name="inventory_fields_estado"></field>

@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="crm_stage_inherit_field_form" model="ir.ui.view">
+            <field name="name">crm.stage.inherit.field.form</field>
+            <field name="model">crm.stage</field>
+            <field name="inherit_id" ref="crm.crm_stage_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_won']" position="after">
+                    <field name="is_loss" widget="boolean_toggle"/>
+                   
+                    <!-- <field name="id" /> -->
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

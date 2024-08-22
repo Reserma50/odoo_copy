@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.actions.act_window" id="crm_eva_infra_list_action">
+             <field name="name">Evaluación de Infraestructura CRM</field>
+             <field name="res_model">crm.infraestructura</field>
+             <field name="view_mode">tree,form</field>
+             <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                       Crear Evaluación de Infraestructura
+                 </p>
+            </field>
+        </record>
+        
+        
+        <menuitem id="menu_comentarios"
+                  name="Evaluación de Infraestructura"
+                  parent="crm.crm_config_settings_menu"
+                  sequence="8"
+                  action="crm_eva_infra_list_action"/>
+
+    </data>
+    
+</odoo>

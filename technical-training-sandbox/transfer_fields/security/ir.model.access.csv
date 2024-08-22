@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_transfer_fields_transfer_fields,transfer_fields.transfer_fields,model_transfer_fields_transfer_fields,base.group_user,1,1,1,1
 access_location_fields,access_location_fields,model_location_fields,base.group_user,1,1,1,1
 access_marcaftk_fields,access_marcaftk_fields,model_marcaftk_fields,base.group_user,1,1,1,1
+access_perifericosmodel_fields,access_perifericosmodel_fields,model_perifericosmodel_fields,base.group_user,1,1,1,1

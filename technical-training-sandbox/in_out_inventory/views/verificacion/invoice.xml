@@ -1,0 +1,273 @@
+<t t-name="web.external_layout_standard">
+    <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+        <span style="display:none; color:#a10205;" t-field="o.display_name"/>
+        <div class="mt-4 oe_structure" style="float:right;">
+            
+            <h2 t-if="'BILL' in o.display_name or 'INV' in o.display_name">
+                        <span t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Factura # <span style="color:#a10205;" t-field="o.name"/></span>
+                        
+
+                        <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                        <span t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                        <span t-if="o.move_type == 'out_refund'">Credit Note</span>
+                        <span t-if="o.move_type == 'in_refund'">Vendor Credit Note</span>
+                        <span t-if="o.move_type == 'in_invoice'">Factura #</span>
+                        <span t-if="o.ref != False" style="color:#a10205;" t-field="o.ref"/>
+                        <span t-if="o.name != '/' and o.ref == False" style="color:#a10205;" t-field="o.name"/>
+                        
+                        
+            </h2>
+            
+             <div t-if="'S' in o.display_name">
+             <h2 t-if="'orders' in o.access_url  and o.state in ['draft', 'sent', 'to approve']">Cotización #<span style="color:#a10205;" t-field="o.name"/></h2>
+             <h2 style="display:none;" t-if="o.state in ['draft', 'sent', 'to approve']">Cotización #<span style="display:none; color:#a10205;" t-field="o.name"/></h2>
+            </div>
+             
+             <div t-if="'P' in o.display_name">
+            <h2 t-if="o.state in ['purchase', 'done','sale']">Pedido de Compra #<span style="color:#a10205;" t-field="o.name"/></h2>
+            </div>
+            <h2 t-if="o.state == 'cancel'">Cancelación #<span style="color:#a10205;" t-field="o.name"/></h2>
+        </div>
+        
+        <div class="row">
+            <div class="col-3 mb4">
+                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 100px;" alt="Logo"/>
+            </div>
+            <div class="col-9 text-end" style="margin-top:22px; display:none;" t-field="company.report_header" name="moto"/>
+        </div>
+        <div t-if="company.logo or company.report_header" class="row zero_min_height">
+            <div class="col-12">
+                <div style="border-bottom: 1px solid black;"/>
+            </div>
+        </div>
+        
+           <div t-if="'S' in o.display_name">  
+           <div style="display:none;" class="row" t-if="'orders' in o.access_url and o.state in ['draft', 'sale', 'sent', 'to approve']">
+            <div class="col-6" name="company_address">
+           
+                <ul class="list-unstyled">
+                 <li><b>RUC: <t t-esc="company.company_registry"/></b></li>
+                 <li><br/></li>
+                 <li><b t-attf-style="color:#1D6895;">Cliente: </b> <t t-esc="o.partner_id.name"/></li>
+                 <li><b t-attf-style="color:#1D6895;">Código :</b> <t t-esc="o.partner_id.codigo_customers"/><br/></li>
+                  <li><b t-attf-style="color:#1D6895;">Atención: </b> <t t-esc="o.persona_contacto_cliente"/></li> 
+                 <li><b t-attf-style="color:#1D6895;">Correo Electrónico: </b> <t t-esc="o.correo_electronico_contacto"/></li> 
+                 <li><b t-attf-style="color:#1D6895;">Teléfono: </b>  <t t-esc="o.numero_telefono_cliente_cliente"/></li> 
+                         
+                </ul>
+            </div>
+             <div style="margin-left:25px;" class="col-5" name="company_address">
+                 
+                <ul class="list-unstyled">
+                 <li><br/></li>
+                 <li><br/></li>
+                 <li><b t-attf-style="color:#1D6895;">Fecha: </b> <t t-esc="o.date_order"/></li>
+                 <li><b t-attf-style="color:#1D6895;">Válido Hasta:</b> <t t-esc="o.validity_date"/><br/></li>
+                 <li><b t-attf-style="color:#1D6895;">Agente Comercial:</b> <t t-esc="o.user_id.name"/></li> 
+
+                </ul>
+           
+               
+            </div>
+        </div>
+          </div>
+ 
+       
+        <div t-if="'P' in o.display_name">    
+        <div style="display:none;" class="row" t-if="'purchase'  in o.access_url">
+            <div class="col-6" name="company_address">
+           
+                <ul class="list-unstyled">
+                 <li><br/></li>
+                 <li><b>RUC: <t t-esc="company.company_registry"/></b></li>
+                 <li><br/></li>
+                 <li><b>Representante de Compra: </b> <p t-field="o.user_id" class="m-0"/></li>
+                 <li><br/></li>
+                 <li><b>Dirección de Envío:</b></li> 
+                 <li> <b> <t t-esc="o.direccion_envio.name"/> </b> <br/><t t-if="str(o.direccion_envio.street) != 'False'" t-esc="str(o.direccion_envio.street) +''+ str(o.direccion_envio.street2) +''+ str(o.direccion_envio.city)"/></li>
+                    
+                </ul>
+            </div>
+             <div style="margin-left:25px;" class="col-5" name="company_address">
+                 
+                <ul class="list-unstyled">
+                 <li><br/></li>
+                 <li><b>Fecha del Pedido: </b> <t t-esc="o.date_approve"/></li>
+                 <li><br/></li>
+                 <li><b><span t-attf-style="color:#1D6895; ">Proveedor: </span></b> <t t-esc="o.partner_id.name"/></li>
+                 <li><b><span t-attf-style="color:#1D6895; ">Código: </span></b><t t-esc="o.partner_id.codigo_customers"/></li>
+                 <li><b><span t-attf-style="color:#1D6895; ">Atención: </span></b><t t-esc="o.persona_contacto_proveedor"/></li>
+                 <li><b><span t-attf-style="color:#1D6895; ">Correo Electrónico:</span></b><t t-esc="o.email_contacto_proveedor"/></li>
+                 <li><b><span t-attf-style="color:#1D6895; ">Teléfono:</span></b><t t-esc="o.telefono_contacto_proveedor"/></li>
+                    
+                </ul>
+           
+               
+            </div>
+        </div>
+        </div>
+       
+       <div style="display:none;">
+            <div t-if="'BILL' in o.display_name or 'INV' in o.display_name" class="row">
+            <div class="col-7">
+           
+                <ul class="list-unstyled">
+                <li><br/></li>
+                <li><b>RUC: <t t-esc="company.company_registry"/></b></li>
+                <li><br/></li>
+                <li><br/></li>
+                
+                 <t t-if="o.move_type == 'in_invoice'">
+                     
+                 <li><b t-attf-style="color:black;">Proveedor :</b> <t t-esc="o.partner_id.name"/></li>
+                 
+                </t>
+                
+               
+                <t t-if="o.move_type == 'out_invoice'">
+                     
+                 <li><b t-attf-style="color:black;">Cliente:</b> <t t-esc="o.partner_id.name"/></li>
+                 
+                </t>
+               
+                
+                 <li><b t-attf-style="color:black;">Código::</b> <t t-esc="o.partner_id.codigo_customers"/></li>
+                 
+                 <li><b t-attf-style="color:black;">Atención:</b><t t-esc="o.partner_id.nombre_persona_contacto"/> </li>
+                  
+                 <li><b t-attf-style="color:black;">Correo Electrónico:</b> <t t-esc="o.partner_id.email"/></li>
+                 
+                 <li><b t-attf-style="color:black;">Teléfono:</b> <t t-esc="o.partner_id.phone"/></li>
+                
+             
+                </ul>
+            </div>
+             <div style="margin-left:25px;" class="col-4">
+                 
+                <ul class="list-unstyled">
+                <li><br/></li>
+                <li><br/></li>
+                <li><br/></li>  <li><br/></li>
+                <li><b>Fecha:</b> <t t-esc="o.invoice_date"/></li> 
+                 
+                <li><b>Origen:</b> <t t-esc="o.invoice_origin"/></li>
+                
+                <li><b>Válido Hasta:</b> <t t-esc="o.invoice_date"/></li> 
+                
+                <li><b>OD:</b> <t t-esc="o.name"/></li> 
+                  
+                </ul>
+           
+               
+            </div>
+
+       </div>
+        </div>
+      
+    
+    </div>
+
+    <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}" t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+        <div class="pt-0">
+
+            <!-- This div ensures that the address is not cropped by the header. -->
+            <t t-call="web.address_layout"/>
+        </div>
+        
+        <t t-out="0"/>
+        
+        <div t-if="'S' in o.display_name">
+    
+            <div t-if="'orders' in o.access_url and o.state in ['draft', 'sale', 'sent', 'to approve']" style="margin-top:0px;">
+            
+        <b>Esta cotización está sujeta a los términos y condiciones que se anuncian a continuación:</b><br/><br/>
+            <b>Forma de pago:</b> <t t-esc="o.forma_pago"/><br/>
+            <b>Termino de pago:</b>  <t t-esc="o.payment_term_id.name"/><br/>
+            <b>Tiempo de entrega:</b>  <t t-esc="o.termino_entrega"/> <br/>
+            4. <b>Garantía:</b> <t t-esc="o.garantia_sale"/> <br/>
+            <b>Vigencia de la propuesta:</b> <t t-esc="o.x_studio_vigencia_del_presupuesto"/> <br/>
+            <b>Favor enviar la cotización firmada a:</b> <t t-esc="o.user_id.email"/> <br/>
+            <b>La aceptación del cliente (firmar a continuación): </b><br/><br/><br/><br/>
+            
+            * ________________________<br/>
+            <b>Firma del cliente</b>
+         </div>   
+        </div>
+        
+         <div t-if="'P' in o.display_name">
+         <div t-if="'purchase'  in o.access_url" style="margin-top:100px;">
+            <span>
+                Este pedido está sujeto a los términos y condiciones que se anuncian a continuación:
+            </span><br/>
+        
+              <span><b>1. Shipment/Envio:</b> <t t-esc="o.shipment_logistic"> </t> </span><br/>
+              <span><b>2. Condition of delivery/Condiciones de envio:</b> <t t-esc="o.delivery_conditions_logistic"> </t> </span>
+        
+        </div>
+        </div>
+        
+          <div t-if="'BILL' in o.display_name or 'INV' in o.display_name">
+            <div>
+<span>Esta facturación está sujeta a los términos y condiciones que se anuncian a continuación:</span><br/>
+<br/>
+<t t-if="str(o.invoice_payment_term_id.name)!= 'False'"><b>1. Termino de pago:</b> Se realizará al <t t-esc="str(o.invoice_payment_term_id.name)"/></t>
+<br/>
+<b>Reserma, S.A</b>
+<br/>
+<b>Banco General</b>
+<br/>
+<b>03-10-01-001210-0</b>
+<br/>
+Yappy en directorio como @resermapty
+<br/>
+Enviar comprobante de pago a <b>contabilidad2@reserma.com</b>
+<br/>
+<br/>
+<br/>
+<br/>
+<b>Aceptado por (Gerente de Operaciones):</b>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<P>*___________________________</P>
+<b>Nombre: Liliana Gómez </b>
+        </div>
+        </div>
+    </div>
+      
+    <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+        
+       <div class="text-left" style="border-top: 1px solid black;">
+                   <br/>
+                   <div style="margin-top:3px;">
+                       Si usted tiene alguna duda sobre esta  <span t-if="'BILL' in o.display_name or 'INV' in o.display_name"><t t-if="'invoice' in o.access_url">factura</t></span>  <t t-else="informaci">  <span t-if="'P' in o.display_name"><t t-if="'purchase' in o.access_url and o.state not in ['purchase','done']">cotización</t> <t t-if="'purchase' in o.access_url and o.state == 'purchase' or o.state == 'done' ">pedido de compra</t></span> </t>, favor pongase en contacto con nosotros al teléfono <b>263-7644</b> o al correo <b>reserma@reserma.com</b>
+  
+                   </div>
+             
+ 
+      <span style="font-style: italic; margin-left:320px; color:#1D6895; font-size:20px;">¡Gracias por Preferirnos!</span>
+
+                
+            <div class="row" style="margin-left:0px; margin-top:-5px;">
+                <div class="col-10" name="company_address">
+                 <br/> <span style="font-size:12px;"><t t-esc="company.street"/></span>
+                </div>
+                 <div class="col-2" name="company_address">
+                 <br/> <span style="font-size:12px;"><t t-esc="company.website"/></span>
+                </div>
+            </div>
+                <div style="display:none;" t-field="company.report_footer"/>
+           
+            <div style="display:none;" t-if="report_type == 'pdf'" class="text-muted">
+                Page: <span class="page"/> / <span class="topage"/>
+            </div>
+            <div t-if="report_type == 'pdf' and display_name_in_footer" class="text-muted">
+                <span t-field="o.name"/>
+            </div>
+        </div>
+    </div>
+</t>

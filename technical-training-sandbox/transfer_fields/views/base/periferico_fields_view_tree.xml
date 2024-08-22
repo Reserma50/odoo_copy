@@ -1,0 +1,18 @@
+<odoo>
+    <data>    
+    <record id="perifico_fields_view_tree" model="ir.ui.view">
+        <field name="name">periferico.fields.view.tree</field>
+        <field name="model">perifericosmodel.fields</field>
+        <field name="arch" type="xml">
+            <tree string="Periféricos" editable="bottom">
+                <field name="name"/>
+                <field name="canti" string="cantidad"/>
+                <field name="mrc_periferico_id" string="Marca."/>
+                <field name="code_base"/>
+                <!-- <field name="producto_ids" /> -->
+            </tree>
+
+        </field>
+    </record>
+    </data>
+</odoo>

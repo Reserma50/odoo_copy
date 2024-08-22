@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.ui.view" id="crm_comentarios_view_form">
+           <field name="name">crm.comentarios.form </field>
+            <field name="model">crm.comentarios</field>
+             <field name="arch" type="xml">
+                <form string="Formulario CRM Comentarios">        
+                    <sheet>
+                
+                <group name="" string="">
+                        <field name="name"/>
+                        <field name="comentarios_id" attrs="{'invisible':1}"/>
+                         <field name="fecha_creacion" />
+                          <field name="create_uid" invisible="1"/>
+                </group>
+                
+                    </sheet>
+                 </form>
+           </field>
+           
+           
+        </record>
+        
+        <record model="ir.ui.view" id="crm_comentarios_view_list">
+              <field name="name">crm.comentarios.form </field>
+            <field name="model">crm.comentarios</field>
+            <field name="arch" type="xml">
+                <tree string="Lista CRM">
+                        <field name="name"/>
+                            <field name="create_uid" invisible="1"/>
+                        
+                </tree>
+            
+            </field>
+            
+        </record>
+        
+        
+    </data>
+    
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.ui.view" id="crm_interesado_view_form">
+           <field name="name">crm.interesado.form </field>
+            <field name="model">crm.interesado</field>
+             <field name="arch" type="xml">
+                <form string="Formulario CRM interesado">        
+                    <sheet>
+                
+                <group name="" string="">
+                        <field name="name"/>
+                        <field name="interesado_id" attrs="{'invisible':1}"/>
+                 
+                </group>
+                
+                    </sheet>
+                 </form>
+           </field>
+           
+        </record>
+        
+        <record model="ir.ui.view" id="crm_interesado_view_list">
+              <field name="name">crm.interesado.form </field>
+            <field name="model">crm.interesado</field>
+            <field name="arch" type="xml">
+                <tree string="Lista CRM">
+                        <field name="name"/>
+                
+                </tree>
+            
+            </field>
+            
+        </record>
+        
+        
+    </data>
+    
+</odoo>

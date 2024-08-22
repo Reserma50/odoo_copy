@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+	<data>
+		<record id="helpdesk_fields_availability_form" model="ir.ui.view">
+			<field name="name">helpdesk.fields.availability.form</field>
+			<field name="model">helpdesk.ticket</field>
+			<field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+			<field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="after">
+					<field name="codigo_cliente" />
+						<field name="numero_serie_product" readonly="1" />
+						<field name="modelo_product" readonly="1" />
+						<field name="marca_product" readonly="1" />
+						<field name="ubicacion_product" readonly="1"/>
+
+
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

@@ -1,7 +1,11 @@
 #-*- coding: utf-8 -*-
 
 from odoo import models, fields, api, exceptions, _, Command
-import re
+import re, datetime
+import logging
+from dateutil.relativedelta import relativedelta
+
+
 mdl_res_partner = "res.partner"
 mdl_stock_location = "stock.location"
 mld_sale_order = "sale.order"
@@ -10,6 +14,7 @@ mdl_stock_lot = "stock.lot"
 mdl_maintenance_request = 'maintenance.request'
 mdl_marcaft_fields = "marcaftk.fields"
 mdl_location_fields = "location.fields"
+mdl_periferico_fields = "perifericosmodel.fields"
 
 class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
@@ -44,6 +49,7 @@ class marcaftk_fields(models.Model):
     name = fields.Char(string="Nombre")
     code_marcaft = fields.Integer(string="Código", default=lambda self: self.env['ir.sequence'].next_by_code('increment_your_marca'))
     producto_mrc_ids = fields.One2many(comodel_name = mdl_product_product, inverse_name="marca_id", string="Productos")
+    periferico_mrc_ids = fields.One2many(comodel_name = mdl_periferico_fields, inverse_name="mrc_periferico_id", string="Periféricos")
     color = fields.Integer('Color')
 
     _sql_constraints = [
@@ -207,9 +213,9 @@ class InheritedModelLote(models.Model):
     # orden_compra = fields.Char(string="Orden de Compra", default="N/A")
     #contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     ficha = fields.Char(string="Ficha tecnica", default="N/A")
-    install_date = fields.Date(string="Fecha de instalación")
+    install_date = fields.Date(string="Fecha de instalación", tracking=True)
     # este campo proviene del sale.order por eso sta comentado
-    #frecuencia_mantenimiento = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
+    frec_mantenimiento = fields.Integer(string="Frecuencia del Mantenimiento (Meses)")
 
     #Contact Fields
     contact = fields.Char(string="Contacto" , default="N/A")
@@ -217,11 +223,23 @@ class InheritedModelLote(models.Model):
     #reserma-fabrica no al cliente #yo estoy cubierto con fabrica
     garantia_fab_inicio = fields.Date(string="Garantia con Fabrica inicio")
     garantia_fab_fin = fields.Date(string="Garantia con Fabrica fin")
-    garantia_fab = fields.Integer(string="Garantia con Fabrica (Años)")
+    garantia_fab = fields.Integer(string="Garantia con Fabrica (Meses)", help="Antes estaba en Años")
+
+    #PEDIDO
+    pedido = fields.Char(string="Pedido")
+    #Last Location
+    my_last_location = fields.Char(string="Ubicación Actual",compute="_compute_last_loc")
+    #
+
+
 
     #garantia de equipo
     gar_extend = fields.Char(string="Garantia extendida", default="N/A")
     vencimiento_gar_extend = fields.Date(string="Vencimiento de Garantia Extendida")
+
+    #Garantia con el cliente
+    gar_cliente = fields.Float(string="Garantia con el cliente (Años)")
+    fin_gar_cliente = fields.Date(string="Fin de la garantia con el Cliente", compute="_compute_last_date_gar")
 
     #sale id #no esta bien definido la siguiente relacion porque un lote puede tener mas de un registro desde venta
     #sale_id = fields.Many2one("sale.order", string="Suscription", domain=[("is_suscription","=", True)])
@@ -235,11 +253,14 @@ class InheritedModelLote(models.Model):
     # cliente_id_rl = fields.Many2one(string="Cliente", related="sale_id.partner_id")
     # CONTRATOS/VENTAS
     sale_ids = fields.Many2many(comodel_name=mld_sale_order, string="Ventas/Contratos")
+    en_contrato = fields.Boolean(string="En contrato?", compute="_compute_state_acuerdos")
     #CHILDS
     lot_id = fields.Many2one(comodel_name=mdl_stock_lot, string='Parent Lot', index=True, ondelete='cascade',
         help="The parent lote that includes this lote. Example : The 'Dispatch Zone' is the 'Gate 1' parent location.")
 
     child_lot_ids = fields.One2many(comodel_name=mdl_stock_lot, inverse_name='lot_id', string='Contains Lot')
+    #Registros de Servicios
+    mytickets_ids = fields.One2many(comodel_name=mdl_maintenance_request, inverse_name='nf_lot_id', string="Servicios de asistencia")
     # DATA IT
     ip_field = fields.Char(string="IP")
     loc_institution_id = fields.Many2one(comodel_name=mdl_location_fields, string="Ubicación en sitio")#by convention
@@ -247,16 +268,76 @@ class InheritedModelLote(models.Model):
     # last partner
     thepartner_id = fields.Many2one(comodel_name="res.partner", string="El contacto final", help="Este campo se actualiza cada que se genera una nueva transacción Venta/OC/Contrato")
 
-    @api.onchange("garantia_fab_inicio", "garantia_fab_fin")
+    # Perifericos 
+    periferico_ids = fields.One2many(comodel_name=mdl_periferico_fields, inverse_name="lote_peri_id", string="Periféricos")
+
+    @api.onchange("garantia_fab_inicio", "garantia_fab")
     def _onchange_garantia(self):
         print("Her we are!")        
         # for record in self:
-        if self.garantia_fab_fin and self.garantia_fab_inicio:
-            delta = self.garantia_fab_fin - self.garantia_fab_inicio
-            delta = (delta.days/30)
-            self.garantia_fab = (delta/12)
+        if self.garantia_fab and self.garantia_fab_inicio:
+            # delta = self.garantia_fab_fin - self.garantia_fab_inicio
+            # delta = (delta.days/30)
+            # self.garantia_fab = (delta/12)
+            self.garantia_fab_fin = self.garantia_fab_inicio + relativedelta(months=self.garantia_fab)
+
         else:
             self.garantia_fab = 0
+
+    @api.depends("install_date")
+    def _compute_last_date_gar(self):
+        for record in self:
+            if record.install_date and record.gar_cliente != 0:
+                period=record.gar_cliente * 12
+
+                record.fin_gar_cliente = record.install_date + relativedelta(months=int(period))
+
+            else:
+                record.fin_gar_cliente = 0
+
+    @api.depends("quant_ids")
+    def _compute_last_loc(self):
+        for record in self:
+            if record.name:
+                logging.info("Loc:::::" + str(record.name))
+                quant_record = self.env['stock.quant'].search([('lot_id', '=', record.id), ('quantity', '>=', 1)], limit=1)
+                record.my_last_location = quant_record.location_id.complete_name
+                logging.info("Calculada:::::" + str(quant_record.location_id))
+            else:
+                record.my_last_location = "N/A"
+
+    #Definir fecha de instalación si esta en blanco. En caso de tener definido algo por el usuario
+    @api.depends("mytickets_ids")
+    def _calcular_fecha_install(self):
+        logging.info("Calculada::::: Se dispara la función ")
+        for record in self:
+            if record.install_date:
+                return record.install_date
+            else:
+                for ticket in record.mytickets_ids:
+                    if ticket.maintenance_team_id.is_install and ticket.schedule_date and ticket.stage_id.id == 3:
+                        record.install_date = ticket.schedule_date
+
+
+
+    #Verificación de contratos o algo que lo respalde
+    @api.depends("sale_ids")
+    def _compute_state_acuerdos(self):
+        for record in self:
+            record.en_contrato = False
+            if record.sale_ids:
+                for rec in record.sale_ids:
+                    # logging.info("Registro de SaleOrder:::::" + str(rec.name))
+                    # quant_record = self.env['sale.order'].search([('id', 'in', record.sale_ids.ids)])
+                    if not rec.fin_contrato:
+                        # logging.info("Registro sin fecha")
+                        continue 
+                    # logging.info("Fecha del Registro:::::" + str(datetime.datetime(rec.fin_contrato.year,rec.fin_contrato.month,rec.fin_contrato.day)))
+                    # logging.info("Contra fecha actual:::::" + str(fields.datetime.today()))
+                    if datetime.datetime(rec.fin_contrato.year,rec.fin_contrato.month,rec.fin_contrato.day,23,59,59) >= fields.datetime.today():
+                        record.en_contrato = True
+                        # logging.info("Equipo vigente en contrato")
+                        return True
 
 class InheritedModeProduct(models.Model):
     _inherit = "product.template"
@@ -266,6 +347,21 @@ class InheritedModeProduct(models.Model):
     modelo = fields.Char("Modelo", default ="N/A") 
     modalidad_id = fields.Many2one(comodel_name="transfer_fields.transfer_fields", string="Modalidad Relacionada")#by convention
     marca_id = fields.Many2one(comodel_name=mdl_marcaft_fields, string="Marca Relacionada")#by convention
+
+class PerifericosModel_fields(models.Model):
+    _name = 'perifericosmodel.fields'
+    _description = 'Perifericos Model Fields'
+
+    name = fields.Char(string="Nombre")
+    code_base = fields.Char(string="Código")
+    canti = fields.Integer(string="Cantidad")
+    mrc_periferico_id = fields.Many2one(comodel_name=mdl_marcaft_fields, string="Marca .")#by convention
+    lote_peri_id = fields.Many2one(comodel_name = mdl_stock_lot, string="Equipo")
+    color = fields.Integer('Color')
+
+    _sql_constraints = [
+        ('code_base_fields_unique_name', 'UNIQUE(code_base)','El Código debe ser único.'),
+    ]    
 
 
 class InheritedModeQuant(models.Model):
@@ -358,6 +454,11 @@ class InheritedModeQuant(models.Model):
         }
         return action
 
+class InheritModelMaintenenceTeam(models.Model):
+    _inherit = "maintenance.team"
+
+    is_install = fields.Boolean(string="Es Equipo de Instalación", default=False)
+
 
 class InheritModelSale(models.Model):
     _inherit = "sale.order"
@@ -366,6 +467,7 @@ class InheritModelSale(models.Model):
     observacion = fields.Char(string= "Observación")
     frecuencia = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
     is_suscription = fields.Boolean("Is Suscription?", default=False)
+    data_export = fields.Boolean("Data Importada?", default=False)
     contrato_old = fields.Char(string="Contrato Viejo", default="N/A")
     inicio_contrato = fields.Date(string="Fecha de inicio de Contrato / Orden de Compra", help="Este campo esta dentro del apartado información adicional, de la versión enterprise.")
     fin_contrato = fields.Date(string="Fecha de fin de Contrato / Orden de Compra")

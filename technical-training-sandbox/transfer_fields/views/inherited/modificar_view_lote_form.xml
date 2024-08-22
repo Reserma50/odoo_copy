@@ -7,11 +7,40 @@
             <field name="arch" type="xml">
 
                 <!-- Add pages -->
+                 
+                <xpath expr="/form[1]/sheet[1]/div[2]/h1" position="after">
+                    <widget name="web_ribbon" title="Fuera de Contrato" bg_color="bg-danger" attrs="{'invisible': [('en_contrato', '=', True)]}"/>  
+                </xpath>
+                <!-- Hide internal Reference -->
+                 <xpath expr="//field[@name='ref']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('modalidad_encar', '!=', False)]}</attribute>
+                 </xpath>
+                 <!-- <xpath expr="//field[@name='fecha_vencimiento_lote_serie']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('modalidad_encar', '!=', False)]}</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='fecha_fabricacion_lote_serie']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('modalidad_encar', '!=', False)]}</attribute>
+                 </xpath> -->
+
+                 <xpath expr="//field[@name='ref']" position="after">
+                    <!-- <group string="Datos de Ubicación">
+                        <group> -->
+                            
+                            <field name="my_last_location"/>
+                            <field name="loc_institution_id"/>
+                            <field name="ip_field"/>
+                            
+                            
+                        <!-- </group>
+                    </group> -->
+                 </xpath>
+                
+
                 <xpath expr="/form[1]/sheet[1]/notebook[1]/page[@name='description']" position="after">
                         <page string="Contacto" name="contact">
                             <group>
-                                <field name="thepartner_id" optional="hide"/>
-                                <field name="lot_id"/>
+                                <field name="thepartner_id" string="Último Cliente" optional="hide"/>
+                                <field name="lot_id" string="Equipo Principal"/>
                             </group>
                         </page>
                         <page string="Datos Madre" name="other_information">
@@ -28,15 +57,34 @@
                                 <group string="Compras">
                                     <group>
                                         <field name="garantia_fab_inicio"></field>
-                                        <field name="garantia_fab_fin"></field>
+                                        
                                         <field name="garantia_fab"></field>
-                                    </group>
-                                    <group>
+                                        <field name="garantia_fab_fin"></field>
+                                        <br></br>
                                         <field name="gar_extend"></field>
                                         <field name="vencimiento_gar_extend"></field>
+                                        <field name="pedido"></field>
+                                        <field name="en_contrato"/>
+                                        
                                     </group>
+                                    <!-- <group> -->
+                                        <!-- <field name="gar_extend"></field>
+                                        <field name="vencimiento_gar_extend"></field>
+                                        <field name="pedido"></field>
+                                        <field name="en_contrato"/> -->
+
+                                    <!-- </group> -->
                                     
                                 </group>
+
+                            </group>
+                            <group name="Second Info">
+                                <group string="Ventas">
+                                    <field name="gar_cliente"/>
+                                    <field name="fin_gar_cliente"/>
+    
+                                </group>
+                            </group>
 
                                 
                                 
@@ -47,7 +95,7 @@
                                             <field name="name"/>
                                             <!-- NAME = S00{ID}  -->
                                             <field name="partner_id" string="Cliente"/>
-                                            <field name="is_suscription" string="Es suscripción?"/>
+                                            <!-- <field name="is_suscription" string="Es suscripción?"/> -->
                                             
                                             <field name="warranty_duration" string="Garantia"/>
                                             <field name="contract_oc"/>
@@ -55,8 +103,14 @@
                                             <field name="frecuencia"/>
                                         </tree>
                                     </field>
-                                    <h4>Hijos</h4>
-                                    <field name="child_lot_ids"/>
+                                    <h4>Equipos relacionados</h4>
+                                    <field name="child_lot_ids">
+                                        <tree string="Equipment">
+                                            <field name="name"/>
+                                            <field name="ref"/>
+                                            <field name="product_id"/>
+                                        </tree>
+                                    </field>
                                     <!-- <field name="sale_id" options="{'no_create': True}"/> -->
                                     <!-- Descomentar -->
                                     <!-- <field name="cliente_id_rl"/> -->
@@ -67,20 +121,16 @@
                                     <!-- <field name="contrato_old_rl" options="{'no_create': True}"/> -->
 
                                     <!-- Add ids from sale_order -->
+                                    <h4>Periféricos</h4>
+                                    <field name="periferico_ids"/>
+                                    <h4>Tickets relacionados</h4>
+                                    <field name="mytickets_ids">
 
+                                    </field>
                                     
-                                    <group string="Datos IT">
-                                        <group>
-                                            <field name="ip_field"/>
-                                            <field name="loc_institution_id"/>
-                                            
-                                        </group>
-                                        
 
-                                    </group>
 
                                 <!-- </group> -->
-                            </group>
                         </page>
                 </xpath>
             </field>

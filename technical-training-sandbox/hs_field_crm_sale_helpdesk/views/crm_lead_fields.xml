@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+	<data>
+		<record id="crm_lead_fields_availability_form" model="ir.ui.view">
+			<field name="name">crm.lead.fields.availability.form</field>
+			<field name="model">crm.lead</field>
+			<field name="inherit_id" ref="crm.crm_lead_view_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='action_set_lost']" position="attributes">
+					<attribute name="attrs">{'invisible':
+						['|',('type','=','lead'),('field_validation_type',"=","opt")]}</attribute>
+
+				</xpath>
+
+				<!-- <xpath expr="//button[@name='734']" position="attributes">
+					<attribute name="attrs">{'invisible': [('type','=','lead')]}</attribute>               
+	
+					 </xpath> -->
+
+				<xpath expr="//widget[@name='web_ribbon']" position="before">
+					<div
+						style="font-weight: bold;text-transform: uppercase;font-size:13px !important;"
+						class="row alert alert-primary" role="alert">Equipo o Proyecto</div>
+				</xpath>
+				<xpath expr="//field[@name='partner_id']" position="before">
+					<field name="field_publico_tipo_cliente" required="1" />
+					<field name="field_publico_institucion"
+						attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Público')], 'required':[('field_publico_tipo_cliente','=','Sector Público')]}" />
+				</xpath>
+
+				<xpath expr="//field[@name='partner_id']" position="after">
+					<field name="field_marca_value"
+						attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Privado')]}" />
+					<field name="field_modelo_value"
+						attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Privado')]}" />
+				</xpath>
+
+
+				<xpath expr="//field[@name='lead_properties']" position="after">
+
+					<group name="container_public_aj1">
+						<field name="field_publico_origen" string="Origen"
+							attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Público')], 'required':[('field_publico_tipo_cliente','=','Sector Público')]}" />
+						<field name="field_privado_origen" string="Origen"
+							attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Privado')], 'required':[('field_publico_tipo_cliente','=','Sector Privado')]}" />
+						<field name="field_origen_value" />
+					</group>
+					<group name="container_public_departamento">
+						<group>
+
+							<field name="date_deadline" />
+							<field name="field_publico_departamento" />
+
+						</group>
+						<group>
+							<field name="field_nombre_contacto_value" />
+							<field name="field_correo_contacto_value" />
+							<field name="field_telefono_contacto_value" />
+							<field name="field_publico_jefe_departamento"
+								attrs="{'invisible':[('field_publico_tipo_cliente','!=','Sector Público')]}" />
+						</group>
+					</group>
+					<group name="container_public_desc_compra">
+						<field name="field_publico_toma_decision" required="1" />
+						<field name="field_publico_plan_compra" required="1" />
+						<field name="field_publico_plan_compra" />
+
+					</group>
+
+					<div style="font-weight: bold;text-transform: uppercase;"
+						class="row alert alert-primary" role="alert">Informe de la primera Visita</div>
+
+					<group name="container_public_informe_p_visita">
+						<group>
+							<field name="field_publico_motivo_eleccion" />
+							<field name="field_publico_interesados" widget="many2many_tags"
+								options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}" />
+							<field name="field_publico_presupuesto" required="1" />
+							<field name="field_publico_usoprincipal" />
+						</group>
+						<group>
+							<field name="field_publico_fecha_primera_visita" />
+						</group>
+					</group>
+					<div style="font-weight: bold;text-transform: uppercase;"
+						class="row alert alert-primary" role="alert">Equipo actual</div>
+					<group name="container_public_equipo_actual">
+						<group>
+							<field name="field_publico_marca" />
+							<field name="field_publico_satisfecho_equipo" widget="radio" />
+						</group>
+						<group>
+							<field name="field_publico_modelo" />
+							<field name="field_publico_motivo" />
+							<field name="request_date" />
+							
+						</group>
+					</group>
+					<group>
+						<field name="field_publico_infraestructura" widget="many2many_tags"
+							options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}" />
+						<field name="field_publico_pendientes" widget="many2many_tags"
+							options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}" />
+						<field name="field_publico_proxima_visita" />
+						<field name="field_validation_type" attrs="{'invisible':1}" />
+
+					</group>
+				</xpath>
+				<xpath expr="//page[@name='internal_notes']" position="after">
+					<page name="page_comentarios" string="Comentarios">
+						<group>
+							<field name="field_publico_comentarios">
+								<tree editable="bottom">
+									<field name="name" />
+									<field name="fecha_creacion" />
+								</tree>
+							</field>
+						</group>
+					</page>
+				</xpath>
+
+				<xpath expr="//page[@name='page_comentarios']" position="after">
+					<page name="page_seguimientos" string="Seguimientos">
+						<group>
+							<field name="field_seguimientos" />
+						</group>
+					</page>
+				</xpath>
+
+				<!--Ocultar
+				campos!-->
+				<xpath expr="//field[@name='email_cc']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='function']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='mobile']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='partner_name']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='street']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='street2']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='city']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='state_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='zip']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='country_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tag_ids']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='title']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+
+
+				<xpath expr="//field[@name='website']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='lang_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='team_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='expected_revenue']" position="attributes">
+					<attribute name="invisible">False</attribute>
+				</xpath>
+				<xpath expr="//field[@name='probability']" position="attributes">
+					<attribute name="invisible">False</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='priority']" position="attributes">
+					<attribute name="invisible">False</attribute>
+				</xpath>
+				<xpath expr="//field[@name='recurring_revenue']" position="attributes">
+					<attribute name="invisible">False</attribute>
+				</xpath>
+
+				<xpath expr="//page[@name='lead']" position="attributes">
+					<attribute name="invisible">True</attribute>
+
+				</xpath>
+				<xpath expr="//page[@name='internal_notes']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+
+				<xpath expr="//page[@name='extra']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+
+				<!--Fin
+				Ocultar campos!-->
+				<!-- Odoo Studio -->
+				<xpath expr="//form[1]/sheet[1]/group[1]/group[not(@name)][1]/label[1]"
+					position="replace" />
+				<xpath expr="//form[1]/sheet[1]/group[1]/group[@name='lead_partner']/label[1]"
+					position="replace" />
+				<!-- <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+					<attribute name="groups">base.group_system,sales_team.group_sale_manager</attribute>
+					<attribute name="studio_approval">False</attribute>
+				</xpath> -->
+				<!-- <xpath expr="//button[@name='734']" position="attributes">
+			  <attribute name="groups">base.group_system</attribute>
+			</xpath> -->
+				<xpath expr="//group[@name='lead_partner']" position="attributes">
+					<attribute name="attrs">{}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='field_modelo_value']" position="after">
+					<xpath expr="//field[@name='field_publico_origen']" position="move" />
+					<xpath expr="//field[@name='field_privado_origen']" position="move" />
+					<xpath expr="//field[@name='field_publico_institucion']" position="move" />
+					<xpath
+						expr="//form[1]/sheet[1]/group[1]/group[@name='lead_partner']/field[@name='partner_id']"
+						position="move" />
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[@name='lead_info']/div[1]/field[@name='contact_name']"
+					position="attributes">
+					<attribute name="string">Nombre del Hospital</attribute>
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[not(@name)][1]/div[1]/field[@name='date_deadline']"
+					position="attributes">
+					<attribute name="attrs">{}</attribute>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[not(@name)][1]/div[1]/field[@name='priority']"
+					position="attributes">
+					<attribute name="attrs">{}</attribute>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//group[@name='lead_priority']" position="attributes">
+					<attribute name="attrs">{}</attribute>
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[@name='lead_priority']/field[@name='priority']"
+					position="attributes">
+					<attribute name="attrs">{}</attribute>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[@name='lead_priority']/field[@name='tag_ids']"
+					position="attributes">
+					<attribute name="attrs">{}</attribute>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath
+					expr="//form[1]/sheet[1]/group[1]/group[@name='lead_priority']/field[@name='tag_ids']"
+					position="after">
+					<xpath expr="//field[@name='field_nombre_contacto_value']" position="move" />
+					<xpath expr="//field[@name='field_correo_contacto_value']" position="move" />
+				</xpath>
+				<xpath expr="//field[@name='lead_properties']" position="attributes">
+					<attribute name="attrs">{}</attribute>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+
+		</record>
+	</data>
+</odoo>

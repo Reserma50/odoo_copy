@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.actions.act_window" id="crm_comentarios_list_action">
+             <field name="name">Comentarios CRM</field>
+             <field name="res_model">crm.comentarios</field>
+             <field name="view_mode">tree,form</field>
+             <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                       Crear Comentarios de CRM
+                 </p>
+            </field>
+        </record>
+        
+        
+        <menuitem id="menu_comentarios"
+                  name="Comentarios CRM"
+                  parent="crm.crm_config_settings_menu"
+                  sequence="11"
+                  action="crm_comentarios_list_action"/>
+
+    </data>
+    
+</odoo>

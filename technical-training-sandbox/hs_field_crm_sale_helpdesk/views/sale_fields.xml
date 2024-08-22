@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+	<data>
+
+		<record id="sale_fields_availability_form" model="ir.ui.view">
+			<field name="name">sale.fields.availability.form</field>
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.view_order_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_id']" position="after">
+					<field name="persona_contacto_cliente" attrs="{'invisible': [('partner_id', '=', False)]}"/>
+					<field name="correo_electronico_contacto"  attrs="{'invisible': [('partner_id', '=', False)]}"/>
+					<field name="numero_telefono_cliente_cliente"  attrs="{'invisible': [('partner_id', '=', False)]}" />	
+				</xpath>
+				<xpath expr="//field[@name='payment_term_id']" position="before">
+					<field name="forma_pago" />
+					
+				</xpath>
+					<xpath expr="//field[@name='payment_term_id']" position="after">
+					<field name="termino_entrega" />
+					<field name="garantia_sale" />
+					
+				</xpath>
+				
+					<xpath expr="//page[@name='other_information']" position="after">
+					<page name="anexo" string="Anexos">
+						<group name="div_group">
+							<field name="anexo_field" />
+
+						</group>
+					</page>
+
+
+				</xpath>
+				   <field name="recurrence_id" position="attributes">
+                <attribute name="invisible">0</attribute>
+            	</field>
+			</field>
+		</record>
+	</data>
+</odoo>

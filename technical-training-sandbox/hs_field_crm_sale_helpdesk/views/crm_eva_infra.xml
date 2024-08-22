@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.ui.view" id="crm_eva_infra_view_form">
+           <field name="name">crm.infraestructura.form </field>
+            <field name="model">crm.infraestructura</field>
+             <field name="arch" type="xml">
+                <form string="Formulario CRM Evaluación Infraestructura">        
+                    <sheet>
+                
+                <group name="" string="">
+                        <field name="name"/>
+                        <field name="infra_ids" attrs="{'invisible':1}"/>
+                 
+                </group>
+                
+                    </sheet>
+                 </form>
+           </field>
+           
+        </record>
+        
+        <record model="ir.ui.view" id="crm_eva_infra_view_list">
+              <field name="name">crm.infraestructura.form </field>
+            <field name="model">crm.infraestructura</field>
+            <field name="arch" type="xml">
+                <tree string="Lista CRM">
+                        <field name="name"/>
+                
+                </tree>
+            
+            </field>
+            
+        </record>
+        
+        
+    </data>
+    
+</odoo>

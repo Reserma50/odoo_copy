@@ -6,6 +6,41 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <!-- add manytomany field to lote form -->
+                <xpath expr="/form/sheet/notebook/page[@name='order_lines']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group[1]/field[@name='atention']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>  
+                <xpath expr="/form/sheet/group/group[1]/field[@name='email']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group[1]/field[@name='phone']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <!-- <xpath expr="/form/sheet/group/group[1]/field[@name='x_studio_vigencia_del_presupuesto']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath> -->
+                <xpath expr="/form/sheet/group/group[1]/field[@name='sale_order_template_id']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group[2]/field[@name='validity_date']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group[2]/field[@name='payment_type_id']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group[2]/field[@name='shipping_term']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <!-- Ocultar Grupos dentro de más información -->
+                <xpath expr="/form/sheet/notebook/page[@name='other_information']/group[1]/group[@name='sale_info']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@name='other_information']/group[2]/group[@name='sale_reporting']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('data_export','=', True)]}</attribute>
+                </xpath>
+                
                 <xpath expr="/form/sheet/notebook/page[@name='myannex']" position="after">
 
                     <page string="Datos de Contrato" name="contrac">
@@ -19,7 +54,7 @@
                             <group>
                                 <field name="frecuencia"/>
                                 <field name="response_time"/>
-                                <field name="is_suscription" widget="boolean_button"/>
+                                <field name="data_export" widget="boolean_button"/>
                                 <field name="contrato_old"/>
                             </group>
                         </group>
@@ -27,9 +62,10 @@
                     <page string="Lote/Serie Relacionados" name="lote_serie">
                         <group>
                             <field name="serie_ids" string=" ">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="product_id"/>
+                                <tree editable="top">
+                                    <field name="product_id" />
+                                    <field name="name" readonly="1"/>
+                                    <field name="company_id" optional="hide"/>
                                     <field name="ficha"/>
                                     <!-- <field name="garantia_fab" optional="show"/> -->
                                     <field name="garantia_fab_inicio" optional="show"/>
@@ -40,7 +76,7 @@
                             </field>
                         </group>
                     </page>
-                    <page string="Ticket de Instalación" name="install">
+                    <page string="Registros asociados" name="install">
                         <group>
                             <field name="ticket_install_created" />
                             <field name="fecha_prevista_install" />

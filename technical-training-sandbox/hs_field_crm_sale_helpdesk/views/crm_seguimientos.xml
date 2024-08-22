@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.ui.view" id="crm_seguimientos_view_form_fn">
+           <field name="name">crm.seguimientosfn.form </field>
+            <field name="model">crm.seguimientos</field>
+             <field name="arch" type="xml">
+                <form string="Formulario CRM Seguimientos">        
+                    <sheet>
+                   <div style="font-weight: bold;text-transform: uppercase;margin-bottom: -65px;"
+                	class="row alert alert-primary" role="alert">Crear nuevas líneas:</div>
+
+              
+                    <!-- <group name="" string=""> -->
+                    <group class="mt-5" name="" string="">
+                    
+                        <!-- Dato redundante -->
+                        <!-- <field name="fecha_solicitud" required="1"/> -->
+
+                        <field name="numero_licitacion" attrs="{'invisible':[('parent.field_publico_tipo_cliente','!=','Sector Público')],
+                        'required':[('parent.field_origen_value', 'in', ['Cotización en Línea', 'Compra Menor', 'Licitación Pública', 'Licitación por Mejor Valor']),
+                        ]}"/>
+                        <field name="required_field_precio_referencia_fn" 
+                         attrs="{'invisible':[
+                         ('parent.field_publico_tipo_cliente','!=','Sector Público')],
+                         'required':[('validar_precio_referencia_fn','=','0'),
+                         ('parent.field_publico_tipo_cliente','=','Sector Público')]}"/>
+                        <field name="validar_precio_referencia_fn" attrs="{'invisible':1}"/>
+                        <field name="precio_referencia" widget="monetary"  help="B/." attrs="{'invisible':[('parent.field_publico_tipo_cliente','!=','Sector Público')] }" />
+
+                    </group>
+
+                    <group name="" string="">
+                        <field name="estado_venta" />
+                          <field name="seguimiento_id" attrs="{'invisible':1}"/>
+                        <field name="motivo" attrs="{'required':[('estado_venta','!=',False),('estado_venta','!=',''),('estado_venta','!=','Oportunidad'),('estado_venta','!=', 'Presupuesto')]}" />
+                         
+                         <field name="required_field_precio_ofertado_fn" 
+                         attrs="{'invisible':[('validar_precio_ofertado_fn','!=','0')],
+                         'required':[('validar_precio_ofertado_fn','=','0')]}"/>
+                        <field name="validar_precio_ofertado_fn" attrs="{'invisible':1}"/>
+                        <field name="precio_ofertado" widget="monetary" required="1" help="B/."/>
+                    </group>
+                <!-- </group> -->
+        
+              
+                <div style="font-weight: bold;text-transform: uppercase;margin-bottom: -35px;"
+                	class="row alert alert-primary" role="alert">Competidores</div>
+                   
+                  
+
+                    <group name="" string="">
+                           
+
+                        <field name="validar_competidor" attrs="{'invisible':1}"/>
+                        <field name="required_field_competidores" 
+                        attrs="{'invisible':[('validar_competidor','!=','0')
+                                ,('parent.field_origen_value', 'not in', ['Cotización en Línea', 'Compra Menor', 'Licitación Pública', 'Licitación por Mejor Valor']),
+                                 ('parent.type','=','lead')
+                                ],
+                                'required':[('validar_competidor','=','0'),
+                                ('parent.field_origen_value', 'in', ['Cotización en Línea', 'Compra Menor', 'Licitación Pública', 'Licitación por Mejor Valor']),
+                                ('parent.field_publico_tipo_cliente','=','Sector Público'),
+                                ('parent.type','=','lead')
+                                ]}" />
+                        <field name="field_competidores">
+                        <tree editable="bottom" >
+                            <field name="name"/>
+                            <field name="precio"/>   
+                            <field name="equipo"/>                             
+                        </tree>
+                        </field>
+
+                        <field name="detalles_seguimientos" />
+                    </group>
+
+                   
+                    </sheet>
+                 </form>
+           </field>
+           
+        </record>
+        
+        <record model="ir.ui.view" id="crm_seguimientos_view_list_fn">
+              <field name="name">crm.seguimientosfn.form </field>
+            <field name="model">crm.seguimientos</field>
+            <field name="arch" type="xml">
+                <tree string="Lista CRM Seguimientos">
+                        <field name="fecha_solicitud"/>
+                        <field name="detalles_seguimientos"/>
+                        <field name="motivo" />
+                        <field name="estado_venta" optional="hide"/>
+                        <field name="numero_licitacion" optional="hide"/>
+                        <field name="precio_referencia" optional="hide"/>
+                        <field name="precio_ofertado" optional="hide"/>
+
+                </tree>
+            
+            </field>
+            
+        </record>
+        
+        
+    </data>
+    
+</odoo>

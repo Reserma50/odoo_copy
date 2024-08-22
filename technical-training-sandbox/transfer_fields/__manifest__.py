@@ -35,6 +35,11 @@
         'views/base/views_tranfer_fields_model.xml',
         'views/base/views_marcaftk_fields_model.xml',
         'views/base/views_location_fields_model.xml',
+        #perifericos
+        'views/base/periferico_fields_view_tree.xml',
+        #Maintenimientos equipos
+        'views/inherited/modf_view_maintenence_team.xml',
+
         'views/inherited/modificar_view_transfer.xml',
         'views/inherited/modificar_view_location_form.xml',
         'views/inherited/modificar_view_maintenence_form.xml',

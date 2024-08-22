@@ -1,0 +1,8 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_infraestructura,access.crm.infraestructura,model_crm_infraestructura,base.group_user,1,1,1,1
+access_crm_pendientes,access.crm.pendientes,model_crm_pendientes,base.group_user,1,1,1,1
+access_crm_interesado,access.crm.interesado,model_crm_interesado,base.group_user,1,1,1,1
+access_crm_comentarios,access.crm.comentarios,model_crm_comentarios,base.group_user,1,1,1,1
+access_crm_seguimientos,access.crm.seguimientos,model_crm_seguimientos,base.group_user,1,1,1,1
+access_crm_competidores,access.crm.competidores,model_crm_competidores,base.group_user,1,1,1,1
+access_crm_interesado,access.crm.interesado,model_crm_interesado,base.group_user,1,1,1,1

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       <record model="ir.actions.act_window" id="crm_seguimiento_list_action">
+             <field name="name">seguimiento CRM</field>
+             <field name="res_model">crm.seguimiento</field>
+             <field name="view_mode">tree,form</field>
+             <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                       Crear seguimiento de CRM
+                 </p>
+            </field>
+        </record>
+        
+        
+        <menuitem id="menu_seguimiento"
+                  name="seguimiento CRM"
+                  parent="crm.crm_config_settings_menu"
+                  sequence="9"
+                  action="crm_seguimiento_list_action"/>
+
+    </data>
+    
+</odoo>
