@@ -78,6 +78,13 @@
             parent="maintenance.menu_maintenance_configuration"
             action="marcaftk_fields_action_window"
             groups="base.group_no_one"/>
+        <menuitem
+            name="Mantenimientos según Contrato"
+            sequence="7"
+            id="menu_maintenance_contrato_configuration"
+            parent="maintenance.menu_maintenance_configuration"
+            action="rs_custom_maintenance.action_window"
+            groups="base.group_no_one"/>
         
         <!-- <menuitem
             id="menu_product_form2"

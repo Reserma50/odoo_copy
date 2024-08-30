@@ -229,17 +229,18 @@ class InheritedModelLote(models.Model):
     pedido = fields.Char(string="Pedido")
     #Last Location
     my_last_location = fields.Char(string="Ubicación Actual",compute="_compute_last_loc")
-    #
-
-
 
     #garantia de equipo
     gar_extend = fields.Char(string="Garantia extendida", default="N/A")
     vencimiento_gar_extend = fields.Date(string="Vencimiento de Garantia Extendida")
 
     #Garantia con el cliente
-    gar_cliente = fields.Float(string="Garantia con el cliente (Años)")
-    fin_gar_cliente = fields.Date(string="Fin de la garantia con el Cliente", compute="_compute_last_date_gar")
+    gar_cliente = fields.Float(string="Garantia con el cliente Inicial (Años)", help="La garantia del primer contrato")
+    fin_gar_cliente = fields.Date(string="Fin de garantia Inicial (Cliente)", compute="_compute_last_date_gar")
+    gar_cliente_actual = fields.Float(string="Garantia con el cliente Actual (Años)", help="La garantia del último contrato/OC", compute="_calcular_last_gar")
+    #Fecha de inicio para tomar la garantía
+    start_date = fields.Date(string="Fecha de Inicio", tracking=True)
+    fin_gar_actual_cliente = fields.Date(string="Fin de garantia Actual (Cliente)", compute="_compute_last_date_gar_actual")
 
     #sale id #no esta bien definido la siguiente relacion porque un lote puede tener mas de un registro desde venta
     #sale_id = fields.Many2one("sale.order", string="Suscription", domain=[("is_suscription","=", True)])
@@ -284,7 +285,7 @@ class InheritedModelLote(models.Model):
         else:
             self.garantia_fab = 0
 
-    @api.depends("install_date")
+    @api.depends("fin_gar_cliente")
     def _compute_last_date_gar(self):
         for record in self:
             if record.install_date and record.gar_cliente != 0:
@@ -294,6 +295,17 @@ class InheritedModelLote(models.Model):
 
             else:
                 record.fin_gar_cliente = 0
+
+    @api.onchange("gar_cliente_actual","start_date")
+    def _compute_last_date_gar_actual(self):
+        for record in self:
+            if record.start_date and record.gar_cliente_actual != 0:
+                period=record.gar_cliente_actual * 12
+
+                record.fin_gar_actual_cliente = record.start_date + relativedelta(months=int(period))
+
+            else:
+                record.fin_gar_actual_cliente = 0
 
     @api.depends("quant_ids")
     def _compute_last_loc(self):
@@ -318,7 +330,45 @@ class InheritedModelLote(models.Model):
                     if ticket.maintenance_team_id.is_install and ticket.schedule_date and ticket.stage_id.id == 3:
                         record.install_date = ticket.schedule_date
 
-
+    #Definir al último cliente
+    @api.depends("sale_ids")
+    @api.onchange("sale_ids")
+    def _calcular_last_gar(self):
+        logging.info("Calculada::::: Se dispara la función ")
+        for record in self:
+            # if record.thepartner_id:
+            #     return record.install_date
+            # else:
+            #for sale in record.sale_ids:#sino hagi nada solo tomará el último y la verdad debe ser el ultim a la fecha validado
+            ventas = self.env['sale.order'].search([('id', 'in', record.sale_ids.ids)], order="create_date desc", limit=1)
+            for sale in ventas:
+                logging.info("última venta ::::: Se dispara la función "+ str(sale))
+                if sale.partner_id:
+                    record.thepartner_id = sale.partner_id
+            #     return record.install_date
+                else:
+                    record.thepartner_id = False
+                if  sale.state == "sale":
+                    #record.thepartner_id = sale.partner_id
+                    #Transformar la garantia dependiendo de los meses, No años.  #Ejemplo son 24 meses dividido entre 12 es igual a 2 Años
+                    if sale.warranty_duration and sale.garantia_global:
+                        # if not type(sale.warranty_duration) is int:
+                        #     # raise TypeError("Only integers are allowed")
+                        #     return 0
+                        # else:
+                        if sale.tipo_gar == "M":
+                            record.gar_cliente_actual = int(sale.warranty_duration)/12
+                            return record.gar_cliente_actual
+                        elif sale.tipo_gar == "A":
+                            record.gar_cliente_actual = int(sale.warranty_duration)
+                            return record.gar_cliente_actual
+                        else:
+                            record.gar_cliente_actual = 0
+                            return record.gar_cliente_actual
+                else:
+                    record.gar_cliente_actual = 0
+            record.gar_cliente_actual = 0
+            return record.gar_cliente_actual
 
     #Verificación de contratos o algo que lo respalde
     @api.depends("sale_ids")
@@ -361,7 +411,7 @@ class PerifericosModel_fields(models.Model):
 
     _sql_constraints = [
         ('code_base_fields_unique_name', 'UNIQUE(code_base)','El Código debe ser único.'),
-    ]    
+    ]
 
 
 class InheritedModeQuant(models.Model):
@@ -396,7 +446,6 @@ class InheritedModeQuant(models.Model):
         # print("El valor", value)
         # print("THIS IS MY RECORD_ID", record_id)
         
-
         if self.id and value:
             print("here 1")
             action = self.open_new_record_form_view(self.id, value)
@@ -463,6 +512,14 @@ class InheritModelMaintenenceTeam(models.Model):
 class InheritModelSale(models.Model):
     _inherit = "sale.order"
 
+    opciones = [
+        ('D', 'Días'),
+        ('M', 'Meses'),
+        ('A', 'Años'),
+        ('R', 'No Seleccionado'),
+    ]
+
+
     contract_oc = fields.Char(string= "Orden de Compra/Contrato", )
     observacion = fields.Char(string= "Observación")
     frecuencia = fields.Integer(string="Frecuencia de Mantenimiento (Meses)")
@@ -474,9 +531,15 @@ class InheritModelSale(models.Model):
     # lotes y series
     serie_ids = fields.Many2many(comodel_name=mdl_stock_lot, name="Series/Lote")
     ticket_install_created = fields.Boolean(default=False, string="Ticket de instalación creado?")
+    garantia_global = fields.Boolean(string="Garantia global", default=True)
     fecha_prevista_install = fields.Date(string="Fecha prevista para Instalación")
     maintenance_ids = fields.One2many(comodel_name=mdl_maintenance_request, string="Mantenimientos", inverse_name="sale_id")
-    response_time = fields.Integer(string=" Tiempor de respuesta (Horas)")
+    #tipo de garantia default meses
+    warranty_duration = fields.Char(string='Warranty', help="Se recomienda que sea en meses y de tipo entero.")
+    tipo_gar = fields.Selection(opciones, string="Tipo de Garantía", default="R")
+
+
+    response_time = fields.Integer(string=" Tiempo de respuesta (Horas)")
 
     def action_set_install_ticket(self):
         '''isn’t prefixed with an underscore (_). This makes our method a public method, which can be called directly from the Odoo interface'''
@@ -568,6 +631,17 @@ class InheritModelSale(models.Model):
             result.append((record.id, name))
         return result
         # return super().name_get()
+    
+    def open_maintenance_logs(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Tickets',
+            'view_mode': 'tree',
+            'res_model': mdl_maintenance_request,
+            'domain': [('sale_id', '=', self.id)],
+            #'context': {'default_driver_id': self.driver_id.id, 'default_vehicle_id': self.id}
+        }
         
 
     # def name_get(self):

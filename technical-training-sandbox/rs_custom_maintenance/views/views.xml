@@ -1,0 +1,133 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="rs_custom_maintenance.list">
+      <field name="name">RsCustomMaintenance list</field>
+      <field name="model">rs_custom_maintenance</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>  
+          <field name="cantidad"/>
+          <field name="start_maintenance_calc"/>
+          <field name="start_maintenance_manual"/>
+          <!-- <field name="sale_register_id"/>
+          <field name="sale_client"/>
+          
+          <field name="sale_product_id"/>
+          <field name="sale_serie_id"/>
+          <field name="maintenance_team_id"/> -->
+          <!-- <group string="Value at Import" groups="base.group_no_one" attrs="{'invisible': [('state', '=', 'model')]}"> -->
+            <!-- <field name="already_ticket_amount_import" string="Cantidad de Tickets Completados"/> -->
+        <!--</group> -->
+        </tree>
+      </field>
+    </record>
+
+    <!-- Tree definition -->
+    <record id="rs_custom_maintenance_view_tree" model="ir.ui.view">
+      <field name="name">rs.custom.maintenance.view.tree</field>
+      <field name="model">rs_custom_maintenance</field>
+      <field name="arch" type="xml">
+          <tree string="Mantenimientos Relacionados a OC/OT" editable="bottom">
+              <field name="name"/>
+          </tree>
+      </field>
+    </record>
+
+    <!-- Form definition -->
+    <record id="rs_custom_maintenance_view_form" model="ir.ui.view">
+      <field name="name">rs.custom.maintenance.view.form</field>
+      <field name="model">rs_custom_maintenance</field>
+      <field name="arch" type="xml">
+          <form string="Mantenimientos Relacionados a OC/OT" editable="bottom">
+            <header>
+              <button name="maintenance_set_confirm" string="Confirmar" class="oe_highlight" type="object" states="draft,unlock"/>
+              <!-- <button name="maintenance_set_confirm" string="Reset to Draft" class="oe_highlight" type="object" states="lock,unlock"/>
+              <button name="period_set_unlock" string="Unlock Period" class="oe_highlight" type="object" states="lock"/> -->
+              <field name="state" widget="statusbar" status_visible="draft,lock"/>
+            </header>  
+            <sheet>
+              <div class="oe_title">
+                <label for="name" string="Period Lock Title"/>
+                <h1>
+                  <field readonly="0" name="name"  required="1"/>
+                </h1>
+              </div>
+              <notebook>
+                <page string="Configuración" name="main_page">
+                  <group>
+                    <group>
+                      <field name="cantidad"/>
+                      <field name="start_maintenance_calc"/>
+                      <field name="start_maintenance_manual"/>
+                      <field name="sale_register_id"/>
+                      <field name="sale_client"/>
+                      
+                    </group>
+                    <group>
+                      <field name="sale_location_id"/>
+                      <field name="sale_product_id"/>
+                      <field name="sale_serie_id"/>
+                      <field name="maintenance_team_id"/>
+                    </group>
+                    <group string="Value at Import" groups="base.group_no_one">
+                                <!-- attrs="{'invisible': [('state', '=', 'model')]}" -->
+                      <field name="already_ticket_amount_import" string="Cantidad de Tickets Completados"/>
+                    </group>
+                  </group>
+
+                </page>
+                <page string="Mantenimientos" name="maintenances">
+                  <field name="maintenances_ids"></field>
+                </page>
+
+              </notebook>
+            </sheet>
+          </form>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="rs_custom_maintenance.action_window">
+      <field name="name">RsCustomMaintenance window</field>
+      <field name="res_model">rs_custom_maintenance</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="rs_custom_maintenance.action_server">
+      <field name="name">RsCustomMaintenance server</field>
+      <field name="model_id" ref="model_rs_custom_maintenance"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="RsCustomMaintenance" id="rs_custom_maintenance.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Menu 1" id="rs_custom_maintenance.menu_1" parent="rs_custom_maintenance.menu_root"/>
+    <menuitem name="Menu 2" id="rs_custom_maintenance.menu_2" parent="rs_custom_maintenance.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="List" id="rs_custom_maintenance.menu_1_list" parent="rs_custom_maintenance.menu_1"
+              action="rs_custom_maintenance.action_window"/>
+    <menuitem name="Server to list" id="rs_custom_maintenance" parent="rs_custom_maintenance.menu_2"
+              action="rs_custom_maintenance.action_server"/>
+
+  </data>
+</odoo>

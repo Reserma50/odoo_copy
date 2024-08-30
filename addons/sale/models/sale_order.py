@@ -96,7 +96,7 @@ class SaleOrder(models.Model):
         )
     
     #warranty_duration = fields.Integer(string='Warranty') #this can be a module!! #string='Warranty (in months)'
-    warranty_duration = fields.Char(string='Warranty')
+    warranty_duration = fields.Char(string='Warranty', help="Se recomienda que esa garantia sea en meses")
     shipping_term = fields.Char(string="Shipping term")
     # warranty_start_date = fields.Date(string='Warranty Start Date')
     # warranty_end_date = fields.Date(string='Warranty End Date', compute='_compute_warranty_end_date', store=True)

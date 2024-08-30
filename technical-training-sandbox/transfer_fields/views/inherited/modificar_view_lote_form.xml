@@ -50,6 +50,7 @@
                                     <field name="state_equipment" options="{'no_create': True}"/>
                                     <field name="modalidad_encar" options="{'no_create': True}"/>
                                     <field name="install_date" options="{'no_create': True}"/>
+                                    <field name="frec_mantenimiento"/>
                                     <field name="contact" options="{'no_create': True}"/>
                                     <field name="tel_contact" options="{'no_create': True}"/>
 
@@ -57,7 +58,6 @@
                                 <group string="Compras">
                                     <group>
                                         <field name="garantia_fab_inicio"></field>
-                                        
                                         <field name="garantia_fab"></field>
                                         <field name="garantia_fab_fin"></field>
                                         <br></br>
@@ -79,9 +79,15 @@
 
                             </group>
                             <group name="Second Info">
-                                <group string="Ventas">
+                                <group string="Venta Inicial">
                                     <field name="gar_cliente"/>
                                     <field name="fin_gar_cliente"/>
+    
+                                </group>
+                                <group string="Venta Renovación">
+                                    <field name="gar_cliente_actual"/>
+                                    <field name="start_date"/>
+                                    <field name="fin_gar_actual_cliente"/>
     
                                 </group>
                             </group>
