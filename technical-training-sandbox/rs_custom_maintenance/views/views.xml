@@ -70,6 +70,8 @@
                       <field name="sale_product_id"/>
                       <field name="sale_serie_id"/>
                       <field name="maintenance_team_id"/>
+                      <field name="frecuencia_man"/>
+                      
                     </group>
                     <group string="Value at Import" groups="base.group_no_one">
                                 <!-- attrs="{'invisible': [('state', '=', 'model')]}" -->
