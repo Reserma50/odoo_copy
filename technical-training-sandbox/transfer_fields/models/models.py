@@ -4,6 +4,8 @@ from odoo import models, fields, api, exceptions, _, Command
 import re, datetime
 import logging
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
+from datetime import timedelta
 
 
 mdl_res_partner = "res.partner"
@@ -15,6 +17,8 @@ mdl_maintenance_request = 'maintenance.request'
 mdl_marcaft_fields = "marcaftk.fields"
 mdl_location_fields = "location.fields"
 mdl_periferico_fields = "perifericosmodel.fields"
+
+MYPERMISO = 'transfer_fields.group_valuation_date_lock'
 
 class transfer_fields(models.Model):
     _name = 'transfer_fields.transfer_fields'
@@ -80,19 +84,221 @@ class InheritedModelStockPicking(models.Model):
 
     def button_validate(self):
         print("We are here")
-        return super().button_validate()
+
+        # for f_name, campo in self.fields_get().items():
+        #     if f_name in self:
+        #         print(f"Campo: {f_name}, Valor: {self[f_name]}")
+
+        d = super().button_validate()
+
+        return d
+    
+    # def _action_done(self):
+    #     result = super()._action_done()
+    #     self.write({'date_done': fields.Datetime.now(), 'priority': '0'})
+
+    #         """Call `_action_done` on the `stock.move` of the `stock.picking` in `self`.
+    #         This method makes sure every `stock.move.line` is linked to a `stock.move` by either
+    #         linking them to an existing one or a newly created one.
+
+    #         If the context key `cancel_backorder` is present, backorders won't be created.
+
+    #         :return: True
+    #         :rtype: bool
+    #         """
+    #         self._check_company()
+
+    #         todo_moves = self.move_ids.filtered(lambda self: self.state in ['draft', 'waiting', 'partially_available', 'assigned', 'confirmed'])
+    #         for picking in self:
+    #             if picking.owner_id:
+    #                 picking.move_ids.write({'restrict_partner_id': picking.owner_id.id})
+    #                 picking.move_line_ids.write({'owner_id': picking.owner_id.id})
+    #         todo_moves._action_done(cancel_backorder=self.env.context.get('cancel_backorder'))
+    #         self.write({'date_done': fields.Datetime.now(), 'priority': '0'})
+    #         # logging.info("Loc:::::" + str(record.name))
+    #         logging.info("Loc::::: De Usuario")
+
+    #         # if incoming/internal moves make other confirmed/partially_available moves available, assign them
+    #         done_incoming_moves = self.filtered(lambda p: p.picking_type_id.code in ('incoming', 'internal')).move_ids.filtered(lambda m: m.state == 'done')
+    #         done_incoming_moves._trigger_assign()
+
+    #         # self._send_confirmation_email()
+    #         return True
 
 
 class InheritedModelStockMove(models.Model):
     _inherit = "stock.move"
 
     def _action_done(self, cancel_backorder=False):
+
         print(self)
+        a = super()._action_done()
+        print("Contiene data el último movimiento (MOVE no Move Line).")
+        for record in self:
+            if record.stock_valuation_layer_ids:
+                svl_ids = record.stock_valuation_layer_ids.ids
+            if record.picking_id:
+                picking_move=self.env['stock.picking'].search([('id', '=', record.picking_id.id)])
+                print("CAMPOS DEL PICKING MOVE")
+                
+                SVL_s = self.env['stock.valuation.layer'].search([('id', 'in', svl_ids)])
+                # for f_name, campo in picking_move.fields_get().items():
+                #     if f_name in picking_move:
+                #         print(f"Campo: {f_name}, Valor: {picking_move[f_name]}")
+                print("**************************")
+                print("EJEMPLO DE DATE_DONE", picking_move.date_done)
+                if picking_move.date_done and self.env.user.has_group(MYPERMISO):    
+                    # my_day = int(picking_move.date_done.strftime("%d"))
+                    # my_month = int(picking_move.date_done.strftime("%m"))
+                    # my_year = int(picking_move.date_done.strftime("%Y"))
+                    
+                    datetime_object = datetime.datetime.combine(fields.Date.today(), datetime.datetime.min.time())
+                    if picking_move.date_done < datetime_object:
+                        #TypeError: can't compare datetime.datetime to datetime.date
+                        print("ES MENOR")
+                        record.write({'date': picking_move.date_done})
+
+                        for SVL in SVL_s:
+                            #Asignar valor de la fecha a El registro de la valuation layer cuando ya existe.
+                            if self.env.user.has_group(MYPERMISO): 
+                                logging.info('------------------------------------')
+                                logging.info('----------------Actualizando VL desde Stock.Move--------------------')
+                                logging.info('SVL' + str(SVL.id))
+                                # SVL.write({'create_date': picking_move.date_done})
+                                # logging.info('Intento 1 SVL' + str(SVL.create_date))
+                                # SVL.create_date = picking_move.date_done
+                                # logging.info('Intento 2 SVL' + str(SVL.create_date))
+                                # SVL.update({'create_date': picking_move.date_done})
+                                # logging.info('Intento 3 SVL' + str(SVL.create_date))
+                                # SVL['create_date'] = picking_move.date_done
+                                logging.info('Intento 4 SVL' + str(SVL.create_date))
+
+                        # establecer
+                        if svl_ids:
+                            query = """
+                                UPDATE stock_valuation_layer
+                                SET create_date = %s
+                                WHERE id IN %s
+                            """
+                            params = (picking_move.date_done, tuple(svl_ids))
+
+                            # Ejecutar el SQL directamente en la base de datos
+                            self.env.cr.execute(query, params)
+                            
+                        for SVL in SVL_s:
+                            logging.info('SVL ACTUALIZADA POR QUERY' + str(SVL.create_date))#registro no de base de datos
+
+
+
+                        #picking_move.date_done
+                        a.write({'state': 'done', 'date': picking_move.date_done})
+                        #cambiar fecha a los movelines
+                        picking_moves_lines=self.env['stock.move.line'].search([('move_id', '=', record.id)])
+                        for n in picking_moves_lines:
+                            print("DATOS DE LINES")
+                            for ff_name, field in n.fields_get().items():
+                                if ff_name in record:
+                                    print(f"Campo: {ff_name}, Valor: {record[ff_name]}")
+
+                            n.write({'date': picking_move.date_done})
+                            print("ACTUALIZAR DATO DE", n)
+
+            if record.reference:
+                target_date=parse(str(record.reference), fuzzy=True)
+                # fields.Date.from_string
+                logging.info("*********")
+                logging.info("_________")
+                logging.info("_________ " + str(target_date))
+                target_date = fields.Datetime.from_string(target_date)
+                target_date = target_date + timedelta(seconds=18000) #last day last month
+                logging.info("Target Date Modificado:" + str(target_date))
+                if svl_ids and self.env.user.has_group(MYPERMISO):
+                    logging.info("Tengo Permiso y además los ids del movimiento")
+                    #picking_move.date_done
+                    a.write({'date': target_date})
+
+                    moves_lines=self.env['stock.move.line'].search([('move_id', '=', record.id)])
+                    for n in moves_lines:
+                        print("DATOS DE LINES")
+
+                        n.write({'date': target_date})
+                        print("ACTUALIZAR DATO DE move LINE", n)
+
+                    query = """
+                        UPDATE stock_valuation_layer
+                        SET create_date = %s
+                        WHERE id IN %s
+                    """
+                    params = (target_date, tuple(svl_ids))
+                    # Ejecutar el SQL directamente en la base de datos
+                    self.env.cr.execute(query, params)
+
+
+
+            # picking_move
+            print("*************************************")
+            for field_name, field in record.fields_get().items():
+                if field_name in record:
+                    print(f"Campo: {field_name}, Valor: {record[field_name]}")
+        
+
         print("Making changes")
         stock_valuation_layers = self.env['stock.valuation.layer']
         print(stock_valuation_layers)
-        return super()._action_done()
+        
+        
+        return a
     
+class InheritedModelStockValuationLayer(models.Model):
+    _inherit = 'stock.valuation.layer'
+
+    @api.model
+    def create(self, vals):
+        logging.info('Sobreescribiendo Lineas')
+        res = super(InheritedModelStockValuationLayer,self).create(vals)
+
+        for record in res:
+            logging.info('Record ID: %s', record.id)
+            for field_name in record._fields:
+                value = getattr(record, field_name, None)
+                logging.info('Field: %s, Value: %s', field_name, value)
+                logging.info('----------------------------------------')
+                logging.info('||_____________________________________||')
+            if record.stock_move_id:
+                logging.info('Move'+ str(record.stock_move_id.id))
+                logging.info('Move'+ str(record.stock_move_id.date))
+                logging.info('Fecha ffectiva de Transferencias'+ str(record.stock_move_id.picking_id.date_done))
+
+            if record.account_move_id:
+                logging.info('Account'+ str(record.account_move_id.id))
+                logging.info('Account'+ str(record.account_move_id.date))
+            
+            logging.info('||________FECHAS_______________________||')
+            logging.info('Valuation date'+ str(record.create_date))
+
+                
+                
+            # if record.stock_move_id and record.account_move_id:
+            #     if record.stock_move_id.date == record.account_move_id.date:
+            #          if self.env.user.has_group(MYPERMISO):
+            #             record.create_date = record.stock_move_id.date
+            if record.stock_move_id:
+                if self.env.user.has_group(MYPERMISO):
+                    logging.info('Fecha de Transferencia'+ str(record.stock_move_id.picking_id.date_done))
+                    logging.info('Validando el permiso y sacando datos del movimiento')
+                    record.create_date = record.stock_move_id.picking_id.date_done
+                    logging.info('Intento W1 SVL' + str(res.create_date))
+                    record.write({'create_date': record.stock_move_id.picking_id.date_done})
+                    logging.info('Intento W2 SVL' + str(res.create_date))
+                    # record.create_date = record.stock_move_id.picking_id.date_done
+                    # res.write({'create_date': record.stock_move_id.picking_id.date_done})
+                    record.update({'create_date': record.stock_move_id.picking_id.date_done})
+                    logging.info('Intento W3 SVL' + str(res.create_date))
+                    record['create_date'] = record.stock_move_id.picking_id.date_done
+                    logging.info('Intento W4 SVL' + str(res.create_date))
+
+
+        return res
 
 class InheritedModelStockLocation(models.Model):
     _inherit = mdl_stock_location
@@ -671,6 +877,10 @@ class InheritModelSale(models.Model):
 #     compute='_compute_expiration_date', store=True
 
 
+# class MoveLineExit(models.Model):
+#     _inherit = 'stock.move.line'
+    
+    # date_done = fields.Datetime('Date of Transfer', copy=False, readonly=False, help="Date at which the transfer has been processed or cancelled.")
 
 
 

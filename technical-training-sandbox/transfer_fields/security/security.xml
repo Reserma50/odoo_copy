@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+      <!-- Security -->
+      <record id="group_valuation_date_lock" model="res.groups">
+        <field name="name">Stock Valuation Lock Super User </field>
+      </record>
+    </data>
+  </odoo>
+  

@@ -21,9 +21,14 @@
                   <!-- <xpath expr="/form[1]/header[1]/button[@name='button_validate']">
                     <attribute name="context">{'force_period_date': date_done}</attribute>
                   </xpath> -->
-
+                  <xpath expr="/form[1]/header[1]/button[@name='button_validate'][1]" position="attributes">
+                    <attribute name="context">{'force_period_date': date_done}</attribute>
+                  </xpath>
+                  <xpath expr="/form[1]/header[1]/button[@name='button_validate'][2]" position="attributes">
+                    <attribute name="context">{'force_period_date': date_done}</attribute>
+                  </xpath>
                   <xpath expr="//field[@name='date_done']" position="replace">
-                    <field name="date_done" string="Effective Date" attrs="{'invisible': ['|', ('state', '=', 'draft'), ('state', '=', 'waiting')], 'readonly': [('state', '=', 'done')]}"/>
+                    <field name="date_done" string="Effective Date" attrs="{'invisible': ['|', ('state', '=', 'draft'), ('state', '=', 'waiting')], 'readonly': [('state', '=', 'draft')]}"/>
                   </xpath>
             </field>
         </record>

@@ -930,6 +930,7 @@ class StockQuant(models.Model):
         else:
             name = _('Product Quantity Updated')
 
+
         return {
             'name': self.env.context.get('inventory_name') or name,
             'product_id': self.product_id.id,
@@ -951,6 +952,8 @@ class StockQuant(models.Model):
                 'package_id': out and self.package_id.id or False,
                 'result_package_id': (not out) and self.package_id.id or False,
                 'owner_id': self.owner_id.id,
+                'date': self.accounting_date or False,
+                
             })]
         }
 
